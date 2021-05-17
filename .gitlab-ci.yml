@@ -12,8 +12,8 @@ lets_test:
 
   - echo hi
 
-  - cd /home/gitlab-runner
-
+  - cd /
+  
   - touch devqa
 
   tags:
