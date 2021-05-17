@@ -16,6 +16,8 @@ lets_test:
   
   - mkdir devqa
 
+  - dir
+
   tags:
 
   - cronmonitor
