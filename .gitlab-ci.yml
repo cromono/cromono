@@ -10,13 +10,14 @@ lets_test:
 
   script:
 
+    - ls
   - echo hi
 
   - cd /
   
   - mkdir devqa
 
-  - pwd
+  - ls
 
   tags:
 
