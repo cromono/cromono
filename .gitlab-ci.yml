@@ -1,14 +1,25 @@
 stages:
 
-  - test
+- test
 
 
-test:
+
+lets_test:
+
   stage: test
+
   script:
-    - echo 'test'
+
+  - echo hi
+
+  - cd /
+  
+  - touch devqa
+
   tags:
+
   - cronmonitor
+
 
 
 
