@@ -16,7 +16,7 @@ lets_test:
   
   - mkdir devqa
 
-  - dir
+  - pwd
 
   tags:
 
