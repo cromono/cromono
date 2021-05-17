@@ -10,7 +10,8 @@ lets_test:
 
   script:
 
-    - ls
+  - ls
+  
   - echo hi
 
   - cd /
