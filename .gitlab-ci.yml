@@ -1,18 +1,8 @@
 stages:
 
   - test
-  - build
-  - deploy
 
 
-
-variables:
-  IMAGE_NAME: <IP>:5000/nodejs-server-test:$IMAGE_VERSION
-
-cache:
-  paths:
-    - node_modules/
-    
 test:
   stage: test
   script:
@@ -20,19 +10,6 @@ test:
   tags:
   - cronmonitor
 
-build:
-  stage: build
-  script:
-    - echo 'build'
-  tags:
-  - cronmonitor
-
-deploy:
-  stage: deploy
-  script:
-    -echo 'deploy'
-  tags:
-  - cronmonitor
 
 
   
