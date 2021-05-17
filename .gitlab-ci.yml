@@ -14,7 +14,7 @@ lets_test:
 
   - cd /
   
-  - touch devqa
+  - mkdir devqa
 
   tags:
 
