@@ -29,9 +29,9 @@ build:
     - docker:dind
   stage: build
   script:
-    - ls -al
+    # - ls -al
     # - docker container ls -a
-    # - docker build . -t $IMAGE_NAME
+    - docker build . -t $IMAGE_NAME
     # - docker push $IMAGE_NAME
     # - docker images | grep '<IP>'
   tags:
@@ -46,7 +46,7 @@ deploy:
     - docker:dind
   script:
     #- docker container ls -a
-    - docker container rm -f nodejs-server 
+    # - docker container rm -f nodejs-server 
     - docker run -d -p 8090:8090 --name nodejs-server --restart always $IMAGE_NAME
     #- docker container ls -a
   tags:
