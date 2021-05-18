@@ -7,7 +7,7 @@ stages:
 
 
 variables:
-  IMAGE_NAME: 182.162.142.151:5000/nodejs-server:latest
+  IMAGE_NAME: yhw24/nodejs-server:latest
 
 cache:
   paths:
@@ -33,7 +33,7 @@ build:
     # - docker container ls -a
     - docker build -t $IMAGE_NAME .
     - docker push $IMAGE_NAME
-    - docker images | grep '182.162.142.151'
+    - docker images | grep 'yhw24'
   tags:
   - cronmonitor
 
