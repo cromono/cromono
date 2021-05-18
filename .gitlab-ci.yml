@@ -31,7 +31,7 @@ build:
   script:
     # - ls -al
     # - docker container ls -a
-    - docker build -t $IMAGE_NAME .
+    - docker build . -t $IMAGE_NAME
     - docker push $IMAGE_NAME
     - docker images | grep '<IP>'
   tags:
