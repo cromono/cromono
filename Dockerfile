@@ -1,6 +1,6 @@
 FROM node
 
-WORKDIR /cronmonitor/app/
+WORKDIR /cronmonitor
 
 ARG NODE_ENV
 ENV NODE_ENV $NODE_ENV
