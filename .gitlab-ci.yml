@@ -7,7 +7,7 @@ stages:
 
 
 variables:
-  IMAGE_NAME: <IP>:5000/nodejs-server-test:$IMAGE_VERSION
+  IMAGE_NAME: 182.162.142.151:5000/nodejs-server-test:latest
 
 cache:
   paths:
@@ -45,10 +45,10 @@ deploy:
   services:
     - docker:dind
   script:
-    - docker container ls -a
+    #- docker container ls -a
     - docker container rm -f nodejs-server 
     - docker run -d -p 8090:8090 --name nodejs-server --restart always $IMAGE_NAME
-    - docker container ls -a
+    #- docker container ls -a
   tags:
   - cronmonitor
 
