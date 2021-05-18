@@ -32,7 +32,7 @@ build:
     # - ls -al
     # - docker container ls -a
     - docker build -t $IMAGE_NAME .
-    - docker push $IMAGE_NAME
+    #- docker push $IMAGE_NAME
     - docker images | grep 'yhw24'
   tags:
   - cronmonitor
