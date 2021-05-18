@@ -30,14 +30,16 @@ build:
   stage: build
   script:
     - ls -al
-    - docker container ls -a
-    - docker build . -t $IMAGE_NAME
-    - docker push $IMAGE_NAME
-    - docker images | grep '<IP>'
+    # - docker container ls -a
+    # - docker build . -t $IMAGE_NAME
+    # - docker push $IMAGE_NAME
+    # - docker images | grep '<IP>'
   tags:
   - cronmonitor
 
 deploy:
+  only:
+    - master
   stage: deploy
   image: docker:latest
   services:
