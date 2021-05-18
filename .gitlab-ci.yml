@@ -7,7 +7,7 @@ stages:
 
 
 variables:
-  IMAGE_NAME: 182.162.142.151:5000/nodejs-server:latest
+  IMAGE_NAME: <IP>:5000/nodejs-server-test:$IMAGE_VERSION
 
 cache:
   paths:
