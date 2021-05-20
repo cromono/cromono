@@ -3,6 +3,7 @@
 ## 프로젝트 소개
 
 > cron은 유닉스 계열 컴퓨터 운영 체제의 시간 기반 잡 스케줄러이다. 소프트웨어 환경을 설정하고 관리하는 사람들은 작업을 고정된 시간, 날짜, 간격에 주기적으로 실행할 수 있도록 스케줄링하기 위해 cron을 사용한다.
+
 - 위키백과
 
 매일 새벽 4시 일일 수행 작업 예) `0 0 4 * * * * /home/users/everydayjob`
@@ -22,4 +23,9 @@
 - Node.js
 - Express
 - MongoDB
+- InfluxDB + T
 - Redis Pub/Sub
+
+## API Documentation
+
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/8f9f0d4b75afcfcda430?action=collection%2Fimport)
