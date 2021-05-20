@@ -23,7 +23,7 @@
 - Node.js
 - Express
 - MongoDB
-- InfluxDB + T
+- InfluxDB + Telegraf
 - Redis Pub/Sub
 
 ## API Documentation
