@@ -1,0 +1,76 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: cron-monitor
+servers:
+  - url: 'http://localhost:3000'
+    description: '로컬'
+paths:
+  /cron-jobs:
+    post:
+      summary: '크론 job 등록'
+      operationId: cronJobRegistration
+      tags:
+        - cronJob
+      requestBody:
+        required: true
+        content:
+          application/json:
+              schema:
+                type: object
+                required:
+                  - server_ip
+                  - cron_name
+                  - cron_expr
+                properties:
+                  server_ip:
+                    type: string
+                  cron_name:
+                    type: string
+                  cron_expr:
+                    type: string
+    
+      responses:
+        '201':
+          description: '정상적으로  등록됨'
+        '400':
+          description: 'Bad request'
+  /cron-servers:
+    get:
+      summary: '크론 서버 목록 조회'
+      responses:
+          '200':
+            description: '서버 목록 조회 성공'
+          '404':
+            description: 'Not found'
+  /cron-server/jobs:
+    get:
+      summary: '서버별 크론 job 목록 조회'
+      parameters:
+          - name: server_ip
+            in: path
+            description: '조회할 서버의 ip'
+            required: true
+            schema:
+             type: string
+            
+      responses:
+          '200':
+            description: '크론 job 목록 조회 성공'
+          '404':
+            description: 'Not found'
+  /server/job/actions:
+    get:
+      summary: '크론 job 실행 목록 조회'
+      parameters:
+        - name:  cron_job_id
+          in: query
+          description: '조회할 크론 job id'
+          schema:
+            type: integer
+      responses:
+          '200':
+            description: 'job 실행 목록 조회 성공'
+          '404':
+            description: 'Not found'
+
