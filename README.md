@@ -20,11 +20,11 @@
 
 ## Language, Frameworks, IDE, DBMS
 
-- Node.js
+- Node.js + Typescript
 - Express
-- MongoDB
+- MySQL
 - InfluxDB + Telegraf
-- Redis Pub/Sub
+- Kafka
 
 ## API Documentation
 
