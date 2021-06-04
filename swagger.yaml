@@ -6,12 +6,87 @@ servers:
   - url: 'http://localhost:3000'
     description: '로컬'
 paths:
+  /cron-servers:
+    get:
+      summary: '크론 서버 목록 조회'
+      operationId: getCronServers
+      tags:
+        - cron-servers
+      responses:
+        '200':
+          description: '서버 목록 조회 성공'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Server'
+        '404':
+          description: 'Not found'
+    post:
+      summary: '크론 서버 등록'
+      operationId: addCronServer
+      tags:
+        - cron-servers
+      requestBody:
+        $ref: '#/components/requestBodies/PostCronServers'
+      responses:
+        '201':
+          description: '정상적으로  등록됨'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: '등록된 크론 서버 id'
+        '400':
+          description: 'Bad request'
+    patch:
+      summary: '크론 서버 수정'
+      operationId: updateCronServer
+      tags:
+        - cron-servers
+      requestBody:
+        $ref: '#/components/requestBodies/PatchCronServers'
+      responses:
+        '201':
+          description: '정상적으로 수정됨'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: '변경된 크론 서버 id'
+        '400':
+          description: 'Bad request'
+    delete:
+      summary: '크론 서버 삭제'
+      operationId: deleteCronServer
+      tags:
+        - cron-servers
+      responses:
+        '204':
+          description: '정상적으로  삭제됨'
+        '400':
+          description: 'Bad request'
   /cron-servers/{serverIp}/cron-jobs:
     post:
       summary: '크론 job 등록'
       operationId: registerCronJob
       tags:
-        - cron-servers
+        - cron-jobs
+      parameters:
+        - $ref: '#/components/parameters/serverIpPath'
       requestBody:
         $ref: '#/components/requestBodies/PostCronJobs'
       responses:
@@ -34,7 +109,7 @@ paths:
       summary: '서버별 크론 job 목록 조회'
       operationId: getCronJobsInServer
       tags:
-        - cron-servers
+        - cron-jobs
       parameters:
         - $ref: '#/components/parameters/serverIpPath'        
       responses:
@@ -48,13 +123,51 @@ paths:
                   $ref: '#/components/schemas/CronJob'
         '404':
           description: 'Not found'
+    patch:
+      summary: '크론 job 수정'
+      operationId: updateCronJob
+      tags:
+        - cron-jobs
+      parameters:
+        - $ref: '#/components/parameters/serverIpPath'   
+      requestBody:
+        $ref: '#/components/requestBodies/PatchCronjobs'
+      responses:
+        '201':
+          description: '정상적으로 수정됨'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: '변경된 크론 job id'
+        '400':
+          description: 'Bad request'
+    delete:
+      summary: '크론 job 삭제'
+      operationId: deleteCronjob
+      tags:
+        - cron-jobs
+      parameters:
+        - $ref: '#/components/parameters/serverIpPath'   
+      responses:
+        '204':
+          description: '정상적으로  삭제됨'
+        '400':
+          description: 'Bad request'
   /cron-servers/{serverIp}/cron-jobs/{cronJobId}/processes:
     get:
       summary: '크론 프로세스 목록 조회'
       operationId: getCronProcesses
       tags:
-        - cron-servers
+        - cron-processes
       parameters:
+        - $ref: '#/components/parameters/serverIpPath'
         - $ref: '#/components/parameters/cronJobIdPath'
       responses:
         '200':
@@ -67,18 +180,19 @@ paths:
                   $ref: '#/components/schemas/CronProcess'
         '404':
           description: 'Not found'
-  /cron-servers/{serverIp}/cron-jobs/{cronJobId}/processes/{pid}/time:
+  /cron-servers/{serverIp}/cron-jobs/{cronJobId}/processes/{pid}:
     get:
-      summary: '크론 프로세스 시간 조회'
-      operationId: getCronProcessTime
+      summary: '크론 프로세스 조회'
+      operationId: getCronProcess
       tags:
-        - cron-servers
+        - cron-processes
       parameters:
+        - $ref: '#/components/parameters/serverIpPath'
         - $ref: '#/components/parameters/cronJobIdPath'
         - $ref: '#/components/parameters/pidPath'
       responses:
         '200':
-          description: '시간 조회 성공'
+          description: '프로세스 조회 성공'
         '404':
           description: 'Not found'
   /cron-servers/{serverIp}/cron-jobs/{cronJobId}/processes/{pid}/logs:
@@ -86,8 +200,9 @@ paths:
       summary: '프로세스 로그 목록 조회'
       operationId: getCronProcessLogs
       tags:
-        - cron-servers
+        - cron-processes
       parameters:
+        - $ref: '#/components/parameters/serverIpPath'
         - $ref: '#/components/parameters/cronJobIdPath'
         - $ref: '#/components/parameters/pidPath'
       responses:
@@ -99,23 +214,6 @@ paths:
                   type: array
                   items:
                     $ref: '#/components/schemas/CronLog'
-        '404':
-          description: 'Not found'
-  /cron-servers:
-    get:
-      summary: '크론 서버 목록 조회'
-      operationId: getCronServers
-      tags:
-        - cron-servers
-      responses:
-        '200':
-          description: '서버 목록 조회 성공'
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Server'
         '404':
           description: 'Not found'
   /users:
@@ -477,9 +575,9 @@ paths:
   /cron-read-auths/users/{userId}/crons/{cronJobId}:
     get:
       summary: '사용자의 크론 조회 권한에 대한 정보를 상세 조회한다'
-      operationId: getCronReadAuthsDetail
+      operationId: getUserCronReadAuth
       tags:
-        - cron-read-auths
+        - cron-read-auths/users
       parameters:
         - $ref: '#/components/parameters/userIdPath'
         - $ref: '#/components/parameters/cronJobIdPath'
@@ -496,9 +594,9 @@ paths:
           description: 'Bad request'
     post:
       summary: '사용자의 크론 조회 권한을 추가한다'
-      operationId: addCronReadAuth
+      operationId: addUserCronReadAuth
       tags:
-        - cron-read-auths
+        - cron-read-auths/users
       parameters:
         - $ref: '#/components/parameters/userIdPath'
         - $ref: '#/components/parameters/cronJobIdPath'  
@@ -520,9 +618,9 @@ paths:
           description: 'Bad request' 
     delete:
       summary: '사용자의 크론 조회 권한을 삭제한다'
-      operationId: deleteCronReadAuth
+      operationId: deleteUserCronReadAuth
       tags:
-        - cron-read-auths
+        - cron-read-auths/users
       parameters:
         - $ref: '#/components/parameters/userIdPath'
         - $ref: '#/components/parameters/cronJobIdPath'
@@ -533,9 +631,9 @@ paths:
           description: 'Bad request'
     patch:
       summary: '사용자의 크론 조회 권한을 수정한다'
-      operationId: addCronReadAuth
+      operationId: addUserCronReadAuth
       tags:
-        - cron-read-auths
+        - cron-read-auths/users
       parameters:
         - $ref: '#/components/parameters/userIdPath'
         - $ref: '#/components/parameters/cronJobIdPath'  
@@ -557,10 +655,10 @@ paths:
           description: 'Bad request'
   /cron-read-auths/teams/{teamId}/crons/{cronJobId}:
     post:
-      summary: '팀 크론 추가'
-      operationId: changeTeam
+      summary: '팀 크론 조회 권한 추가'
+      operationId: addTeamCronReadAuth
       tags:
-        - cron-read-auths
+        - cron-read-auths/teams
       parameters:
         - $ref: '#/components/parameters/teamIdPath'
         - $ref: '#/components/parameters/cronJobIdPath'
@@ -572,10 +670,10 @@ paths:
         '400':
           description: 'Bad request'
     patch:
-      summary: '팀 크론 수정'
-      operationId: changeTeam
+      summary: '팀 크론 조회 권한 수정'
+      operationId: updateTeamCronReadAuth
       tags:
-        - cron-read-auths
+        - cron-read-auths/teams
       parameters:
         - $ref: '#/components/parameters/teamIdPath'
         - $ref: '#/components/parameters/cronJobIdPath'
@@ -587,10 +685,10 @@ paths:
         '400':
           description: 'Bad request'
     get:
-      summary: '팀 조회'
-      operationId: getTeam
+      summary: '팀 크론 조회 권한 조회'
+      operationId: getTeamCronReadAuth
       tags:
-        - cron-read-auths
+        - cron-read-auths/teams
       parameters:
         - $ref: '#/components/parameters/teamIdPath'
         - $ref: '#/components/parameters/cronJobIdPath'
@@ -606,10 +704,10 @@ paths:
         '400':
           description: 'Bad request'
     delete:
-      summary: '팀 삭제'
-      operationId: deleteTeam
+      summary: '팀 크론 조회 권한 삭제'
+      operationId: deleteTeamCronReadAuth
       tags:
-        - cron-read-auths
+        - cron-read-auths/teams
       parameters:
         - $ref: '#/components/parameters/teamIdPath'
         - $ref: '#/components/parameters/cronJobIdPath'
@@ -715,8 +813,8 @@ paths:
         '400':
           description: 'Bad request'
     get:
-      summary: '웹훅 조회'
-      operationId: getTeam
+      summary: '웹훅 리스트 조회'
+      operationId: getWebhooks
       tags:
         - webhook
       parameters:
@@ -890,6 +988,28 @@ components:
       schema:
         type: integer
   requestBodies:
+    PostCronServers:
+      description: '크론 서버 등록'
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - serverIp
+            properties:
+              serverIp:
+                type: string
+    PatchCronServers:
+      description: '크론 서버 등록'
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              serverIp:
+                type: string
     PostCronJobs:
       description: '크론 등록'
       required: true
@@ -898,12 +1018,21 @@ components:
           schema:
             type: object
             required:
-              - serverIp
               - cronName
               - cronExpr
             properties:
-              serverIp:
+              cronName:
                 type: string
+              cronExpr:
+                type: string  
+    PatchCronJobs:
+      description: '크론 수정'
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
               cronName:
                 type: string
               cronExpr:
