@@ -737,7 +737,7 @@ paths:
       summary: '웹훅 삭제'
       operationId: deleteTeam
       tags:
-        - notifications
+        - webhook
       parameters:
         - $ref: '#/components/parameters/notIdPath'
       responses:
