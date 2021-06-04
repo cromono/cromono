@@ -123,6 +123,7 @@ paths:
                   $ref: '#/components/schemas/CronJob'
         '404':
           description: 'Not found'
+  /cron-servers/{serverIp}/cron-jobs/{cronJobId}:
     patch:
       summary: '크론 job 수정'
       operationId: updateCronJob
@@ -130,6 +131,7 @@ paths:
         - cron-jobs
       parameters:
         - $ref: '#/components/parameters/serverIpPath'   
+        - $ref: '#/components/parameters/cronJobIdPath'
       requestBody:
         $ref: '#/components/requestBodies/PatchCronjobs'
       responses:
@@ -155,6 +157,7 @@ paths:
         - cron-jobs
       parameters:
         - $ref: '#/components/parameters/serverIpPath'   
+        - $ref: '#/components/parameters/cronJobIdPath'
       responses:
         '204':
           description: '정상적으로  삭제됨'
