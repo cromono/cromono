@@ -1,56 +1,8 @@
 stages:
-
   - test
   - build
   - deploy
 
-
-
-variables:
-  IMAGE_NAME: yhw24/nodejs-server:latest
-
-cache:
-  paths:
-    - node_modules/
-    
 test:
-  stage: test
-  image: node:latest
-  script:
-    - env
-    - npm install
-  tags:
-  - cronmonitor
-
 build:
-  stage: package
-  image: docker:latest
-  services:
-    - docker:dind
-  stage: build
-  script:
-    # - ls -al
-    # - docker container ls -a
-    - docker build -t $IMAGE_NAME .
-    #- docker push $IMAGE_NAME
-    - docker images | grep 'yhw24'
-  tags:
-  - cronmonitor
-
 deploy:
-  only:
-    - master
-  stage: deploy
-  image: docker:latest
-  services:
-    - docker:dind
-  script:
-    #- docker container ls -a
-    - docker container rm -f nodejs-server 
-    - docker run -d -p 8090:8090 --name nodejs-server --restart always $IMAGE_NAME
-    #- docker container ls -a
-  tags:
-  - cronmonitor
-
-
-  
