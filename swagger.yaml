@@ -66,6 +66,9 @@ paths:
   /cron-jobs/{cronJobId}/processes/{pid}/logs:
     get:
       summary: '프로세스 로그 목록 조회'
+      operationId: getCronProcessLogs
+      tags:
+        - cron-jobs
       parameters:
         - $ref: '#/components/parameters/cronJobIdPath'
         - $ref: '#/components/parameters/pidPath'
