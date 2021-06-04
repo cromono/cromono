@@ -35,10 +35,10 @@
 
 ## Language, Frameworks, IDE, DBMS
 
-- Node.js + Typescript
-- Express
+- JDK11 + Spring Boot
 - MySQL
-- InfluxDB + Telegraf
+- InfluxDB
+- Filebeats
 - Kafka
 
 ## API Documentation
