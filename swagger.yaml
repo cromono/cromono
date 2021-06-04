@@ -46,39 +46,6 @@ paths:
                         description: '등록된 크론 서버 id'
         '400':
           description: 'Bad request'
-    patch:
-      summary: '크론 서버 수정'
-      operationId: updateCronServer
-      tags:
-        - cron-servers
-      requestBody:
-        $ref: '#/components/requestBodies/PatchCronServers'
-      responses:
-        '201':
-          description: '정상적으로 수정됨'
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                        description: '변경된 크론 서버 id'
-        '400':
-          description: 'Bad request'
-    delete:
-      summary: '크론 서버 삭제'
-      operationId: deleteCronServer
-      tags:
-        - cron-servers
-      responses:
-        '204':
-          description: '정상적으로  삭제됨'
-        '400':
-          description: 'Bad request'
   /cron-servers/{serverIp}/cron-jobs:
     post:
       summary: '크론 job 등록'
@@ -123,6 +90,43 @@ paths:
                   $ref: '#/components/schemas/CronJob'
         '404':
           description: 'Not found'
+    patch:
+      summary: '크론 서버 수정'
+      operationId: updateCronServer
+      tags:
+        - cron-servers
+      parameters:
+        - $ref: '#/components/parameters/serverIpPath'  
+      requestBody:
+        $ref: '#/components/requestBodies/PatchCronServers'
+      responses:
+        '201':
+          description: '정상적으로 수정됨'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: '변경된 크론 서버 id'
+        '400':
+          description: 'Bad request'
+    delete:
+      summary: '크론 서버 삭제'
+      operationId: deleteCronServer
+      tags:
+        - cron-servers
+      parameters:
+        - $ref: '#/components/parameters/serverIpPath'  
+      responses:
+        '204':
+          description: '정상적으로  삭제됨'
+        '400':
+          description: 'Bad request'
   /cron-servers/{serverIp}/cron-jobs/{cronJobId}:
     patch:
       summary: '크론 job 수정'
