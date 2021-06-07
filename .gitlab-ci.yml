@@ -11,7 +11,7 @@ variables:
   IMAGE_NAME: $DOCKERHUB_ID/cronmonitor
 
 build:
-  image: gradle:7.0.2-jdk11
+  image: gradle:5.0-jdk8-alpine
   stage: build
   script:
     - gradle clean build
@@ -24,7 +24,7 @@ build:
 package:
   stage: package
   script:
-    - docker build --build-arg JAR_FILE=build/libs/\*.jar -t $IMAGE_NAME .
+    - docker build -t $IMAGE_NAME .
     - docker login -u $DOCKERHUB_ID -p $DOCKERHUB_PASS
     - docker push $IMAGE_NAME
     - docker images | grep 'cronmonitor'
