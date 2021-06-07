@@ -14,7 +14,7 @@ build:
   image: gradle:7.0.2-jdk11
   stage: build
   script:
-    - gradle build
+    - gradle clean build
   artifacts:
     paths:
       - build/libs/*.jar
