@@ -1,18 +1,14 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:test_db
-    username: sa
-    password: 1
-    driver-class-name: org.h2.Driver
-
-  h2:
-    console:
-      enabled: true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ENC(FT9MAa2OjCi3L4KxLTtuihNe7aaTI+MqU7BqleHlSm37pH/jCsc6kfPLgp0XrR+IhfZvnVMlBz0tsueSbnsMlOC+XgPAUnGAhw8b8BgcqUotG++IpcKRCnqzkJPGp4O3G8CglAb5c18=)
+    username: ENC(vlCqS3V8pcLgDf9i7j4f2Q==)
+    password: ENC(zKcrcC7yhJI4oX1N3yIU6ekob3kkHw+T)
 
   jpa:
     hibernate:
-      ddl-auto: create #creat-drop, update, validate, none가 있음 ;; 교재확인 -> 운영에 create쓰면 안됨 why? drop table되니 데이터 다날라감
-      #dialect : ////
+#      ddl-auto: create #creat-drop, update, validate, none가 있음 ;; 교재확인 -> 운영에 create쓰면 안됨 why? drop table되니 데이터 다날라감
+#      #dialect : ////
     properties:
       hibernate:
 #        show_sql: true 얘는 시스템아웃으로 찍는거임.
@@ -23,3 +19,13 @@ logging:
     org.hibernate.SQL: debug
     org.hibernate.type : trace
     # org.hibernate.type : trace // 이건 insert 구문에 들어가는 물음표(파라미터) 에 어떤값이 들어가는지 명확히 보기위한 로거 설정임
+
+#jasypt config
+jasypt:
+  encryptor:
+    algorithm: PBEWithMD5AndDES
+    bean: jasyptStringEncryptor
+    property:
+      prefix: ENC(
+      suffix: )
+    pool-size: 1
