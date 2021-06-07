@@ -7,8 +7,8 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create #creat-drop, update, validate, none가 있음 ;; 교재확인 -> 운영에 create쓰면 안됨 why? drop table되니 데이터 다날라감
-      #dialect : ////
+#      ddl-auto: create #creat-drop, update, validate, none가 있음 ;; 교재확인 -> 운영에 create쓰면 안됨 why? drop table되니 데이터 다날라감
+#      #dialect : ////
     properties:
       hibernate:
 #        show_sql: true 얘는 시스템아웃으로 찍는거임.
