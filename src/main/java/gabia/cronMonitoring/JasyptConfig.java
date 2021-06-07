@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 public class JasyptConfig {
 
     @Bean("jasyptStringEncryptor")
-    public StringEncryptor stringEncryptor(){
+    public StringEncryptor stringEncryptor() {
         PooledPBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
         SimpleStringPBEConfig config = new SimpleStringPBEConfig();
         config.setPassword("cron_monitoring");
