@@ -1,13 +1,18 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:test_db
-    username: sa
-    password: 1
-    driver-class-name: org.h2.Driver
-
-  h2:
-    console:
-      enabled: true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://139.150.64.58:3306/cron_monitoring?serverTimezone=UTC&characterEncoding=UTF-8
+    username: root
+    password: Gabia12!@
+  #  datasource:
+#    url: jdbc:h2:mem:test_db
+#    username: sa
+#    password: 1
+#    driver-class-name: org.h2.Driver
+#
+#  h2:
+#    console:
+#      enabled: true
 
   jpa:
     hibernate:
