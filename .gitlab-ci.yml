@@ -8,7 +8,7 @@ stages:
   - deploy
 
 variables:
-  IMAGE_NAME: $DOCKERHUB_ID/cronmonitor
+  IMAGE_NAME: lukekijung/cronmonitor
 
 build:
   image: gradle:7.0.2-jdk11
