@@ -1,13 +1,9 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:test_db
-    username: sa
-    password: 1
-    driver-class-name: org.h2.Driver
-
-  h2:
-    console:
-      enabled: true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://139.150.64.58:3306/cron_monitoring?serverTimezone=UTC&characterEncoding=UTF-8
+    username: ENC(vlCqS3V8pcLgDf9i7j4f2Q==)
+    password: ENC(zKcrcC7yhJI4oX1N3yIU6ekob3kkHw+T)
 
   jpa:
     hibernate:
@@ -23,3 +19,13 @@ logging:
     org.hibernate.SQL: debug
     org.hibernate.type : trace
     # org.hibernate.type : trace // 이건 insert 구문에 들어가는 물음표(파라미터) 에 어떤값이 들어가는지 명확히 보기위한 로거 설정임
+
+#jasypt config
+jasypt:
+  encryptor:
+    algorithm: PBEWithMD5AndDES
+    bean: jasyptStringEncryptor
+    property:
+      prefix: ENC(
+      suffix: )
+    pool-size: 1
