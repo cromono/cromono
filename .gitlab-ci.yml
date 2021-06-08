@@ -1,8 +1,49 @@
+image: docker:latest
+services:
+  - docker:dind
+
 stages:
-  - test
   - build
+  - package
   - deploy
 
-test:
+variables:
+  IMAGE_NAME: lukekijung/cronmonitor
+
 build:
-deploy:
+  image: gradle:7.0.2-jdk11
+  stage: build
+  script:
+    - gradle clean build
+  artifacts:
+    paths:
+      - build/libs/*.jar
+  tags:
+    - cronmonitor
+
+package:
+  stage: package
+  script:
+    - docker build -t $IMAGE_NAME .
+    - docker login -u $DOCKERHUB_ID -p $DOCKERHUB_PASS
+    - docker push $IMAGE_NAME
+    - docker images | grep 'cronmonitor'
+  tags:
+    - cronmonitor
+
+deploy_staging:
+  stage: deploy
+  script:
+    - yum upgrade
+    - yum install sshpass -y
+    - sshpass -p "$STAGING_SERVER_PASS" ssh -o StrictHostKeyChecking=no $STAGING_SERVER_USER@$STAGING_SERVER docker login -u $DOCKERHUB_ID -p $DOCKERHUB_PASS
+    - sshpass -p "$STAGING_SERVER_PASS" ssh -o StrictHostKeyChecking=no $STAGING_SERVER_USER@$STAGING_SERVER docker pull $IMAGE_NAME
+    - sshpass -p "$STAGING_SERVER_PASS" ssh -o StrictHostKeyChecking=no $STAGING_SERVER_USER@$STAGING_SERVER "docker container stop $IMAGE_NAME && docker container rm $IMAGE_NAME || true"
+    - sshpass -p "$STAGING_SERVER_PASS" ssh -o StrictHostKeyChecking=no $STAGING_SERVER_USER@$STAGING_SERVER docker run --name $IMAGE_NAME -p 80:80 -d $IMAGE_NAME
+  environment:
+    name: staging
+    url: $STAGING_SERVER_IP:80
+  only:
+    - develop
+  tags:
+    - cronmonitor
