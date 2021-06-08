@@ -38,7 +38,7 @@ deploy_staging:
     - yum install sshpass -y
     - sshpass -p "$STAGING_SERVER_PASS" ssh -o StrictHostKeyChecking=no $STAGING_SERVER_USER@$STAGING_SERVER docker login -u $DOCKERHUB_ID -p $DOCKERHUB_PASS
     - sshpass -p "$STAGING_SERVER_PASS" ssh -o StrictHostKeyChecking=no $STAGING_SERVER_USER@$STAGING_SERVER docker pull $IMAGE_NAME
-    - sshpass -p "$STAGING_SERVER_PASS" ssh -o StrictHostKeyChecking=no $STAGING_SERVER_USER@$STAGING_SERVER "docker container stop mathflake_api && docker container rm mathflake_api || true"
+    - sshpass -p "$STAGING_SERVER_PASS" ssh -o StrictHostKeyChecking=no $STAGING_SERVER_USER@$STAGING_SERVER "docker container stop $IMAGE_NAME && docker container rm $IMAGE_NAME || true"
     - sshpass -p "$STAGING_SERVER_PASS" ssh -o StrictHostKeyChecking=no $STAGING_SERVER_USER@$STAGING_SERVER docker run --name $IMAGE_NAME -p 80:80 -d $IMAGE_NAME
   environment:
     name: staging
