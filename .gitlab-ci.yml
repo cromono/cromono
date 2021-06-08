@@ -37,10 +37,10 @@ deploy_staging:
     - apk upgrade && apk update
     - apk add openssh-client
     - apk add sshpass
-    - sshpass -p "$STAGING_SERVER_PASS" ssh -o StrictHostKeyChecking=no $STAGING_SERVER_USER@$STAGING_SERVER docker login -u $DOCKERHUB_ID -p $DOCKERHUB_PASS
-    - sshpass -p "$STAGING_SERVER_PASS" ssh -o StrictHostKeyChecking=no $STAGING_SERVER_USER@$STAGING_SERVER docker pull $IMAGE_NAME
-    - sshpass -p "$STAGING_SERVER_PASS" ssh -o StrictHostKeyChecking=no $STAGING_SERVER_USER@$STAGING_SERVER "docker container stop $IMAGE_NAME && docker container rm $IMAGE_NAME || true"
-    - sshpass -p "$STAGING_SERVER_PASS" ssh -o StrictHostKeyChecking=no $STAGING_SERVER_USER@$STAGING_SERVER docker run --name $IMAGE_NAME -p 80:80 -d $IMAGE_NAME
+    - sshpass -p "$STAGING_SERVER_PASS" ssh -o StrictHostKeyChecking=no $STAGING_SERVER_USER@$STAGING_SERVER_IP docker login -u $DOCKERHUB_ID -p $DOCKERHUB_PASS
+    - sshpass -p "$STAGING_SERVER_PASS" ssh -o StrictHostKeyChecking=no $STAGING_SERVER_USER@$STAGING_SERVER_IP docker pull $IMAGE_NAME
+    - sshpass -p "$STAGING_SERVER_PASS" ssh -o StrictHostKeyChecking=no $STAGING_SERVER_USER@$STAGING_SERVER_IP "docker container stop $IMAGE_NAME && docker container rm $IMAGE_NAME || true"
+    - sshpass -p "$STAGING_SERVER_PASS" ssh -o StrictHostKeyChecking=no $STAGING_SERVER_USER@$STAGING_SERVER_IP docker run --name $IMAGE_NAME -p 80:80 -d $IMAGE_NAME
   environment:
     name: staging
     url: $STAGING_SERVER_IP:80
