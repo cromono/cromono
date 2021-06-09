@@ -33,14 +33,22 @@ package:
 
 deploy_staging:
   stage: deploy
+  before_script:
+    - 'which ssh-agent || (apk update && apk add openssh-client)'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan -p $PROD_SERVER_PORT $PROD_SERVER_IP >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
   script:
     - apk upgrade && apk update
     - apk add openssh-client
     - apk add sshpass
     - sshpass -p "$STAGING_SERVER_PASS" ssh -o StrictHostKeyChecking=no $STAGING_SERVER_USER@$STAGING_SERVER_IP docker login -u $DOCKERHUB_ID -p $DOCKERHUB_PASS
     - sshpass -p "$STAGING_SERVER_PASS" ssh -o StrictHostKeyChecking=no $STAGING_SERVER_USER@$STAGING_SERVER_IP docker pull $IMAGE_NAME
-    - sshpass -p "$STAGING_SERVER_PASS" ssh -o StrictHostKeyChecking=no $STAGING_SERVER_USER@$STAGING_SERVER_IP "docker container stop $IMAGE_NAME && docker container rm $IMAGE_NAME || true"
-    - sshpass -p "$STAGING_SERVER_PASS" ssh -o StrictHostKeyChecking=no $STAGING_SERVER_USER@$STAGING_SERVER_IP docker run --name $IMAGE_NAME -p 80:80 -d $IMAGE_NAME
+    - sshpass -p "$STAGING_SERVER_PASS" ssh -o StrictHostKeyChecking=no $STAGING_SERVER_USER@$STAGING_SERVER_IP "docker container stop cronmonitor && docker container rm cronmonitor || true"
+    - sshpass -p "$STAGING_SERVER_PASS" ssh -o StrictHostKeyChecking=no $STAGING_SERVER_USER@$STAGING_SERVER_IP docker run --name cronmonitor -p 80:80 -d $IMAGE_NAME
   environment:
     name: staging
     url: $STAGING_SERVER_IP:80
