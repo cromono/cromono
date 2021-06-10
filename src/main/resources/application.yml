@@ -1,25 +1,19 @@
 spring:
   profiles:
     group:
-      prod: "prod_db,common"
+      prod: "prod_env,common"
 ---
 spring:
   profiles:
     group:
-      dev: "dev_db,common"
----
-spring:
-  profiles:
-    group:
-      test: "dev_db,common"
-
+      dev: "dev_env,common"
 
 ---
 #운영 환경
 spring:
   config:
     activate:
-      on-profile: "prod_db"
+      on-profile: "prod_env"
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ENC(FT9MAa2OjCi3L4KxLTtuihNe7aaTI+MqU7BqleHlSm37pH/jCsc6kfPLgp0XrR+IhfZvnVMlBz0tsueSbnsMlOC+XgPAUnGAhw8b8BgcqUotG++IpcKRCnqzkJPGp4O3G8CglAb5c18=)
@@ -29,13 +23,11 @@ spring:
   jpa:
     properties:
       hibernate:
-        #        show_sql: true 얘는 시스템아웃으로 찍는거임.
         format_sql: true
 logging:
   level:
     org.hibernate.SQL: debug
     org.hibernate.type : trace
-    # org.hibernate.type : trace // 이건 insert 구문에 들어가는 물음표(파라미터) 에 어떤값이 들어가는지 명확히 보기위한 로거 설정임
 
 #jasypt config
 jasypt:
@@ -55,7 +47,7 @@ server:
 spring:
   config:
     activate:
-      on-profile: "dev_db"
+      on-profile: "dev_env"
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:test_db;DB_CLOSE_DELAY=-1
