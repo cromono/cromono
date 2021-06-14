@@ -15,6 +15,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,9 +52,11 @@ public class Notice {
     private String noticeMessage;
 
     @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
     private Date noticeCreateDatetime;
 
     @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
     private Date noticeReadDatetime;
 
 }
