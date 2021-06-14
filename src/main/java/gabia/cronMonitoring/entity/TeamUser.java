@@ -1,7 +1,10 @@
 package gabia.cronMonitoring.entity;
 
+import gabia.cronMonitoring.entity.Enum.AuthType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,9 +26,10 @@ public class TeamUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "authority")
     @NotNull
-    private String authority;
+    private AuthType authority;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
