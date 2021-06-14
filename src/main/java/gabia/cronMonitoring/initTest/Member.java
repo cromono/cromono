@@ -1,4 +1,4 @@
-package gabia.cronMonitoring.entity;
+package gabia.cronMonitoring.initTest;
 
 import lombok.Getter;
 import lombok.Setter;
