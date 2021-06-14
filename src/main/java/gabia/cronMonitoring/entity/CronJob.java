@@ -22,8 +22,6 @@ import org.hibernate.annotations.GenericGenerator;
 public class CronJob {
 
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(name = "cron_job_id")
     private UUID id;
 
