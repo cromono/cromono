@@ -33,11 +33,11 @@ public class Notice {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn
     private User receiveUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn
     private User createUser;
 
     @Enumerated(EnumType.STRING)
@@ -45,7 +45,7 @@ public class Notice {
     private NoticeType noticeType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cron_job_id")
+    @JoinColumn
     private CronJob cronJob;
 
     @NotNull
