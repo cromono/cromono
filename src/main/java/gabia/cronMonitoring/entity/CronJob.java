@@ -1,6 +1,8 @@
 package gabia.cronMonitoring.entity;
 
+import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,8 +36,11 @@ public class CronJob {
     @Column(name = "cron_expr")
     @NotNull
     private String cronExpr;
-    private Timestamp minStartTime;
-    private Timestamp maxEndTime;
+
+    @Temporal(TemporalType.TIME)
+    private Date minStartTime;
+    @Temporal(TemporalType.TIME)
+    private Date maxEndTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "server_ip")
