@@ -20,7 +20,7 @@ public class CronProcess {
     @GeneratedValue
     private Long id;
 
-    @Column(name = "pid")
+    @Column(name = "pid", nullable = false)
     private String pid;
     private Timestamp startTime;
     private Timestamp endTime;
