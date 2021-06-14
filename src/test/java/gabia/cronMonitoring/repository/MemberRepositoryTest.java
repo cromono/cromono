@@ -1,7 +1,7 @@
 package gabia.cronMonitoring.repository;
 
-import gabia.cronMonitoring.entity.Member;
-import gabia.cronMonitoring.repositoryImpl.MemberRepository;
+import gabia.cronMonitoring.initTest.Member;
+import gabia.cronMonitoring.initTest.MemberRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
