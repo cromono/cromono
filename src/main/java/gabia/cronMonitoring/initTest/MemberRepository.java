@@ -1,6 +1,5 @@
-package gabia.cronMonitoring.repositoryImpl;
+package gabia.cronMonitoring.initTest;
 
-import gabia.cronMonitoring.entity.Member;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
