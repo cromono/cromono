@@ -24,7 +24,7 @@ public class Webhook {
     private Long id;
 
     @NotNull
-    private Long not_id;
+    private Notice notice;
 
     @NotNull
     private String url;

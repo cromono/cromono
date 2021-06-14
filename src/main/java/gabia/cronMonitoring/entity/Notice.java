@@ -2,6 +2,7 @@ package gabia.cronMonitoring.entity;
 
 import gabia.cronMonitoring.entity.Enum.NoticeType;
 import java.time.LocalDateTime;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -27,17 +28,15 @@ public class Notice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "not_id")
-
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-
-    private User receiveUserId;
+    private User receiveUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User createUserId;
+    private User createUser;
 
     @Enumerated(EnumType.STRING)
     @NotNull
@@ -51,9 +50,9 @@ public class Notice {
     private String noticeMessage;
 
     @NotNull
-    private LocalDateTime noticeCreateDatetime;
+    private Date noticeCreateDatetime;
 
     @NotNull
-    private LocalDateTime noticeReadDatetime;
+    private Date noticeReadDatetime;
 
 }
