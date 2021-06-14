@@ -45,7 +45,7 @@ public class Notice {
     private NoticeType noticeType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
+    @JoinColumn(name = "cron_job_id")
     private CronJob cronJob;
 
     @NotNull
