@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,6 +19,8 @@ public class CronLog {
     @Id
     @GeneratedValue
     private Timestamp logTime;
+
+    @NotNull
     private String log;
 
     @ManyToOne(fetch = FetchType.LAZY)
