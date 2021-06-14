@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -23,7 +24,13 @@ public class CronJob {
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(name = "cron_job_id")
     private UUID id;
+
+    @Column(name = "cron_name")
+    @NotNull
     private String cronName;
+
+    @Column(name = "cron_expr")
+    @NotNull
     private String cronExpr;
     private Timestamp minStartTime;
     private Timestamp maxEndTime;
