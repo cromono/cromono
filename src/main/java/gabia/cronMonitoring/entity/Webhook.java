@@ -14,12 +14,13 @@ import net.bytebuddy.dynamic.loading.InjectionClassLoader.Strategy;
 
 @Entity
 @Table(name = "webhook")
-@Getter@Setter
+@Getter
+@Setter
 public class Webhook {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name= "id")
+    @Column(name = "id")
     private Long id;
 
     @NotNull

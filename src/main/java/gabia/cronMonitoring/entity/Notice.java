@@ -19,21 +19,24 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Getter @Setter
-@Table( name = "notice")
+@Getter
+@Setter
+@Table(name = "notice")
 public class Notice {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="not_id")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "not_id")
+
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="userId")
+    @JoinColumn(name = "userId")
 
     private User receiveUserId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="userId")
+    @JoinColumn(name = "userId")
     private User createUserId;
 
     @Enumerated(EnumType.STRING)
@@ -41,7 +44,7 @@ public class Notice {
     private NoticeType noticeType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id")
+    @JoinColumn(name = "id")
     private CronJob cronJob;
 
     @NotNull
