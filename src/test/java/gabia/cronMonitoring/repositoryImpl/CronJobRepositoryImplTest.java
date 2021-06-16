@@ -2,6 +2,7 @@ package gabia.cronMonitoring.repositoryImpl;
 
 import gabia.cronMonitoring.entity.CronJob;
 import gabia.cronMonitoring.entity.CronServer;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -77,6 +78,52 @@ class CronJobRepositoryImplTest {
         Assertions.assertThat(cronJob.getId()).isEqualTo(savedID);
         Assertions.assertThat(foundedCronJob.getCronExpr()).isEqualTo(cronJob.getCronExpr());
     }
+
+    @Test
+    @Transactional
+    @Rollback(false)
+    void findByServer() {
+        //given
+        ArrayList<CronServer> cronServers = new ArrayList<>();
+        int serverNum=3;
+        for(int i=0;i<serverNum ;i++){
+            cronServers.add(createCronServer("192.168.0.1"+i));
+        }
+
+        LinkedList<CronJob> cronJobList = new LinkedList<>();
+        int jobNum = 6;
+        for (int i = 0; i < jobNum; i++) {
+            UUID uuid = UUID.randomUUID();
+            CronJob cronJob = createCronJob(uuid, "expr" + i, "name" + i,
+                cronServers.get(i%serverNum),
+                new Date(), new Date());
+            cronJobList.add(cronJob);
+        }
+
+        //when
+        cronServers.stream().forEach(o->{
+            em.persist(o);
+        });
+        cronJobList.stream().forEach(o -> {
+            cronJobRepository.save(o);
+        });
+
+        //then
+        em.flush();
+        em.clear();
+
+
+        for(int i = 0 ; i < serverNum;i++ ){
+            CronServer tempCronServer = cronServers.get(i);
+            List<CronJob> foundedCronJobList = cronJobRepository.findByServer(tempCronServer);
+            org.junit.jupiter.api.Assertions.assertFalse(foundedCronJobList.isEmpty());
+            foundedCronJobList.stream().forEach(o->{
+                Assertions.assertThat(o.getServer().getIp()).isEqualTo(tempCronServer.getIp());
+            });
+        }
+
+    }
+
 
     @Test
     @Transactional

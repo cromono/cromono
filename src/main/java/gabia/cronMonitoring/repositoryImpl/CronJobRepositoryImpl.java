@@ -1,6 +1,7 @@
 package gabia.cronMonitoring.repositoryImpl;
 
 import gabia.cronMonitoring.entity.CronJob;
+import gabia.cronMonitoring.entity.CronServer;
 import gabia.cronMonitoring.repository.CronJobRepository;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +27,12 @@ public class CronJobRepositoryImpl implements CronJobRepository {
     @Override
     public Optional<CronJob> findOne(UUID id) {
         return Optional.ofNullable(em.find(CronJob.class, id));
+    }
+
+    @Override
+    public List<CronJob> findByServer(CronServer cronServer) {
+        return em.createQuery("select cj from CronJob cj where cj.server.ip =: serverIp", CronJob.class)
+            .setParameter("serverIp",cronServer.getIp()).getResultList();
     }
 
     @Override
