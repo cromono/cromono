@@ -2,19 +2,20 @@ package gabia.cronMonitoring.repository;
 
 import gabia.cronMonitoring.entity.CronJob;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface CronJobRepository {
 
-    UUID save(CronJob cronJob);
+    Optional<UUID> save(CronJob cronJob);
 
-    CronJob findOne(UUID id);
+    Optional<CronJob> findOne(UUID id);
 
     List<CronJob> findAll();
 
-    UUID deleteById(UUID id);
+    Optional<UUID> deleteById(UUID id);
 
-    UUID delete(CronJob cronJob);
+    Optional<UUID> delete(CronJob cronJob);
 
 
 }

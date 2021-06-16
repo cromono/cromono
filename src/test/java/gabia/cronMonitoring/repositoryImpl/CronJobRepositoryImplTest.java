@@ -67,8 +67,8 @@ class CronJobRepositoryImplTest {
 
         //when
         em.persist(cronServer);
-        UUID savedID = cronJobRepository.save(cronJob);
-        CronJob foundedCronJob = cronJobRepository.findOne(savedID);
+        UUID savedID = cronJobRepository.save(cronJob).get();
+        CronJob foundedCronJob = cronJobRepository.findOne(savedID).get();
 
         //then
         em.flush();
@@ -124,11 +124,11 @@ class CronJobRepositoryImplTest {
         //when
         em.persist(cronServer);
         em.persist(cronJob);
-        UUID returnedUUID = cronJobRepository.deleteById(uuid);
+        UUID returnedUUID = cronJobRepository.deleteById(uuid).get();
 
         //then
         Assertions.assertThat(returnedUUID).isEqualByComparingTo(uuid);
-        Assertions.assertThat(cronJobRepository.findOne(returnedUUID)).isNull();
+        Assertions.assertThat(cronJobRepository.findOne(returnedUUID).isPresent()).isFalse();
 
     }
 
@@ -147,11 +147,11 @@ class CronJobRepositoryImplTest {
         //when
         em.persist(cronServer);
         em.persist(cronJob);
-        UUID returnedUUID = cronJobRepository.delete(cronJob);
+        UUID returnedUUID = cronJobRepository.delete(cronJob).get();
 
         //then
         Assertions.assertThat(returnedUUID).isEqualByComparingTo(uuid);
-        Assertions.assertThat(cronJobRepository.findOne(returnedUUID)).isNull();
+        Assertions.assertThat(cronJobRepository.findOne(returnedUUID).isPresent()).isFalse();
 
     }
 

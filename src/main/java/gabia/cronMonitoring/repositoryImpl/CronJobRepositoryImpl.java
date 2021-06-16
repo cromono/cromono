@@ -3,8 +3,10 @@ package gabia.cronMonitoring.repositoryImpl;
 import gabia.cronMonitoring.entity.CronJob;
 import gabia.cronMonitoring.repository.CronJobRepository;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import javax.persistence.EntityManager;
+import javax.swing.text.html.Option;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -16,14 +18,14 @@ public class CronJobRepositoryImpl implements CronJobRepository {
     private final EntityManager em;
 
     @Override
-    public UUID save(CronJob cronjob) {
+    public Optional<UUID> save(CronJob cronjob) {
         em.persist(cronjob);
-        return cronjob.getId();
+        return Optional.of(cronjob.getId());
     }
 
     @Override
-    public CronJob findOne(UUID id) {
-        return em.find(CronJob.class, id);
+    public Optional<CronJob> findOne(UUID id) {
+        return Optional.ofNullable(em.find(CronJob.class, id));
     }
 
     @Override
@@ -32,17 +34,17 @@ public class CronJobRepositoryImpl implements CronJobRepository {
     }
 
     @Override
-    public UUID deleteById(UUID id) {
+    public Optional<UUID> deleteById(UUID id) {
         CronJob targetCronJob = em.find(CronJob.class, id);
         em.remove(targetCronJob);
-        return targetCronJob.getId();
+        return Optional.ofNullable(targetCronJob.getId());
     }
 
     @Override
-    public UUID delete(CronJob cronJob) {
+    public Optional<UUID> delete(CronJob cronJob) {
         UUID targetId = cronJob.getId();
         em.remove(cronJob);
-        return targetId;
+        return Optional.ofNullable(targetId);
     }
 
 
