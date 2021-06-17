@@ -39,10 +39,11 @@ public class CronJob {
 
     @Temporal(TemporalType.TIME)
     private Date minStartTime;
+
     @Temporal(TemporalType.TIME)
     private Date maxEndTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "server_ip")
+    @JoinColumn(name = "server_ip", referencedColumnName = "server_ip")
     private CronServer server;
 }
