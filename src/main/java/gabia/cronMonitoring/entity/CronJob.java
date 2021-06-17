@@ -15,7 +15,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -23,6 +25,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Getter
 @Setter
 @Table(name = "cron_job")
+@AllArgsConstructor
 public class CronJob {
 
     @Id
@@ -48,4 +51,8 @@ public class CronJob {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "server_ip")
     private CronServer server;
+
+    public CronJob() {
+
+    }
 }

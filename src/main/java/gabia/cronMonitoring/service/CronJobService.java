@@ -1,8 +1,11 @@
 package gabia.cronMonitoring.service;
 
+import gabia.cronMonitoring.Mapper.CronMapper;
+import gabia.cronMonitoring.dto.CronJobDTO;
 import gabia.cronMonitoring.entity.CronJob;
 import gabia.cronMonitoring.entity.CronServer;
 import gabia.cronMonitoring.repository.CronJobRepository;
+import gabia.cronMonitoring.repository.CronServerRepository;
 import gabia.cronMonitoring.service.exception.CronJobExistedException;
 import gabia.cronMonitoring.service.exception.CronJobNotFoundException;
 import java.util.Date;
@@ -22,16 +25,15 @@ public class CronJobService {
     final boolean DELETE_FAILED = false;
 
     private final CronJobRepository cronJobRepository;
+    private final CronServerRepository cronServerRepository;
+    private final CronMapper cronMapper;
 
-
-    public CronJob createCronJob(CronJob cronJob) {
-
+    public CronJob createCronJob(CronJobDTO cronJobDTO) {
+        CronJob cronJob = cronMapper.toCronJobEntity(cronJobDTO);
         if (cronJobRepository.findById(cronJob.getId()).isPresent()) {
             throw new CronJobExistedException("UUID 중복 - 이미 생성된 크론 잡 입니다");
         }
-
         return cronJobRepository.save(cronJob);
-
     }
 
     public List<CronJob> readCronJobListByServer(String cronServerIp) {
@@ -40,7 +42,7 @@ public class CronJobService {
     }
 
     @Transactional
-    public CronJob updateCronJob(UUID cronJobId, CronServer cronServer, String cronName,
+    public CronJob updateCronJob(UUID cronJobId, String serverIp, String cronName,
         String cronExpr, Date minStartTime, Date maxEndTime) {
         Optional<CronJob> cronJobOptional = cronJobRepository.findById(cronJobId);
         if (cronJobOptional.isEmpty()) {
@@ -51,7 +53,7 @@ public class CronJobService {
         cronJob.setCronExpr(cronExpr);
         cronJob.setMinStartTime(minStartTime);
         cronJob.setMaxEndTime(maxEndTime);
-        cronJob.setServer(cronServer);
+        cronJob.setServer(cronServerRepository.findByIp(serverIp).get());
         return cronJob;
     }
 

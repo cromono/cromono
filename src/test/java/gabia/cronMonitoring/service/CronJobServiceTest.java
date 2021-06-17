@@ -2,9 +2,12 @@ package gabia.cronMonitoring.service;
 
 import static org.mockito.BDDMockito.given;
 
+import gabia.cronMonitoring.Mapper.CronMapper;
+import gabia.cronMonitoring.dto.CronJobDTO;
 import gabia.cronMonitoring.entity.CronJob;
 import gabia.cronMonitoring.entity.CronServer;
 import gabia.cronMonitoring.repository.CronJobRepository;
+import gabia.cronMonitoring.repository.CronServerRepository;
 import gabia.cronMonitoring.service.exception.CronJobExistedException;
 import gabia.cronMonitoring.service.exception.CronJobNotFoundException;
 import java.time.LocalDate;
@@ -30,10 +33,16 @@ public class CronJobServiceTest {
 
     @Mock
     private CronJobRepository cronJobRepository;
+    @Mock
+    private CronServerRepository cronServerRepository;
+    @Mock
+    private CronMapper cronMapper;
+
 
     @Before
     public void init() {
-        cronJobService = new CronJobService(this.cronJobRepository);
+        cronJobService = new CronJobService(this.cronJobRepository, this.cronServerRepository,
+            this.cronMapper);
     }
 
     @Test
@@ -42,20 +51,20 @@ public class CronJobServiceTest {
         //given
         UUID uuid = UUID.randomUUID();
         CronServer cronServer = createCronServer("192.168.0.1");
-        CronJob cronJob = createCronJob(uuid, "* * * * * test1.sh", "test1.sh", cronServer,
-            new Date(), new Date());
-        //given(cronJobRepository.findOne(uuid)).willReturn(Optional.of(cronJob));
-        given(cronJobRepository.findById(cronJob.getId())).willReturn(Optional.empty());
+        CronJobDTO cronJobDTO = new CronJobDTO(uuid, "* * * * * test1.sh", "test1.sh",
+            new Date(), new Date(), cronServer.getIp());
+        CronJob cronJob = new CronJob(uuid, "* * * * * test1.sh", "test1.sh",
+            new Date(), new Date(), cronServer);
+
+        given(cronMapper.toCronJobEntity(cronJobDTO)).willReturn(cronJob);
+        given(cronJobRepository.findById(uuid)).willReturn(Optional.empty());
         given(cronJobRepository.save(cronJob)).willReturn(cronJob);
 
         //when
-        CronJob savedCronJob = cronJobService.createCronJob(cronJob);
+        CronJob savedCronJob = cronJobService.createCronJob(cronJobDTO);
 
         //then
-        Assertions.assertThat(savedCronJob.getId()).isNotNull();
-        Assertions.assertThat(savedCronJob.getMinStartTime()).isNotNull();
-        Assertions.assertThat(savedCronJob.getMaxEndTime()).isNotNull();
-
+        Assertions.assertThat(savedCronJob.getId()).isEqualTo(uuid);
     }
 
     @Test(expected = CronJobExistedException.class)
@@ -64,17 +73,16 @@ public class CronJobServiceTest {
         //given
         UUID uuid = UUID.randomUUID();
         CronServer cronServer = createCronServer("192.168.0.1");
-        CronJob cronJob1 = createCronJob(uuid, "* * * * * test1.sh", "test1.sh", cronServer,
-            new Date(), new Date());
-        CronJob cronJob2 = createCronJob(uuid, "* * * * * test1.sh", "test1.sh", cronServer,
-            new Date(), new Date());
-        given(cronJobRepository.findById(uuid)).willReturn(Optional.of(cronJob1));
+        CronJobDTO cronJobDTO = new CronJobDTO(uuid, "* * * * * test1.sh", "test1.sh",
+            new Date(), new Date(), cronServer.getIp());
+        CronJob cronJob = new CronJob(uuid, "* * * * * test1.sh", "test1.sh",
+            new Date(), new Date(), cronServer);
+        given(cronMapper.toCronJobEntity(cronJobDTO)).willReturn(cronJob);
+        given(cronJobRepository.findById(uuid)).willReturn(Optional.of(cronJob));
 
         //when
-        CronJob savedCronJob1 = cronJobService.createCronJob(cronJob1);
-        CronJob savedCronJob3 = cronJobService.createCronJob(cronJob2);
-        CronJob savedCronJob2 = cronJobService.createCronJob(cronJob1);
-        cronJobService.createCronJob(cronJob1);
+        CronJob savedCronJob1 = cronJobService.createCronJob(cronJobDTO);
+        CronJob savedCronJob3 = cronJobService.createCronJob(cronJobDTO);
 
         //then
         Assertions.fail("테스트 실패");
@@ -125,11 +133,10 @@ public class CronJobServiceTest {
         //given
         UUID uuid = UUID.randomUUID();
         CronServer cronServer = createCronServer("192.168.0.1");
-        CronJob cronJob = createCronJob(uuid, "* * * * * test1.sh", "test1.sh", cronServer,
-            new Date(), new Date());
-        given(cronJobRepository.findById(uuid)).willReturn(Optional.of(cronJob));
-
-        //when
+        CronJobDTO cronJobDTO = new CronJobDTO(uuid, "* * * * * test1.sh", "test1.sh",
+            new Date(), new Date(), cronServer.getIp());
+        CronJob cronJob = new CronJob(uuid, "* * * * * test1.sh", "test1.sh",
+            new Date(), new Date(), cronServer);
         String cronExpr = new String("1 1 1 1 1 test2.sh");
         String cronName = new String("test2.sh");
         CronServer cronServer2 = createCronServer("127.0.0.1");
@@ -137,8 +144,13 @@ public class CronJobServiceTest {
             Date.from(LocalDate.of(2021, 6, 1).atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date date2 =
             Date.from(LocalDate.of(2021, 7, 1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+
+        given(cronJobRepository.findById(uuid)).willReturn(Optional.of(cronJob));
+        given(cronServerRepository.findByIp(cronServer2.getIp())).willReturn(Optional.of(cronServer));
+        //when
         CronJob updatedCronJob = cronJobService
-            .updateCronJob(uuid, cronServer2, cronName, cronExpr, date1, date2);
+            .updateCronJob(uuid, cronServer2.getIp(), cronName, cronExpr, date1, date2);
         //then
 
         Assertions.assertThat(updatedCronJob).isEqualTo(cronJob);
@@ -171,7 +183,7 @@ public class CronJobServiceTest {
         Date date2 =
             Date.from(LocalDate.of(2021, 7, 1).atStartOfDay(ZoneId.systemDefault()).toInstant());
         CronJob updatedCronJob = cronJobService
-            .updateCronJob(uuid, cronServer2, cronName, cronExpr, date1, date2);
+            .updateCronJob(uuid, cronServer2.getIp(), cronName, cronExpr, date1, date2);
 
         //then
         Assertions.fail("수정 대상이 없어서 실패");
