@@ -19,13 +19,13 @@ public class CronJobRepositoryImpl implements CronJobRepository {
     private final EntityManager em;
 
     @Override
-    public Optional<CronJob> save(CronJob cronjob) {
+    public CronJob save(CronJob cronjob) {
         em.persist(cronjob);
-        return Optional.of(em.find(CronJob.class,cronjob.getId()));
+        return em.find(CronJob.class,cronjob.getId());
     }
 
     @Override
-    public Optional<CronJob> findOne(UUID id) {
+    public Optional<CronJob> findById(UUID id) {
         return Optional.ofNullable(em.find(CronJob.class, id));
     }
 

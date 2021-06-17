@@ -45,15 +45,17 @@ public class CronJobServiceTest {
         CronJob cronJob = createCronJob(uuid, "* * * * * test1.sh", "test1.sh", cronServer,
             new Date(), new Date());
         //given(cronJobRepository.findOne(uuid)).willReturn(Optional.of(cronJob));
-        given(cronJobRepository.findOne(uuid)).willReturn(Optional.empty());
-        given(cronJobRepository.save(cronJob)).willReturn(Optional.of(uuid));
+        given(cronJobRepository.findById(cronJob.getId())).willReturn(Optional.empty());
+        given(cronJobRepository.save(cronJob)).willReturn(cronJob);
 
         //when
-        UUID savedCronJobId = cronJobService.createCronJob(cronJob);
+        CronJob savedCronJob = cronJobService.createCronJob(cronJob);
 
         //then
-        Assertions.assertThat(savedCronJobId).isEqualTo(uuid);
-        Assertions.assertThat(savedCronJobId).isEqualTo(cronJob.getId());
+        Assertions.assertThat(savedCronJob.getId()).isNotNull();
+        Assertions.assertThat(savedCronJob.getMinStartTime()).isNotNull();
+        Assertions.assertThat(savedCronJob.getMaxEndTime()).isNotNull();
+
     }
 
     @Test(expected = CronJobExistedException.class)
@@ -66,12 +68,13 @@ public class CronJobServiceTest {
             new Date(), new Date());
         CronJob cronJob2 = createCronJob(uuid, "* * * * * test1.sh", "test1.sh", cronServer,
             new Date(), new Date());
-        given(cronJobRepository.findOne(uuid)).willReturn(Optional.of(cronJob1));
+        given(cronJobRepository.findById(uuid)).willReturn(Optional.of(cronJob1));
 
         //when
-        UUID savedCronJobId1 = cronJobService.createCronJob(cronJob1);
-        UUID savedCronJobId3 = cronJobService.createCronJob(cronJob2);
-        UUID savedCronJobId2 = cronJobService.createCronJob(cronJob1);
+        CronJob savedCronJob1 = cronJobService.createCronJob(cronJob1);
+        CronJob savedCronJob3 = cronJobService.createCronJob(cronJob2);
+        CronJob savedCronJob2 = cronJobService.createCronJob(cronJob1);
+        cronJobService.createCronJob(cronJob1);
 
         //then
         Assertions.fail("테스트 실패");
@@ -124,7 +127,7 @@ public class CronJobServiceTest {
         CronServer cronServer = createCronServer("192.168.0.1");
         CronJob cronJob = createCronJob(uuid, "* * * * * test1.sh", "test1.sh", cronServer,
             new Date(), new Date());
-        given(cronJobRepository.findOne(uuid)).willReturn(Optional.of(cronJob));
+        given(cronJobRepository.findById(uuid)).willReturn(Optional.of(cronJob));
 
         //when
         String cronExpr = new String("1 1 1 1 1 test2.sh");
@@ -157,7 +160,7 @@ public class CronJobServiceTest {
         CronServer cronServer = createCronServer("192.168.0.1");
         CronJob cronJob = createCronJob(uuid, "* * * * * test1.sh", "test1.sh", cronServer,
             new Date(), new Date());
-        given(cronJobRepository.findOne(uuid)).willReturn(Optional.empty());
+        given(cronJobRepository.findById(uuid)).willReturn(Optional.empty());
 
         //when
         String cronExpr = new String("1 1 1 1 1 test2.sh");
@@ -182,7 +185,7 @@ public class CronJobServiceTest {
         CronServer cronServer = createCronServer("192.168.0.1");
         CronJob cronJob = createCronJob(uuid, "* * * * * test1.sh", "test1.sh", cronServer,
             new Date(), new Date());
-        given(cronJobRepository.findOne(uuid)).willReturn(Optional.of(cronJob));
+        given(cronJobRepository.findById(uuid)).willReturn(Optional.of(cronJob));
         given(
             cronJobRepository.deleteById(uuid)).willReturn(Optional.of(uuid));
         //when
@@ -201,7 +204,7 @@ public class CronJobServiceTest {
         CronServer cronServer = createCronServer("192.168.0.1");
         CronJob cronJob = createCronJob(uuid, "* * * * * test1.sh", "test1.sh", cronServer,
             new Date(), new Date());
-        given(cronJobRepository.findOne(uuid)).willReturn(Optional.empty());
+        given(cronJobRepository.findById(uuid)).willReturn(Optional.empty());
 
         //when
         boolean ret = cronJobService.deleteCronJob(uuid);

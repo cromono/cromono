@@ -38,8 +38,7 @@ class CronJobRepositoryImplTest {
     void save() {
         //given
         CronServer cronServer = createCronServer("192.168.0.1");
-        UUID uuid = UUID.randomUUID();
-        CronJob cronJob = createCronJob(uuid, "* * * * * test1.sh", "test1.sh", cronServer,
+        CronJob cronJob = createCronJob(null, "* * * * * test1.sh", "test1.sh", cronServer,
             new Date(), new Date());
 
         //when
@@ -50,9 +49,9 @@ class CronJobRepositoryImplTest {
         em.flush();
         em.clear();
 
-        CronJob findCronJob = em.find(CronJob.class, uuid);
+        CronJob findCronJob = em.find(CronJob.class, cronJob.getId());
         Assertions.assertThat(findCronJob).isNotNull();
-        Assertions.assertThat(findCronJob.getId()).isEqualTo(uuid);
+        Assertions.assertThat(findCronJob.getId()).isEqualTo(cronJob.getId());
         Assertions.assertThat(findCronJob.getId()).isNotEqualByComparingTo(UUID.randomUUID());
     }
 
@@ -62,14 +61,13 @@ class CronJobRepositoryImplTest {
     void findOne() {
         //given
         CronServer cronServer = createCronServer("192.168.0.1");
-        UUID uuid = UUID.randomUUID();
-        CronJob cronJob = createCronJob(uuid, "* * * * * test1.sh", "test1.sh", cronServer,
+        CronJob cronJob = createCronJob(null, "* * * * * test1.sh", "test1.sh", cronServer,
             new Date(), new Date());
 
         //when
         em.persist(cronServer);
-        UUID savedID = cronJobRepository.save(cronJob).get().getId();
-        CronJob foundedCronJob = cronJobRepository.findOne(savedID).get();
+        UUID savedID = cronJobRepository.save(cronJob).getId();
+        CronJob foundedCronJob = cronJobRepository.findById(savedID).get();
 
         //then
         em.flush();
@@ -93,8 +91,7 @@ class CronJobRepositoryImplTest {
         LinkedList<CronJob> cronJobList = new LinkedList<>();
         int jobNum = 6;
         for (int i = 0; i < jobNum; i++) {
-            UUID uuid = UUID.randomUUID();
-            CronJob cronJob = createCronJob(uuid, "expr" + i, "name" + i,
+            CronJob cronJob = createCronJob(null, "expr" + i, "name" + i,
                 cronServers.get(i%serverNum),
                 new Date(), new Date());
             cronJobList.add(cronJob);
@@ -134,8 +131,7 @@ class CronJobRepositoryImplTest {
         LinkedList<CronJob> cronJobList = new LinkedList<>();
         int num = 3;
         for (int i = 0; i < num; i++) {
-            UUID uuid = UUID.randomUUID();
-            CronJob cronJob = createCronJob(uuid, "expr" + i, "name" + i, cronServer,
+            CronJob cronJob = createCronJob(null, "expr" + i, "name" + i, cronServer,
                 new Date(), new Date());
             cronJobList.add(cronJob);
         }
@@ -165,17 +161,17 @@ class CronJobRepositoryImplTest {
 
         CronServer cronServer = createCronServer("192.168.0.1");
         UUID uuid = UUID.randomUUID();
-        CronJob cronJob = createCronJob(uuid, "* * * * * test1.sh", "test1.sh", cronServer,
+        CronJob cronJob = createCronJob(null, "* * * * * test1.sh", "test1.sh", cronServer,
             new Date(), new Date());
 
         //when
         em.persist(cronServer);
         em.persist(cronJob);
-        UUID returnedUUID = cronJobRepository.deleteById(uuid).get();
+        UUID returnedUUID = cronJobRepository.deleteById(cronJob.getId()).get();
 
         //then
-        Assertions.assertThat(returnedUUID).isEqualByComparingTo(uuid);
-        Assertions.assertThat(cronJobRepository.findOne(returnedUUID).isPresent()).isFalse();
+        Assertions.assertThat(returnedUUID).isEqualByComparingTo(cronJob.getId());
+        Assertions.assertThat(cronJobRepository.findById(returnedUUID).isPresent()).isFalse();
 
     }
 
@@ -188,7 +184,7 @@ class CronJobRepositoryImplTest {
 
         CronServer cronServer = createCronServer("192.168.0.1");
         UUID uuid = UUID.randomUUID();
-        CronJob cronJob = createCronJob(uuid, "* * * * * test1.sh", "test1.sh", cronServer,
+        CronJob cronJob = createCronJob(null, "* * * * * test1.sh", "test1.sh", cronServer,
             new Date(), new Date());
 
         //when
@@ -197,8 +193,8 @@ class CronJobRepositoryImplTest {
         UUID returnedUUID = cronJobRepository.delete(cronJob).get();
 
         //then
-        Assertions.assertThat(returnedUUID).isEqualByComparingTo(uuid);
-        Assertions.assertThat(cronJobRepository.findOne(returnedUUID).isPresent()).isFalse();
+        Assertions.assertThat(returnedUUID).isEqualByComparingTo(cronJob.getId());
+        Assertions.assertThat(cronJobRepository.findById(returnedUUID).isPresent()).isFalse();
 
     }
 

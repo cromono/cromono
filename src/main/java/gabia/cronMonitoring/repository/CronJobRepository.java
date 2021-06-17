@@ -8,9 +8,9 @@ import java.util.UUID;
 
 public interface CronJobRepository {
 
-    Optional<CronJob> save(CronJob cronJob);
+    CronJob save(CronJob cronJob);
 
-    Optional<CronJob> findOne(UUID id);
+    Optional<CronJob> findById(UUID id);
 
     List<CronJob> findByServer(String cronServerIp);
 

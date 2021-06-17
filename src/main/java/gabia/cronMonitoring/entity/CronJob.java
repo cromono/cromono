@@ -26,8 +26,11 @@ import org.hibernate.annotations.GenericGenerator;
 public class CronJob {
 
     @Id
-    @Column(name = "cron_job_id")
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(name = "cron_job_id", columnDefinition = "BINARY(16)")
     private UUID id;
+
 
     @Column(name = "cron_name")
     @NotNull
