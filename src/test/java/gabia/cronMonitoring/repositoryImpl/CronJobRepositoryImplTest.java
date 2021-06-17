@@ -68,7 +68,7 @@ class CronJobRepositoryImplTest {
 
         //when
         em.persist(cronServer);
-        UUID savedID = cronJobRepository.save(cronJob).get();
+        UUID savedID = cronJobRepository.save(cronJob).get().getId();
         CronJob foundedCronJob = cronJobRepository.findOne(savedID).get();
 
         //then

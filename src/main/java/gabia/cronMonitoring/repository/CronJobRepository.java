@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface CronJobRepository {
 
-    Optional<UUID> save(CronJob cronJob);
+    Optional<CronJob> save(CronJob cronJob);
 
     Optional<CronJob> findOne(UUID id);
 
