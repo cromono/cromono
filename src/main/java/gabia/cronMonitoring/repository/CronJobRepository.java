@@ -12,7 +12,7 @@ public interface CronJobRepository {
 
     Optional<CronJob> findOne(UUID id);
 
-    List<CronJob> findByServer(CronServer cronServer);
+    List<CronJob> findByServer(String cronServerIp);
 
     List<CronJob> findAll();
 

@@ -81,7 +81,7 @@ class CronJobRepositoryImplTest {
 
     @Test
     @Transactional
-    @Rollback(false)
+    //@Rollback(false)
     void findByServer() {
         //given
         ArrayList<CronServer> cronServers = new ArrayList<>();
@@ -115,7 +115,7 @@ class CronJobRepositoryImplTest {
 
         for(int i = 0 ; i < serverNum;i++ ){
             CronServer tempCronServer = cronServers.get(i);
-            List<CronJob> foundedCronJobList = cronJobRepository.findByServer(tempCronServer);
+            List<CronJob> foundedCronJobList = cronJobRepository.findByServer(tempCronServer.getIp());
             org.junit.jupiter.api.Assertions.assertFalse(foundedCronJobList.isEmpty());
             foundedCronJobList.stream().forEach(o->{
                 Assertions.assertThat(o.getServer().getIp()).isEqualTo(tempCronServer.getIp());
