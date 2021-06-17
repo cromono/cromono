@@ -1,7 +1,6 @@
 package gabia.cronMonitoring.repositoryImpl;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.Assert.*;
 
 import gabia.cronMonitoring.entity.CronServer;
 import java.util.List;
@@ -66,7 +65,6 @@ public class CronServerRepositoryImplTest {
         // When
         cronServerRepository.delete(cronServer);
         // Then
-//        System.out.println(cronServerRepository.findByIp("1:1:1:1").isNull());
         assertThat(cronServerRepository.findByIp("1:1:1:1")).isEmpty();
     }
 }
