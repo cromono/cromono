@@ -10,11 +10,9 @@ import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 @Table(name = "cron_server")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CronServer {
@@ -28,6 +26,10 @@ public class CronServer {
     private String ip;
 
     public CronServer(String ip) {
+        this.ip = ip;
+    }
+
+    public void setIp(String ip) {
         this.ip = ip;
     }
 }
