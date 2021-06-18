@@ -58,7 +58,7 @@ class CronJobRepositoryImplTest {
     @Test
     @Transactional
         // @Rollback(false)
-    void findOne() {
+    void findById() {
         //given
         CronServer cronServer = createCronServer("192.168.0.1");
         CronJob cronJob = createCronJob(null, "* * * * * test1.sh", "test1.sh", cronServer,
