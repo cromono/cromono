@@ -25,8 +25,9 @@ public class CronServerService {
                 Collectors.toList());
     }
 
-    public CronServer getCronServer(String ip) {
-        return cronServerRepository.findByIp(ip).get();
+    public CronServerDTO getCronServer(String ip) {
+        CronServer cronServer = cronServerRepository.findByIp(ip).get();
+        return CronServerDTO.from(cronServer);
     }
 
     @Transactional
