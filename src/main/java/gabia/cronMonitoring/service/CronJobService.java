@@ -1,9 +1,9 @@
 package gabia.cronMonitoring.service;
 
-import gabia.cronMonitoring.Mapper.CronMapper;
+import gabia.cronMonitoring.entity.CronServer;
+import gabia.cronMonitoring.mapper.CronMapper;
 import gabia.cronMonitoring.dto.CronJobDTO;
 import gabia.cronMonitoring.entity.CronJob;
-import gabia.cronMonitoring.entity.CronServer;
 import gabia.cronMonitoring.repository.CronJobRepository;
 import gabia.cronMonitoring.repository.CronServerRepository;
 import gabia.cronMonitoring.service.exception.CronJobExistedException;
@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,23 +27,26 @@ public class CronJobService {
 
     private final CronJobRepository cronJobRepository;
     private final CronServerRepository cronServerRepository;
-    private final CronMapper cronMapper;
 
-    public CronJob createCronJob(CronJobDTO cronJobDTO) {
-        CronJob cronJob = cronMapper.toCronJobEntity(cronJobDTO);
+    public CronJobDTO createCronJob(CronJobDTO cronJobDTO) {
+        CronServer cronServer = cronServerRepository.findByIp(cronJobDTO.getServerIp()).get();
+        CronJob cronJob = CronMapper.toCronJobEntity(cronJobDTO,cronServer);
         if (cronJobRepository.findById(cronJob.getId()).isPresent()) {
             throw new CronJobExistedException("UUID 중복 - 이미 생성된 크론 잡 입니다");
         }
-        return cronJobRepository.save(cronJob);
+        return CronMapper.toCronJobDTO(cronJob);
     }
 
-    public List<CronJob> readCronJobListByServer(String cronServerIp) {
-        List<CronJob> cronJobLIst = cronJobRepository.findByServer(cronServerIp);
-        return cronJobLIst;
+    public List<CronJobDTO> readCronJobListByServer(String cronServerIp) {
+        List<CronJob> cronJobList = cronJobRepository.findByServer(cronServerIp);
+        return cronJobList.stream().map(
+            cronJob -> CronMapper.toCronJobDTO(cronJob))
+            .collect(
+                Collectors.toList());
     }
 
     @Transactional
-    public CronJob updateCronJob(UUID cronJobId, String serverIp, String cronName,
+    public CronJobDTO updateCronJob(UUID cronJobId, String serverIp, String cronName,
         String cronExpr, Date minStartTime, Date maxEndTime) {
         Optional<CronJob> cronJobOptional = cronJobRepository.findById(cronJobId);
         if (cronJobOptional.isEmpty()) {
@@ -54,7 +58,7 @@ public class CronJobService {
         cronJob.setMinStartTime(minStartTime);
         cronJob.setMaxEndTime(maxEndTime);
         cronJob.setServer(cronServerRepository.findByIp(serverIp).get());
-        return cronJob;
+        return CronMapper.toCronJobDTO(cronJob);
     }
 
     @Transactional

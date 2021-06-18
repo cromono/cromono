@@ -2,7 +2,7 @@ package gabia.cronMonitoring.service;
 
 import static org.mockito.BDDMockito.given;
 
-import gabia.cronMonitoring.Mapper.CronMapper;
+import gabia.cronMonitoring.mapper.CronMapper;
 import gabia.cronMonitoring.dto.CronJobDTO;
 import gabia.cronMonitoring.entity.CronJob;
 import gabia.cronMonitoring.entity.CronServer;
@@ -35,14 +35,10 @@ public class CronJobServiceTest {
     private CronJobRepository cronJobRepository;
     @Mock
     private CronServerRepository cronServerRepository;
-    @Mock
-    private CronMapper cronMapper;
-
 
     @Before
     public void init() {
-        cronJobService = new CronJobService(this.cronJobRepository, this.cronServerRepository,
-            this.cronMapper);
+        cronJobService = new CronJobService(this.cronJobRepository, this.cronServerRepository);
     }
 
     @Test
@@ -56,15 +52,14 @@ public class CronJobServiceTest {
         CronJob cronJob = new CronJob(uuid, "* * * * * test1.sh", "test1.sh",
             new Date(), new Date(), cronServer);
 
-        given(cronMapper.toCronJobEntity(cronJobDTO)).willReturn(cronJob);
+        given(cronServerRepository.findByIp(cronServer.getIp())).willReturn(Optional.of(cronServer));
         given(cronJobRepository.findById(uuid)).willReturn(Optional.empty());
-        given(cronJobRepository.save(cronJob)).willReturn(cronJob);
 
         //when
-        CronJob savedCronJob = cronJobService.createCronJob(cronJobDTO);
+        CronJobDTO savedCronJobDTO = cronJobService.createCronJob(cronJobDTO);
 
         //then
-        Assertions.assertThat(savedCronJob.getId()).isEqualTo(uuid);
+        Assertions.assertThat(savedCronJobDTO.getId()).isEqualTo(uuid);
     }
 
     @Test(expected = CronJobExistedException.class)
@@ -77,12 +72,13 @@ public class CronJobServiceTest {
             new Date(), new Date(), cronServer.getIp());
         CronJob cronJob = new CronJob(uuid, "* * * * * test1.sh", "test1.sh",
             new Date(), new Date(), cronServer);
-        given(cronMapper.toCronJobEntity(cronJobDTO)).willReturn(cronJob);
+
+        given(cronServerRepository.findByIp(cronServer.getIp())).willReturn(Optional.of(cronServer));
         given(cronJobRepository.findById(uuid)).willReturn(Optional.of(cronJob));
 
         //when
-        CronJob savedCronJob1 = cronJobService.createCronJob(cronJobDTO);
-        CronJob savedCronJob3 = cronJobService.createCronJob(cronJobDTO);
+        CronJobDTO savedCronJob1 = cronJobService.createCronJob(cronJobDTO);
+        CronJobDTO savedCronJob3 = cronJobService.createCronJob(cronJobDTO);
 
         //then
         Assertions.fail("테스트 실패");
@@ -112,8 +108,8 @@ public class CronJobServiceTest {
 
         //when
 
-        List<CronJob> returnedJobs1 = cronJobService.readCronJobListByServer(cronServer1.getIp());
-        List<CronJob> returnedJobs2 = cronJobService.readCronJobListByServer(cronServer2.getIp());
+        List<CronJobDTO> returnedJobs1 = cronJobService.readCronJobListByServer(cronServer1.getIp());
+        List<CronJobDTO> returnedJobs2 = cronJobService.readCronJobListByServer(cronServer2.getIp());
 
         //then
         Assertions.assertThat(returnedJobs1.size()).isEqualTo(3);
@@ -133,34 +129,35 @@ public class CronJobServiceTest {
         //given
         UUID uuid = UUID.randomUUID();
         CronServer cronServer = createCronServer("192.168.0.1");
-        CronJobDTO cronJobDTO = new CronJobDTO(uuid, "* * * * * test1.sh", "test1.sh",
-            new Date(), new Date(), cronServer.getIp());
-        CronJob cronJob = new CronJob(uuid, "* * * * * test1.sh", "test1.sh",
+        CronJob cronJob = new CronJob(uuid,  "test1.sh","* * * * * test1.sh",
             new Date(), new Date(), cronServer);
+
         String cronExpr = new String("1 1 1 1 1 test2.sh");
         String cronName = new String("test2.sh");
         CronServer cronServer2 = createCronServer("127.0.0.1");
-        Date date1 =
+        Date min =
             Date.from(LocalDate.of(2021, 6, 1).atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date date2 =
+        Date max =
             Date.from(LocalDate.of(2021, 7, 1).atStartOfDay(ZoneId.systemDefault()).toInstant());
 
+        CronJobDTO cronJobDTO = new CronJobDTO(uuid, cronName, cronExpr,
+            min, max, cronServer2.getIp());
 
         given(cronJobRepository.findById(uuid)).willReturn(Optional.of(cronJob));
-        given(cronServerRepository.findByIp(cronServer2.getIp())).willReturn(Optional.of(cronServer));
+        given(cronServerRepository.findByIp(cronServer2.getIp())).willReturn(Optional.of(cronServer2));
         //when
-        CronJob updatedCronJob = cronJobService
-            .updateCronJob(uuid, cronServer2.getIp(), cronName, cronExpr, date1, date2);
+        CronJobDTO updatedCronJobDTO = cronJobService
+            .updateCronJob(uuid, cronServer2.getIp(), cronName, cronExpr, min, max);
         //then
 
-        Assertions.assertThat(updatedCronJob).isEqualTo(cronJob);
-        Assertions.assertThat(updatedCronJob.getCronExpr()).isEqualTo(cronJob.getCronExpr());
-        Assertions.assertThat(updatedCronJob.getCronName()).isEqualTo(cronJob.getCronName());
-        Assertions.assertThat(updatedCronJob.getServer().getIp())
-            .isEqualTo(cronJob.getServer().getIp());
-        Assertions.assertThat(updatedCronJob.getMaxEndTime()).isEqualTo(cronJob.getMaxEndTime());
-        Assertions.assertThat(updatedCronJob.getMinStartTime())
-            .isEqualTo(cronJob.getMinStartTime());
+        Assertions.assertThat(updatedCronJobDTO).isEqualTo(cronJobDTO);
+        Assertions.assertThat(updatedCronJobDTO.getCronExpr()).isEqualTo(cronExpr);
+        Assertions.assertThat(updatedCronJobDTO.getCronName()).isEqualTo(cronName);
+        Assertions.assertThat(updatedCronJobDTO.getServerIp())
+            .isEqualTo("127.0.0.1");
+        Assertions.assertThat(updatedCronJobDTO.getMaxEndTime()).isEqualTo(max);
+        Assertions.assertThat(updatedCronJobDTO.getMinStartTime())
+            .isEqualTo(min);
 
     }
 
@@ -182,7 +179,7 @@ public class CronJobServiceTest {
             Date.from(LocalDate.of(2021, 6, 1).atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date date2 =
             Date.from(LocalDate.of(2021, 7, 1).atStartOfDay(ZoneId.systemDefault()).toInstant());
-        CronJob updatedCronJob = cronJobService
+        CronJobDTO updatedCronJobDTO = cronJobService
             .updateCronJob(uuid, cronServer2.getIp(), cronName, cronExpr, date1, date2);
 
         //then
