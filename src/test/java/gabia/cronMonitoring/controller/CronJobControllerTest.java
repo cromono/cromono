@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import gabia.cronMonitoring.Util.CronMonitorUtil;
 import gabia.cronMonitoring.dto.CronJobDTO;
 import gabia.cronMonitoring.dto.CronJobResult;
 import gabia.cronMonitoring.entity.CronJob;
@@ -96,8 +97,8 @@ public class CronJobControllerTest {
         CronJob cronJob = new CronJob(cronJobId, cronName, cronExpr, sDate, eDate,
             new CronServer());
 
-        String requestJson = objToJson(cronJobDTO);
-        String responseJson = objToJson(new CronJobResult<>(cronJobId));
+        String requestJson = CronMonitorUtil.objToJson(cronJobDTO);
+        String responseJson =  CronMonitorUtil.objToJson(new CronJobResult<>(cronJobId));
 
         given(cronJobService.createCronJob(cronJobDTO)).willReturn(cronJobDTO);
 
@@ -124,8 +125,8 @@ public class CronJobControllerTest {
         CronJobDTO cronJobDTO = new CronJobDTO(cronJobId, cronName, cronExpr, sDate, eDate,
             serverIp);
 
-        String requestJson = objToJson(cronJobDTO);
-        String responseJson = objToJson(new CronJobResult<>(cronJobId));
+        String requestJson =  CronMonitorUtil.objToJson(cronJobDTO);
+        String responseJson =  CronMonitorUtil.objToJson(new CronJobResult<>(cronJobId));
 
         given(cronJobService
             .updateCronJob(cronJobId, serverIp, cronName, cronExpr, sDate, eDate))
@@ -155,7 +156,7 @@ public class CronJobControllerTest {
         CronJobDTO cronJobDTO = new CronJobDTO(cronJobId, cronName, cronExpr, sDate, eDate,
             serverIp);
 
-        String requestJson = objToJson(cronJobDTO);
+        String requestJson =  CronMonitorUtil.objToJson(cronJobDTO);
 
         given(cronJobService
             .deleteCronJob(cronJobId))
@@ -170,10 +171,5 @@ public class CronJobControllerTest {
             .andReturn();
     }
 
-    public <T> String objToJson(T obj) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-        return ow.writeValueAsString(obj);
-    }
+
 }
