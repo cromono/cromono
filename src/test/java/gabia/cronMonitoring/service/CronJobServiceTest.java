@@ -2,7 +2,6 @@ package gabia.cronMonitoring.service;
 
 import static org.mockito.BDDMockito.given;
 
-import gabia.cronMonitoring.mapper.CronMapper;
 import gabia.cronMonitoring.dto.CronJobDTO;
 import gabia.cronMonitoring.entity.CronJob;
 import gabia.cronMonitoring.entity.CronServer;
@@ -52,7 +51,8 @@ public class CronJobServiceTest {
         CronJob cronJob = new CronJob(uuid, "* * * * * test1.sh", "test1.sh",
             new Date(), new Date(), cronServer);
 
-        given(cronServerRepository.findByIp(cronServer.getIp())).willReturn(Optional.of(cronServer));
+        given(cronServerRepository.findByIp(cronServer.getIp()))
+            .willReturn(Optional.of(cronServer));
         given(cronJobRepository.findById(uuid)).willReturn(Optional.empty());
 
         //when
@@ -73,7 +73,8 @@ public class CronJobServiceTest {
         CronJob cronJob = new CronJob(uuid, "* * * * * test1.sh", "test1.sh",
             new Date(), new Date(), cronServer);
 
-        given(cronServerRepository.findByIp(cronServer.getIp())).willReturn(Optional.of(cronServer));
+        given(cronServerRepository.findByIp(cronServer.getIp()))
+            .willReturn(Optional.of(cronServer));
         given(cronJobRepository.findById(uuid)).willReturn(Optional.of(cronJob));
 
         //when
@@ -108,8 +109,10 @@ public class CronJobServiceTest {
 
         //when
 
-        List<CronJobDTO> returnedJobs1 = cronJobService.readCronJobListByServer(cronServer1.getIp());
-        List<CronJobDTO> returnedJobs2 = cronJobService.readCronJobListByServer(cronServer2.getIp());
+        List<CronJobDTO> returnedJobs1 = cronJobService
+            .readCronJobListByServer(cronServer1.getIp());
+        List<CronJobDTO> returnedJobs2 = cronJobService
+            .readCronJobListByServer(cronServer2.getIp());
 
         //then
         Assertions.assertThat(returnedJobs1.size()).isEqualTo(3);
@@ -129,7 +132,7 @@ public class CronJobServiceTest {
         //given
         UUID uuid = UUID.randomUUID();
         CronServer cronServer = createCronServer("192.168.0.1");
-        CronJob cronJob = new CronJob(uuid,  "test1.sh","* * * * * test1.sh",
+        CronJob cronJob = new CronJob(uuid, "test1.sh", "* * * * * test1.sh",
             new Date(), new Date(), cronServer);
 
         String cronExpr = new String("1 1 1 1 1 test2.sh");
@@ -144,7 +147,8 @@ public class CronJobServiceTest {
             min, max, cronServer2.getIp());
 
         given(cronJobRepository.findById(uuid)).willReturn(Optional.of(cronJob));
-        given(cronServerRepository.findByIp(cronServer2.getIp())).willReturn(Optional.of(cronServer2));
+        given(cronServerRepository.findByIp(cronServer2.getIp()))
+            .willReturn(Optional.of(cronServer2));
         //when
         CronJobDTO updatedCronJobDTO = cronJobService
             .updateCronJob(uuid, cronServer2.getIp(), cronName, cronExpr, min, max);

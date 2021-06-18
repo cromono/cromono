@@ -5,6 +5,7 @@ import gabia.cronMonitoring.dto.CronJobResult;
 import gabia.cronMonitoring.service.CronJobService;
 import java.util.List;
 import java.util.UUID;
+import javax.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class CronJobController {
 
     //크론서버별크론잡목록조회
     @GetMapping(value = "/cron-servers/{serverIp}/cron-jobs")
-    public CronJobResult findCronJobByServer(@PathVariable("serverIp") String serverIp) {
+    public CronJobResult findCronJobByServer(@PathVariable("serverIp") @NotEmpty String serverIp) {
         List<CronJobDTO> cronJobDTOs = cronJobService.readCronJobListByServer(serverIp);
         return new CronJobResult(cronJobDTOs);
     }
@@ -33,14 +34,15 @@ public class CronJobController {
     //크론 job 등록
     @PostMapping(value = "/cron-servers/{serverIp}/cron-jobs")
     public CronJobResult createCronJob(@RequestBody CronJobDTO cronJobDTO,
-        @PathVariable("serverIp") String serverIp) {
+        @PathVariable("serverIp") @NotEmpty String serverIp) {
         return new CronJobResult(cronJobService.createCronJob(cronJobDTO).getId().toString());
     }
 
     //크론 job 수정
     @PatchMapping(value = "/cron-servers/{serverIp}/cron-jobs/{cronJobId}")
     public CronJobResult updateCronJob(@RequestBody CronJobDTO cronJobDTO,
-        @PathVariable("serverIp") String serverIp, @PathVariable("cronJobId") String cronJobId) {
+        @PathVariable("serverIp") @NotEmpty String serverIp,
+        @PathVariable("cronJobId") @NotEmpty String cronJobId) {
         CronJobDTO updateCronJobDTO = cronJobService
             .updateCronJob(UUID.fromString(cronJobId), serverIp, cronJobDTO.getCronName(),
                 cronJobDTO.getCronExpr(), cronJobDTO.getMinStartTime(), cronJobDTO.getMaxEndTime());
@@ -51,10 +53,10 @@ public class CronJobController {
     //크론 job 삭제
     @DeleteMapping(value = "/cron-servers/{serverIp}/cron-jobs/{cronJobId}")
     public ResponseEntity<?> deleteCronJob(
-        @PathVariable("serverIp") String serverIp, @PathVariable("cronJobId") String cronJobId) {
+        @PathVariable("serverIp") @NotEmpty String serverIp,
+        @PathVariable("cronJobId") @NotEmpty String cronJobId) {
         boolean ret = cronJobService.deleteCronJob(UUID.fromString(cronJobId));
         if (ret) {
-
             return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
         } else {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
