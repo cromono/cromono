@@ -35,6 +35,7 @@ public class CronJobController {
     @PostMapping(value = "/cron-servers/{serverIp}/cron-jobs")
     public CronJobResult createCronJob(@RequestBody CronJobDTO cronJobDTO,
         @PathVariable("serverIp") @NotEmpty String serverIp) {
+        cronJobDTO.setServerIp(serverIp);
         return new CronJobResult(cronJobService.createCronJob(cronJobDTO).getId().toString());
     }
 

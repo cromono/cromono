@@ -8,6 +8,7 @@ import gabia.cronMonitoring.repository.CronJobRepository;
 import gabia.cronMonitoring.repository.CronServerRepository;
 import gabia.cronMonitoring.service.exception.CronJobExistedException;
 import gabia.cronMonitoring.service.exception.CronJobNotFoundException;
+import gabia.cronMonitoring.service.exception.CronServerNotFoundException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -27,13 +28,14 @@ public class CronJobService {
 
     private final CronJobRepository cronJobRepository;
     private final CronServerRepository cronServerRepository;
-
+    @Transactional
     public CronJobDTO createCronJob(CronJobDTO cronJobDTO) {
+        if (cronServerRepository.findByIp(cronJobDTO.getServerIp()).isEmpty()) {
+            throw new CronServerNotFoundException("존재하지 않는 Server IP - 잘못된 IP:"+cronJobDTO.getServerIp());
+        }
         CronServer cronServer = cronServerRepository.findByIp(cronJobDTO.getServerIp()).get();
         CronJob cronJob = CronMapper.toCronJobEntity(cronJobDTO,cronServer);
-        if (cronJobRepository.findById(cronJob.getId()).isPresent()) {
-            throw new CronJobExistedException("UUID 중복 - 이미 생성된 크론 잡 입니다");
-        }
+        cronJobRepository.save(cronJob);
         return CronMapper.toCronJobDTO(cronJob);
     }
 
@@ -69,7 +71,7 @@ public class CronJobService {
         }
 
         cronJobRepository.deleteById(cronJobId).get();
-        if (cronJobRepository.findById(cronJobId).isPresent()) {
+        if (cronJobRepository.findById(cronJobId).isEmpty()) {
             return DELETE_SUCCESS;
         } else {
             return DELETE_FAILED;

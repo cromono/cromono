@@ -9,6 +9,7 @@ import gabia.cronMonitoring.repository.CronJobRepository;
 import gabia.cronMonitoring.repository.CronServerRepository;
 import gabia.cronMonitoring.service.exception.CronJobExistedException;
 import gabia.cronMonitoring.service.exception.CronJobNotFoundException;
+import gabia.cronMonitoring.service.exception.CronServerNotFoundException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -53,7 +54,6 @@ public class CronJobServiceTest {
 
         given(cronServerRepository.findByIp(cronServer.getIp()))
             .willReturn(Optional.of(cronServer));
-        given(cronJobRepository.findById(uuid)).willReturn(Optional.empty());
 
         //when
         CronJobDTO savedCronJobDTO = cronJobService.createCronJob(cronJobDTO);
@@ -62,20 +62,18 @@ public class CronJobServiceTest {
         Assertions.assertThat(savedCronJobDTO.getId()).isEqualTo(uuid);
     }
 
-    @Test(expected = CronJobExistedException.class)
+    @Test(expected = CronServerNotFoundException.class)
     @Transactional
     public void 크론_JOB_등록_실패() {
         //given
         UUID uuid = UUID.randomUUID();
-        CronServer cronServer = createCronServer("192.168.0.1");
+        String serverIp = "192.168.0.1";
+        CronServer cronServer = createCronServer(serverIp);
         CronJobDTO cronJobDTO = new CronJobDTO(uuid, "* * * * * test1.sh", "test1.sh",
-            new Date(), new Date(), cronServer.getIp());
-        CronJob cronJob = new CronJob(uuid, "* * * * * test1.sh", "test1.sh",
-            new Date(), new Date(), cronServer);
+            new Date(), new Date(), serverIp);
 
         given(cronServerRepository.findByIp(cronServer.getIp()))
-            .willReturn(Optional.of(cronServer));
-        given(cronJobRepository.findById(uuid)).willReturn(Optional.of(cronJob));
+            .willReturn(Optional.empty());
 
         //when
         CronJobDTO savedCronJob1 = cronJobService.createCronJob(cronJobDTO);
