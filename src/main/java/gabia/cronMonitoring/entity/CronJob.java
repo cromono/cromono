@@ -18,6 +18,7 @@ import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Getter
@@ -26,7 +27,9 @@ import org.hibernate.annotations.GenericGenerator;
 public class CronJob {
 
     @Id
-    @Column(name = "cron_job_id")
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(name = "cron_job_id", columnDefinition = "BINARY(16)")
     private UUID id;
 
     @Column(name = "cron_name")
@@ -43,6 +46,6 @@ public class CronJob {
     private Date maxEndTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "server_ip")
+    @JoinColumn(name = "server_ip", referencedColumnName = "server_ip")
     private CronServer server;
 }
