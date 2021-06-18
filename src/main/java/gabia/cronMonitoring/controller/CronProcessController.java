@@ -74,24 +74,6 @@ public class CronProcessController {
         return new ResponseEntity<>(cronProcess, HttpStatus.OK);
 
     }
-
-    @ExceptionHandler(CronJobNotFoundException.class)
-    public ResponseEntity<CronProcessDto.ErrorResponse> noCronJob(CronJobNotFoundException e) {
-
-        return new ResponseEntity<>(
-            new CronProcessDto.ErrorResponse(e.getMessage()),
-            HttpStatus.NOT_FOUND);
-
-    }
-
-    @ExceptionHandler(CronProcessNotFoundException.class)
-    public ResponseEntity<CronProcessDto.ErrorResponse> noCronProcess(
-        CronProcessNotFoundException e) {
-
-        return new ResponseEntity<>(new CronProcessDto.ErrorResponse(e.getMessage()),
-            HttpStatus.NOT_FOUND);
-    }
-
 //    //프로세스 로그 목록 조회
 //    public ResponseEntity<>
 
