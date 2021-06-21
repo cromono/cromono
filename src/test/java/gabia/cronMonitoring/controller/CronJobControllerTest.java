@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import gabia.cronMonitoring.Util.CronMonitorUtil;
+import gabia.cronMonitoring.util.CronMonitorUtil;
 import gabia.cronMonitoring.dto.CronJobDTO;
 import gabia.cronMonitoring.dto.CronJobResult;
 import gabia.cronMonitoring.entity.CronJob;

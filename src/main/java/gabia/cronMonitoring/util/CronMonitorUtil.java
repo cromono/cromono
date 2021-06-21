@@ -1,4 +1,4 @@
-package gabia.cronMonitoring.Util;
+package gabia.cronMonitoring.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,5 +12,10 @@ public class CronMonitorUtil {
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         return ow.writeValueAsString(obj);
+    }
+
+    public static <T> T jsonStrToObj(String jsonStr, Class<T> classObj)
+        throws JsonProcessingException {
+        return new ObjectMapper().readValue(jsonStr,classObj);
     }
 }
