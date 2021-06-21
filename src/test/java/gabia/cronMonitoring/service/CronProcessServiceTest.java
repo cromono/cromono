@@ -114,8 +114,7 @@ class CronProcessServiceTest {
         testCronJob.get().setId(UUID.fromString("123e4567-e89b-12d3-a456-556642440001"));
         testCronJob.get().setCronExpr("test");
         testCronJob.get().setCronName("test");
-        given(
-            cronJobRepository.findById(UUID.fromString("123e4567-e89b-12d3-a456-556642440001")))
+        given(cronJobRepository.findById(UUID.fromString("123e4567-e89b-12d3-a456-556642440001")))
             .willReturn(testCronJob);
 
         //when
@@ -142,8 +141,7 @@ class CronProcessServiceTest {
         //then
         assertThrows(CronProcessNotFoundException.class, () -> {
             //when
-            Response response = cronProcessService
-                .findCronProcess("28");
+            cronProcessService.findCronProcess("28");
         });
     }
 
@@ -162,13 +160,8 @@ class CronProcessServiceTest {
                 .build());
         given(cronProcessRepository.findByPid("28")).willReturn(cronProcess);
 
-        given(
-            cronProcessRepository.findByPid("28"))
-            .willReturn(cronProcess);
-
         //when
-        Response response = cronProcessService
-            .findCronProcess("28");
+        Response response = cronProcessService.findCronProcess("28");
 
         //then
         Assertions.assertThat(response.getPid()).isEqualTo("28");
@@ -179,15 +172,12 @@ class CronProcessServiceTest {
     void findProcess_크론_프로세스가_존재하지_않는_경우() {
         //given
         openMocks(this);
-        given(
-            cronProcessRepository.findByPid("28"))
-            .willReturn(Optional.empty());
+        given(cronProcessRepository.findByPid("28")).willReturn(Optional.empty());
 
         //then
         assertThrows(CronProcessNotFoundException.class, () -> {
             //when
-            Response response = cronProcessService
-                .findCronProcess("28");
+            cronProcessService.findCronProcess("28");
         });
 
     }
@@ -206,16 +196,15 @@ class CronProcessServiceTest {
         cronJob.setCronExpr("test");
         cronJob.setCronName("test");
 
-        Optional<CronProcess> testCronPrcess = Optional
+        Optional<CronProcess> testCronProcess = Optional
             .of(CronProcess.builder().id(1L).pid("28").startTime(timestamp).cronJob(cronJob)
                 .build());
-        given(cronProcessRepository.findByPid("28")).willReturn(testCronPrcess);
+        given(cronProcessRepository.findByPid("28")).willReturn(testCronProcess);
 
         //when
         CronProcessDto.Request request = new CronProcessDto.Request();
         request.setEndTime(timestamp);
-        Response response = cronProcessService
-            .changeCronProcess("28", request);
+        Response response = cronProcessService.changeCronProcess("28", request);
 
         //then
         Assertions.assertThat(response.getEndTime()).isEqualTo(timestamp);
@@ -233,7 +222,7 @@ class CronProcessServiceTest {
             //when
             CronProcessDto.Request request = new CronProcessDto.Request();
             request.setEndTime(timestamp);
-            Response process = cronProcessService.changeCronProcess("2", request);
+            cronProcessService.changeCronProcess("2", request);
         });
 
     }

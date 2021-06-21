@@ -67,6 +67,7 @@ public class CronProcessServiceIntegrationTest {
             .startTime(timestamp)
             .cronJob(cronJob)
             .build();
+
         CronProcess savedCronProcess1 = cronProcessRepository.save(cronProcess);
         CronProcess savedCronProcess2 = cronProcessRepository.save(cronProcess2);
 
@@ -116,7 +117,7 @@ public class CronProcessServiceIntegrationTest {
             Request request = new Request();
             request.setStartTime(timestamp);
             request.setPid("1");
-            Response cronProcess = cronProcessService.makeCronProcess(UUID.randomUUID(), request);
+            cronProcessService.makeCronProcess(UUID.randomUUID(), request);
         });
     }
 
@@ -133,7 +134,7 @@ public class CronProcessServiceIntegrationTest {
         cronJob.setServer(cronServer);
         cronJob.setCronExpr("test");
         cronJob.setCronName("test");
-        CronJob cronJob1 = cronJobRepository.save(cronJob);
+        cronJobRepository.save(cronJob);
 
         CronProcess cronProcess = CronProcess.builder()
             .pid("1")
@@ -167,7 +168,7 @@ public class CronProcessServiceIntegrationTest {
         cronJob.setServer(cronServer);
         cronJob.setCronExpr("test");
         cronJob.setCronName("test");
-        CronJob cronJob1 = cronJobRepository.save(cronJob);
+        cronJobRepository.save(cronJob);
 
         CronProcess cronProcess = CronProcess.builder()
             .pid("1")
@@ -175,12 +176,12 @@ public class CronProcessServiceIntegrationTest {
             .endTime(timestamp)
             .cronJob(cronJob)
             .build();
-        CronProcess savedCronProcess = cronProcessRepository.save(cronProcess);
+        cronProcessRepository.save(cronProcess);
 
         //then
         assertThrows(CronProcessNotFoundException.class, () -> {
             //when
-            Response cronProcess1 = cronProcessService.findCronProcess("2");
+            cronProcessService.findCronProcess("2");
         });
     }
 
@@ -197,7 +198,7 @@ public class CronProcessServiceIntegrationTest {
         cronJob.setServer(cronServer);
         cronJob.setCronExpr("test");
         cronJob.setCronName("test");
-        CronJob cronJob1 = cronJobRepository.save(cronJob);
+        cronJobRepository.save(cronJob);
 
         CronProcess cronProcess = CronProcess.builder()
             .pid("1")
@@ -205,13 +206,13 @@ public class CronProcessServiceIntegrationTest {
             .endTime(timestamp)
             .cronJob(cronJob)
             .build();
-        CronProcess savedCronProcess = cronProcessRepository.save(cronProcess);
+        cronProcessRepository.save(cronProcess);
 
         //when
         Request request = new Request();
         request.setPid("1");
         request.setEndTime(timestamp);
-        Response response = cronProcessService.changeCronProcess("1",request);
+        Response response = cronProcessService.changeCronProcess("1", request);
 
         //then
         Assertions.assertEquals(timestamp, response.getEndTime());
@@ -219,7 +220,7 @@ public class CronProcessServiceIntegrationTest {
     }
 
     @Test
-    public void 크론_프로세스_변경_크론프로세스가_없는_경우() throws Exception{
+    public void 크론_프로세스_변경_크론프로세스가_없는_경우() throws Exception {
         //given
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
@@ -231,7 +232,7 @@ public class CronProcessServiceIntegrationTest {
         cronJob.setServer(cronServer);
         cronJob.setCronExpr("test");
         cronJob.setCronName("test");
-        CronJob cronJob1 = cronJobRepository.save(cronJob);
+        cronJobRepository.save(cronJob);
 
         CronProcess cronProcess = CronProcess.builder()
             .pid("1")
@@ -239,7 +240,7 @@ public class CronProcessServiceIntegrationTest {
             .endTime(timestamp)
             .cronJob(cronJob)
             .build();
-        CronProcess savedCronProcess = cronProcessRepository.save(cronProcess);
+        cronProcessRepository.save(cronProcess);
 
         //then
         assertThrows(CronProcessNotFoundException.class, () -> {
@@ -247,7 +248,7 @@ public class CronProcessServiceIntegrationTest {
             Request request = new Request();
             request.setPid("1");
             request.setEndTime(timestamp);
-            Response response = cronProcessService.changeCronProcess("2",request);
+            cronProcessService.changeCronProcess("2", request);
         });
 
     }

@@ -72,13 +72,13 @@ class CronProcessRepositoryTest {
         cronServer.setIp("0.0.0.0");
         cronServerRepository.save(cronServer);
 
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         CronJob cronJob = new CronJob();
         cronJob.setCronName("test");
         cronJob.setCronExpr("test");
         cronJob.setServer(cronServer);
         cronJobRepository.save(cronJob);
 
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         CronProcess cronProcess = CronProcess.builder()
             .pid("1")
             .cronJob(cronJob)

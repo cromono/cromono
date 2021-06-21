@@ -150,7 +150,6 @@ public class CronProcessControllerTest {
     public void updateCronProcess() throws Exception {
         //given
         Response response = new Response();
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         response.setCronJobId(UUID.fromString("123e4567-e89b-12d3-a456-556642440000"));
         response.setPid("12");
 
