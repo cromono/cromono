@@ -33,11 +33,6 @@ public class CronProcessService {
 
         List<CronProcessDto.Response> response = new ArrayList<>();
 
-//        response = cronProcessRepository.findAllByCronJob_Id(cronJobId).stream()
-//            .map(dto -> new CronProcessDto.Response(dto.getCronJob().getId(),
-//                dto.getPid(), dto.getStartTime(), dto.getEndTime()))
-//            .collect(Collectors.toList());
-
         response = cronProcessRepository.findAllByCronJob_Id(cronJobId).stream()
             .map(dto -> CronProcessDto.Response.from(dto))
             .collect(Collectors.toList());
@@ -49,11 +44,9 @@ public class CronProcessService {
     public CronProcessDto.Response makeCronProcess(String serverIp, UUID cronJobId,
         CronProcessDto.Request request) {
 
-//        CronProcessDto.Response response = new CronProcessDto.Response();
         CronJob cronJob = cronJobRepository.findById(cronJobId)
             .orElseThrow(() -> new CronJobNotFoundException());
 
-        // setter -> Builder
         CronProcess cronProcess = CronProcess.builder()
             .pid(request.getPid())
             .startTime(request.getStartTime())
@@ -63,19 +56,16 @@ public class CronProcessService {
         CronProcess savedCronProcess = cronProcessRepository.save(cronProcess);
 
         CronProcessDto.Response response = CronProcessDto.Response.from(savedCronProcess);
-//        response = changeEntityToDto(savedCronProcess);
 
         return response;
     }
 
     public CronProcessDto.Response findCronProcess(String serverIp, UUID cronJobId, String pid) {
 
-//        CronProcessDto.Response response = new CronProcessDto.Response();
         CronProcess savedCronProcess = cronProcessRepository.findByPid(pid)
             .orElseThrow(() -> new CronProcessNotFoundException());
 
         CronProcessDto.Response response = CronProcessDto.Response.from(savedCronProcess);
-//        response = changeEntityToDto(cronProcess);
 
         return response;
     }
@@ -87,7 +77,6 @@ public class CronProcessService {
         CronProcess cronProcess = cronProcessRepository.findByPid(pid)
             .orElseThrow(() -> new CronProcessNotFoundException());
 
-        // setter -> 내부 method
         cronProcess.changeEndTime(request.getEndTime());
         CronProcess savedCronProcess = cronProcessRepository.save(cronProcess);
         CronProcessDto.Response response = CronProcessDto.Response.from(savedCronProcess);

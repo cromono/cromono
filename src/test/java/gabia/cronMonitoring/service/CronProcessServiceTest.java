@@ -8,20 +8,16 @@ import gabia.cronMonitoring.dto.CronProcessDto.Response;
 import gabia.cronMonitoring.entity.CronJob;
 import gabia.cronMonitoring.entity.CronProcess;
 import gabia.cronMonitoring.entity.CronServer;
-import gabia.cronMonitoring.exception.CronJobNotFoundException;
 import gabia.cronMonitoring.exception.CronProcessNotFoundException;
 import gabia.cronMonitoring.repository.CronJobRepository;
 import gabia.cronMonitoring.repository.CronProcessRepository;
 import gabia.cronMonitoring.repository.CronServerRepository;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import javax.swing.text.html.Option;
 import org.assertj.core.api.Assertions;
-import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.AdditionalAnswers;
@@ -30,8 +26,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.Mockito.*;
-import org.mockito.BDDMockito.*;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -52,7 +46,6 @@ class CronProcessServiceTest {
 
     @Test
     void findAllProcess_해당_잡의_프로세스가_존재하는_경우() {
-        // 해당하는 잡의 프로세스가 존재하는 경우
         //given
         MockitoAnnotations.openMocks(this);
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -98,7 +91,6 @@ class CronProcessServiceTest {
 
     @Test
     void findAllProcess_해당_잡의_프로세스가_존재하지_않는_경우() {
-        // 해당하는 잡의 프로세스가 존재하지 않는 경우
         //given
         MockitoAnnotations.openMocks(this);
         BDDMockito.given(cronProcessRepository.findAllByCronJob_Id(
@@ -115,7 +107,6 @@ class CronProcessServiceTest {
 
     @Test
     void makeProcess_크론잡이_존재히는_경우() {
-        //Cron Job 이 존재하는 경우
         //given
         MockitoAnnotations.openMocks(this);
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -145,7 +136,6 @@ class CronProcessServiceTest {
 
     @Test
     void makeProcess_크론잡이_존재하지_않는_경우() {
-        //Cron Job 이 존재하지 않는 경우
 
         MockitoAnnotations.openMocks(this);
         BDDMockito.given(
@@ -163,7 +153,6 @@ class CronProcessServiceTest {
 
     @Test
     void findProcess_크론_프로세스가_존재하는_경우() {
-        //프로세스가 존재하는 경우
         //given
         MockitoAnnotations.openMocks(this);
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -223,7 +212,6 @@ class CronProcessServiceTest {
         cronJob.setCronExpr("test");
         cronJob.setCronName("test");
 
-        //setter -> Builder
         Optional<CronProcess> testCronPrcess = Optional
             .of(CronProcess.builder().id(1L).pid("28").startTime(timestamp).cronJob(cronJob)
                 .build());

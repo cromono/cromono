@@ -1,14 +1,10 @@
 package gabia.cronMonitoring.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import gabia.cronMonitoring.entity.CronJob;
 import gabia.cronMonitoring.entity.CronProcess;
 import gabia.cronMonitoring.entity.CronServer;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;

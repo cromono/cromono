@@ -6,12 +6,12 @@ import gabia.cronMonitoring.exception.CronJobNotFoundException;
 import gabia.cronMonitoring.exception.CronProcessNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class ControllerExceptionHandler {
+
     @ExceptionHandler(CronJobNotFoundException.class)
     public ResponseEntity<ErrorResponse> noCronJob(CronJobNotFoundException e) {
 
