@@ -9,12 +9,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import gabia.cronMonitoring.util.CronMonitorUtil;
 import gabia.cronMonitoring.dto.CronJobDTO;
 import gabia.cronMonitoring.dto.CronJobResult;
 import gabia.cronMonitoring.entity.CronJob;
 import gabia.cronMonitoring.entity.CronServer;
 import gabia.cronMonitoring.service.CronJobService;
+import gabia.cronMonitoring.util.CronMonitorUtil;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -68,8 +68,6 @@ public class CronJobControllerTest {
         mockMvc.perform(get("/cron-servers/{serverIp}/cron-jobs", serverIp))
             //then
             .andExpect(status().isOk());
-
-
     }
 
     @Test

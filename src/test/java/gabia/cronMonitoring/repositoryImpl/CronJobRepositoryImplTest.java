@@ -21,17 +21,14 @@ import org.springframework.transaction.annotation.Transactional;
 @RunWith(SpringRunner.class)
 class CronJobRepositoryImplTest {
 
-
     @Autowired
     CronJobRepositoryImpl cronJobRepository;
 
     @PersistenceContext
     EntityManager em;
 
-
     @Test
     @Transactional
-        //@Rollback(false)
     void save() {
         //given
         CronServer cronServer = createCronServer("192.168.0.1");
@@ -54,7 +51,6 @@ class CronJobRepositoryImplTest {
 
     @Test
     @Transactional
-        // @Rollback(false)
     void findById() {
         //given
         CronServer cronServer = createCronServer("192.168.0.1");
@@ -76,26 +72,25 @@ class CronJobRepositoryImplTest {
 
     @Test
     @Transactional
-    //@Rollback(false)
     void findByServer() {
         //given
         ArrayList<CronServer> cronServers = new ArrayList<>();
-        int serverNum=3;
-        for(int i=0;i<serverNum ;i++){
-            cronServers.add(createCronServer("192.168.0.1"+i));
+        int serverNum = 3;
+        for (int i = 0; i < serverNum; i++) {
+            cronServers.add(createCronServer("192.168.0.1" + i));
         }
 
         LinkedList<CronJob> cronJobList = new LinkedList<>();
         int jobNum = 6;
         for (int i = 0; i < jobNum; i++) {
             CronJob cronJob = createCronJob(null, "expr" + i, "name" + i,
-                cronServers.get(i%serverNum),
+                cronServers.get(i % serverNum),
                 new Date(), new Date());
             cronJobList.add(cronJob);
         }
 
         //when
-        cronServers.stream().forEach(o->{
+        cronServers.stream().forEach(o -> {
             em.persist(o);
         });
         cronJobList.stream().forEach(o -> {
@@ -106,12 +101,12 @@ class CronJobRepositoryImplTest {
         em.flush();
         em.clear();
 
-
-        for(int i = 0 ; i < serverNum;i++ ){
+        for (int i = 0; i < serverNum; i++) {
             CronServer tempCronServer = cronServers.get(i);
-            List<CronJob> foundedCronJobList = cronJobRepository.findByServer(tempCronServer.getIp());
+            List<CronJob> foundedCronJobList = cronJobRepository
+                .findByServer(tempCronServer.getIp());
             org.junit.jupiter.api.Assertions.assertFalse(foundedCronJobList.isEmpty());
-            foundedCronJobList.stream().forEach(o->{
+            foundedCronJobList.stream().forEach(o -> {
                 Assertions.assertThat(o.getServer().getIp()).isEqualTo(tempCronServer.getIp());
             });
         }
@@ -121,7 +116,6 @@ class CronJobRepositoryImplTest {
 
     @Test
     @Transactional
-        //@Rollback(false)
     void findAll() {
         //given
         CronServer cronServer = createCronServer("192.168.0.1");
@@ -151,7 +145,6 @@ class CronJobRepositoryImplTest {
 
     @Test
     @Transactional
-        //@Rollback(false)
     void deleteById() {
 
         //given
@@ -174,11 +167,8 @@ class CronJobRepositoryImplTest {
 
     @Test
     @Transactional
-        //@Rollback(false)
     void delete() {
-
         //given
-
         CronServer cronServer = createCronServer("192.168.0.1");
         UUID uuid = UUID.randomUUID();
         CronJob cronJob = createCronJob(null, "* * * * * test1.sh", "test1.sh", cronServer,
