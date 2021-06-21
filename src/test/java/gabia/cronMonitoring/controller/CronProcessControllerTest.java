@@ -1,12 +1,15 @@
 package gabia.cronMonitoring.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import gabia.cronMonitoring.dto.CronProcessDto;
 import gabia.cronMonitoring.dto.CronProcessDto.Request;
 import gabia.cronMonitoring.dto.CronProcessDto.Response;
 import gabia.cronMonitoring.service.CronProcessService;
@@ -17,7 +20,6 @@ import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -25,9 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 @RunWith(MockitoJUnitRunner.class)
 @WebMvcTest(CronProcessController.class)
@@ -46,7 +45,7 @@ public class CronProcessControllerTest {
     @Before
     public void setUpMockMvc() {
         cronProcessController = new CronProcessController(cronProcessService);
-        mvc = MockMvcBuilders.standaloneSetup(cronProcessController).build();
+        mvc = standaloneSetup(cronProcessController).build();
     }
 
     @Test
@@ -56,12 +55,12 @@ public class CronProcessControllerTest {
         List<Response> allResponse = new ArrayList<>();
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
-        CronProcessDto.Response testResponse = new CronProcessDto.Response();
+        Response testResponse = new Response();
         testResponse.setCronJobId(UUID.fromString("123e4567-e89b-12d3-a456-556642440000"));
         testResponse.setPid("12");
         testResponse.setStartTime(timestamp);
 
-        CronProcessDto.Response testResponse2 = new CronProcessDto.Response();
+        Response testResponse2 = new Response();
         testResponse2.setCronJobId(UUID.fromString("123e4567-e89b-12d3-a456-556642440002"));
         testResponse2.setPid("15");
         testResponse2.setStartTime(timestamp);
@@ -70,36 +69,35 @@ public class CronProcessControllerTest {
         allResponse.add(testResponse2);
 
         //when
-        BDDMockito.given(cronProcessService
+        given(cronProcessService
             .findAllCronProcess(UUID.fromString("123e4567-e89b-12d3-a456-556642440000")))
             .willReturn(allResponse);
 
         //then
         mvc.perform(
-            MockMvcRequestBuilders
-                .get("/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process/", "0.0.0.0",
-                    UUID.fromString("123e4567-e89b-12d3-a456-556642440000")))
+            get("/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process/", "0.0.0.0",
+                UUID.fromString("123e4567-e89b-12d3-a456-556642440000")))
             .andDo(print())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.[0].pid").value("12"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.[0].cronJobId")
+            .andExpect(jsonPath("$.[0].pid").value("12"))
+            .andExpect(jsonPath("$.[0].cronJobId")
                 .value("123e4567-e89b-12d3-a456-556642440000"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$[1].pid").value("15"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$[1].cronJobId")
+            .andExpect(jsonPath("$[1].pid").value("15"))
+            .andExpect(jsonPath("$[1].cronJobId")
                 .value("123e4567-e89b-12d3-a456-556642440002"))
-            .andExpect(MockMvcResultMatchers.status().isOk());
+            .andExpect(status().isOk());
     }
 
     @Test
     public void createCronProcess() throws Exception {
         //given
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        CronProcessDto.Response response = new CronProcessDto.Response();
+        Response response = new Response();
         response.setCronJobId(UUID.fromString("123e4567-e89b-12d3-a456-556642440000"));
         response.setPid("12");
         response.setStartTime(timestamp);
 
         //when
-        CronProcessDto.Request request = new CronProcessDto.Request();
+        Request request = new Request();
         request.setPid("12");
         request.setStartTime(timestamp);
         request.setEndTime(timestamp);
@@ -109,61 +107,58 @@ public class CronProcessControllerTest {
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         String requestJson = ow.writeValueAsString(request);
 
-        BDDMockito.given(cronProcessService.makeCronProcess(any(), any())).willReturn(response);
+        given(cronProcessService.makeCronProcess(any(), any())).willReturn(response);
 
         //then
-        mvc.perform(MockMvcRequestBuilders
-            .post("/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process/", "0.0.0.0",
-                "123e4567-e89b-12d3-a456-556642440000")
+        mvc.perform(post("/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process/", "0.0.0.0",
+            "123e4567-e89b-12d3-a456-556642440000")
             .contentType(MediaType.APPLICATION_JSON_UTF8)
             .content(requestJson)
 
-        )
-            .andDo(print())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.pid").value("12"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.cronJobId")
+        ).andDo(print())
+            .andExpect(jsonPath("$.pid").value("12"))
+            .andExpect(jsonPath("$.cronJobId")
                 .value("123e4567-e89b-12d3-a456-556642440000"))
-            .andExpect(MockMvcResultMatchers.status().isOk());
+            .andExpect(status().isOk());
     }
 
     @Test
     public void getCronProcess() throws Exception {
         //given
-        CronProcessDto.Response response = new CronProcessDto.Response();
+        Response response = new Response();
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         response.setCronJobId(UUID.fromString("123e4567-e89b-12d3-a456-556642440000"));
         response.setPid("12");
         response.setStartTime(timestamp);
 
         //when
-        BDDMockito.given(cronProcessService.findCronProcess("12")).willReturn(response);
+        given(cronProcessService.findCronProcess("12")).willReturn(response);
 
         //then
         mvc.perform(
-            MockMvcRequestBuilders
-                .get("/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process/{pid}", "0.0.0.0",
-                    UUID.fromString("123e4567-e89b-12d3-a456-556642440000"), "12"))
+            get("/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process/{pid}", "0.0.0.0",
+                UUID.fromString("123e4567-e89b-12d3-a456-556642440000"), "12"))
             .andDo(print())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.pid").value("12"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.cronJobId")
+            .andExpect(jsonPath("$.pid").value("12"))
+            .andExpect(jsonPath("$.cronJobId")
                 .value("123e4567-e89b-12d3-a456-556642440000"))
-            .andExpect(MockMvcResultMatchers.status().isOk());
+            .andExpect(status().isOk());
 
     }
 
     @Test
     public void updateCronProcess() throws Exception {
         //given
-        CronProcessDto.Response response = new CronProcessDto.Response();
+        Response response = new Response();
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         response.setCronJobId(UUID.fromString("123e4567-e89b-12d3-a456-556642440000"));
         response.setPid("12");
 
         //when
-        CronProcessDto.Request request = new Request();
+        Request request = new Request();
         request.setPid("12");
 
-        BDDMockito.given(cronProcessService.changeCronProcess(any(), any())).willReturn(response);
+        given(cronProcessService.changeCronProcess(any(), any())).willReturn(response);
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
@@ -172,16 +167,15 @@ public class CronProcessControllerTest {
 
         //then
         mvc.perform(
-            MockMvcRequestBuilders
-                .patch("/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process/{pid}", "0.0.0.0",
-                    UUID.fromString("123e4567-e89b-12d3-a456-556642440000"), "12")
+            patch("/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process/{pid}", "0.0.0.0",
+                UUID.fromString("123e4567-e89b-12d3-a456-556642440000"), "12")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(requestJson))
             .andDo(print())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.pid").value("12"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.cronJobId")
+            .andExpect(jsonPath("$.pid").value("12"))
+            .andExpect(jsonPath("$.cronJobId")
                 .value("123e4567-e89b-12d3-a456-556642440000"))
-            .andExpect(MockMvcResultMatchers.status().isOk());
+            .andExpect(status().isOk());
     }
 
 }

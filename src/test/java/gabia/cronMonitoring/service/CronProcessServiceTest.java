@@ -1,6 +1,9 @@
 package gabia.cronMonitoring.service;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.*;
+import static org.mockito.MockitoAnnotations.*;
 
 import gabia.cronMonitoring.dto.CronProcessDto;
 import gabia.cronMonitoring.dto.CronProcessDto.Request;
@@ -11,7 +14,6 @@ import gabia.cronMonitoring.entity.CronServer;
 import gabia.cronMonitoring.exception.CronProcessNotFoundException;
 import gabia.cronMonitoring.repository.CronJobRepository;
 import gabia.cronMonitoring.repository.CronProcessRepository;
-import gabia.cronMonitoring.repository.CronServerRepository;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,10 +23,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.AdditionalAnswers;
-import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
@@ -38,16 +38,13 @@ class CronProcessServiceTest {
     @Mock
     private CronJobRepository cronJobRepository;
 
-    @Mock
-    private CronServerRepository cronServerRepository;
-
     @InjectMocks
     private CronProcessService cronProcessService;
 
     @Test
     void findAllProcess_해당_잡의_프로세스가_존재하는_경우() {
         //given
-        MockitoAnnotations.openMocks(this);
+        openMocks(this);
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
         CronServer cronServer = new CronServer();
@@ -72,7 +69,7 @@ class CronProcessServiceTest {
         List<CronProcess> cronProcessList = new ArrayList<>();
         cronProcessList.add(cronProcess);
         cronProcessList.add(cronProcess2);
-        BDDMockito.given(cronProcessRepository.findAllByCronJob_Id(
+        given(cronProcessRepository.findAllByCronJob_Id(
             UUID.fromString("123e4567-e89b-12d3-a456-556642440000")))
             .willReturn(new ArrayList<CronProcess>(cronProcessList));
 
@@ -92,8 +89,8 @@ class CronProcessServiceTest {
     @Test
     void findAllProcess_해당_잡의_프로세스가_존재하지_않는_경우() {
         //given
-        MockitoAnnotations.openMocks(this);
-        BDDMockito.given(cronProcessRepository.findAllByCronJob_Id(
+        openMocks(this);
+        given(cronProcessRepository.findAllByCronJob_Id(
             UUID.fromString("123e4567-e89b-12d3-a456-556642440000")))
             .willReturn(new ArrayList<>());
 
@@ -108,16 +105,16 @@ class CronProcessServiceTest {
     @Test
     void makeProcess_크론잡이_존재히는_경우() {
         //given
-        MockitoAnnotations.openMocks(this);
+        openMocks(this);
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
-        BDDMockito.given(cronProcessRepository.save(any(CronProcess.class)))
+        given(cronProcessRepository.save(any(CronProcess.class)))
             .willAnswer(AdditionalAnswers.returnsFirstArg());
         Optional<CronJob> testCronJob = Optional.of(new CronJob());
         testCronJob.get().setId(UUID.fromString("123e4567-e89b-12d3-a456-556642440001"));
         testCronJob.get().setCronExpr("test");
         testCronJob.get().setCronName("test");
-        BDDMockito.given(
+        given(
             cronJobRepository.findById(UUID.fromString("123e4567-e89b-12d3-a456-556642440001")))
             .willReturn(testCronJob);
 
@@ -137,13 +134,13 @@ class CronProcessServiceTest {
     @Test
     void makeProcess_크론잡이_존재하지_않는_경우() {
 
-        MockitoAnnotations.openMocks(this);
-        BDDMockito.given(
+        openMocks(this);
+        given(
             cronJobRepository.findById(UUID.fromString("123e4567-e89b-12d3-a456-556642440001")))
             .willReturn(Optional.empty());
 
         //then
-        org.junit.jupiter.api.Assertions.assertThrows(CronProcessNotFoundException.class, () -> {
+        assertThrows(CronProcessNotFoundException.class, () -> {
             //when
             Response response = cronProcessService
                 .findCronProcess("28");
@@ -153,7 +150,7 @@ class CronProcessServiceTest {
     @Test
     void findProcess_크론_프로세스가_존재하는_경우() {
         //given
-        MockitoAnnotations.openMocks(this);
+        openMocks(this);
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
         CronJob cronJob = new CronJob();
@@ -163,9 +160,9 @@ class CronProcessServiceTest {
         Optional<CronProcess> cronProcess = Optional
             .of(CronProcess.builder().id(1L).pid("28").startTime(timestamp).cronJob(cronJob)
                 .build());
-        BDDMockito.given(cronProcessRepository.findByPid("28")).willReturn(cronProcess);
+        given(cronProcessRepository.findByPid("28")).willReturn(cronProcess);
 
-        BDDMockito.given(
+        given(
             cronProcessRepository.findByPid("28"))
             .willReturn(cronProcess);
 
@@ -181,13 +178,13 @@ class CronProcessServiceTest {
     @Test
     void findProcess_크론_프로세스가_존재하지_않는_경우() {
         //given
-        MockitoAnnotations.openMocks(this);
-        BDDMockito.given(
+        openMocks(this);
+        given(
             cronProcessRepository.findByPid("28"))
             .willReturn(Optional.empty());
 
         //then
-        org.junit.jupiter.api.Assertions.assertThrows(CronProcessNotFoundException.class, () -> {
+        assertThrows(CronProcessNotFoundException.class, () -> {
             //when
             Response response = cronProcessService
                 .findCronProcess("28");
@@ -199,10 +196,10 @@ class CronProcessServiceTest {
     @Test
     void changeCronProcess_크론프로세스가_존재하는_경우() {
         //given
-        MockitoAnnotations.openMocks(this);
+        openMocks(this);
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
-        BDDMockito.given(cronProcessRepository.save(any(CronProcess.class)))
+        given(cronProcessRepository.save(any(CronProcess.class)))
             .willAnswer(AdditionalAnswers.returnsFirstArg());
 
         CronJob cronJob = new CronJob();
@@ -212,7 +209,7 @@ class CronProcessServiceTest {
         Optional<CronProcess> testCronPrcess = Optional
             .of(CronProcess.builder().id(1L).pid("28").startTime(timestamp).cronJob(cronJob)
                 .build());
-        BDDMockito.given(cronProcessRepository.findByPid("28")).willReturn(testCronPrcess);
+        given(cronProcessRepository.findByPid("28")).willReturn(testCronPrcess);
 
         //when
         CronProcessDto.Request request = new CronProcessDto.Request();
@@ -227,12 +224,12 @@ class CronProcessServiceTest {
     @Test
     void changeCronProcess_크론프로세스가_존재하지_않는_경우() {
         //given
-        MockitoAnnotations.openMocks(this);
+        openMocks(this);
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        BDDMockito.given(cronProcessRepository.findByPid("28")).willReturn(Optional.empty());
+        given(cronProcessRepository.findByPid("28")).willReturn(Optional.empty());
 
         //then
-        org.junit.jupiter.api.Assertions.assertThrows(CronProcessNotFoundException.class, () -> {
+        assertThrows(CronProcessNotFoundException.class, () -> {
             //when
             CronProcessDto.Request request = new CronProcessDto.Request();
             request.setEndTime(timestamp);
