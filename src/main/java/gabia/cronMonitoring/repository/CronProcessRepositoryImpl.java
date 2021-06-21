@@ -18,10 +18,9 @@ public class CronProcessRepositoryImpl implements CronProcessRepository {
 
     @Override
     public Optional<CronProcess> findByPid(String pid) {
-        CronProcess cronProcess = em
+        return em
             .createQuery("select cp from CronProcess cp where cp.pid = :pid", CronProcess.class)
-            .setParameter("pid", pid).getSingleResult();
-        return Optional.ofNullable(cronProcess);
+            .setParameter("pid", pid).getResultList().stream().findFirst();
     }
 
     @Override
