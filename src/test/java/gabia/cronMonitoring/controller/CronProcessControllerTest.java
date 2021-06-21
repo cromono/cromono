@@ -70,8 +70,9 @@ public class CronProcessControllerTest {
         allResponse.add(testResponse2);
 
         //when
-        BDDMockito.given(cronProcessService.findAllCronProcess("0.0.0.0",
-            UUID.fromString("123e4567-e89b-12d3-a456-556642440000"))).willReturn(allResponse);
+        BDDMockito.given(cronProcessService
+            .findAllCronProcess(UUID.fromString("123e4567-e89b-12d3-a456-556642440000")))
+            .willReturn(allResponse);
 
         //then
         mvc.perform(
@@ -108,8 +109,7 @@ public class CronProcessControllerTest {
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         String requestJson = ow.writeValueAsString(request);
 
-        BDDMockito.given(cronProcessService.makeCronProcess(any(),
-            any(), any())).willReturn(response);
+        BDDMockito.given(cronProcessService.makeCronProcess(any(), any())).willReturn(response);
 
         //then
         mvc.perform(MockMvcRequestBuilders
@@ -136,8 +136,7 @@ public class CronProcessControllerTest {
         response.setStartTime(timestamp);
 
         //when
-        BDDMockito.given(cronProcessService.findCronProcess("0.0.0.0",
-            UUID.fromString("123e4567-e89b-12d3-a456-556642440000"), "12")).willReturn(response);
+        BDDMockito.given(cronProcessService.findCronProcess("12")).willReturn(response);
 
         //then
         mvc.perform(
@@ -164,8 +163,7 @@ public class CronProcessControllerTest {
         CronProcessDto.Request request = new Request();
         request.setPid("12");
 
-        BDDMockito.given(cronProcessService.changeCronProcess(any(), any(), any(), any()))
-            .willReturn(response);
+        BDDMockito.given(cronProcessService.changeCronProcess(any(), any())).willReturn(response);
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);

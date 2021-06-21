@@ -33,7 +33,7 @@ public class CronProcessController {
         @PathVariable(name = "serverIp") String serverIp,
         @PathVariable(name = "cronJobId") UUID cronJobId) {
 
-        List<Response> allCronProcess = cronProcessService.findAllCronProcess(serverIp, cronJobId);
+        List<Response> allCronProcess = cronProcessService.findAllCronProcess(cronJobId);
         return new ResponseEntity<>(allCronProcess, HttpStatus.OK);
     }
 
@@ -43,7 +43,7 @@ public class CronProcessController {
         @PathVariable(name = "cronJobId") UUID cronJobId,
         @RequestBody CronProcessDto.Request request) {
 
-        Response cronProcess = cronProcessService.makeCronProcess(serverIp, cronJobId, request);
+        Response cronProcess = cronProcessService.makeCronProcess(cronJobId, request);
         return new ResponseEntity<>(cronProcess, HttpStatus.OK);
     }
 
@@ -52,7 +52,7 @@ public class CronProcessController {
         @PathVariable(name = "serverIp") String serverIp,
         @PathVariable(name = "cronJobId") UUID cronJobId, @PathVariable(name = "pid") String pid) {
 
-        Response cronProcess = cronProcessService.findCronProcess(serverIp, cronJobId, pid);
+        Response cronProcess = cronProcessService.findCronProcess(pid);
         return new ResponseEntity<>(cronProcess, HttpStatus.OK);
     }
 
@@ -62,8 +62,7 @@ public class CronProcessController {
         @PathVariable(name = "cronJobId") UUID cronJobId, @PathVariable(name = "pid") String pid,
         @RequestBody CronProcessDto.Request request) {
 
-        Response cronProcess = cronProcessService
-            .changeCronProcess(serverIp, cronJobId, pid, request);
+        Response cronProcess = cronProcessService.changeCronProcess(pid, request);
         return new ResponseEntity<>(cronProcess, HttpStatus.OK);
 
     }

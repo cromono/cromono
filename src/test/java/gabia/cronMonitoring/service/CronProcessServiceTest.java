@@ -78,7 +78,7 @@ class CronProcessServiceTest {
 
         //when
         final List<CronProcessDto.Response> result = cronProcessService
-            .findAllCronProcess("0.0.0.0", UUID.fromString("123e4567-e89b-12d3-a456-556642440000"));
+            .findAllCronProcess(UUID.fromString("123e4567-e89b-12d3-a456-556642440000"));
 
         //then
         Assertions.assertThat(result.get(0).getPid()).isEqualTo("1");
@@ -99,7 +99,7 @@ class CronProcessServiceTest {
 
         //when
         final List<CronProcessDto.Response> result = cronProcessService
-            .findAllCronProcess("0.0.0.0", UUID.fromString("123e4567-e89b-12d3-a456-556642440000"));
+            .findAllCronProcess(UUID.fromString("123e4567-e89b-12d3-a456-556642440000"));
 
         //then
         Assertions.assertThat(result.isEmpty()).isEqualTo(true);
@@ -126,7 +126,7 @@ class CronProcessServiceTest {
         request.setPid("28");
         request.setStartTime(timestamp);
         Response response = cronProcessService
-            .makeCronProcess("0.0.0.0", UUID.fromString("123e4567-e89b-12d3-a456-556642440001"),
+            .makeCronProcess(UUID.fromString("123e4567-e89b-12d3-a456-556642440001"),
                 request);
 
         //then
@@ -146,8 +146,7 @@ class CronProcessServiceTest {
         org.junit.jupiter.api.Assertions.assertThrows(CronProcessNotFoundException.class, () -> {
             //when
             Response response = cronProcessService
-                .findCronProcess("0.0.0.0", UUID.fromString("123e4567-e89b-12d3-a456-556642440001"),
-                    "28");
+                .findCronProcess("28");
         });
     }
 
@@ -172,8 +171,7 @@ class CronProcessServiceTest {
 
         //when
         Response response = cronProcessService
-            .findCronProcess("0.0.0.0", UUID.fromString("123e4567-e89b-12d3-a456-556642440001"),
-                "28");
+            .findCronProcess("28");
 
         //then
         Assertions.assertThat(response.getPid()).isEqualTo("28");
@@ -192,8 +190,7 @@ class CronProcessServiceTest {
         org.junit.jupiter.api.Assertions.assertThrows(CronProcessNotFoundException.class, () -> {
             //when
             Response response = cronProcessService
-                .findCronProcess("0.0.0.0", UUID.fromString("123e4567-e89b-12d3-a456-556642440001"),
-                    "28");
+                .findCronProcess("28");
         });
 
     }
@@ -221,8 +218,8 @@ class CronProcessServiceTest {
         CronProcessDto.Request request = new CronProcessDto.Request();
         request.setEndTime(timestamp);
         Response response = cronProcessService
-            .changeCronProcess("0.0.0.0", UUID.fromString("123e4567-e89b-12d3-a456-556642440001"),
-                "28", request);
+            .changeCronProcess("28", request);
+
         //then
         Assertions.assertThat(response.getEndTime()).isEqualTo(timestamp);
     }
@@ -239,9 +236,7 @@ class CronProcessServiceTest {
             //when
             CronProcessDto.Request request = new CronProcessDto.Request();
             request.setEndTime(timestamp);
-            Response process = cronProcessService
-                .changeCronProcess("0.0.0.0",
-                    UUID.fromString("123e4567-e89b-12d3-a456-556642440001"), "2", request);
+            Response process = cronProcessService.changeCronProcess("2", request);
         });
 
     }

@@ -29,7 +29,7 @@ public class CronProcessService {
         this.cronJobRepository = cronJobRepository;
     }
 
-    public List<CronProcessDto.Response> findAllCronProcess(String serverIp, UUID cronJobId) {
+    public List<CronProcessDto.Response> findAllCronProcess(UUID cronJobId) {
 
         List<CronProcessDto.Response> response = new ArrayList<>();
 
@@ -41,8 +41,7 @@ public class CronProcessService {
     }
 
     @Transactional
-    public CronProcessDto.Response makeCronProcess(String serverIp, UUID cronJobId,
-        CronProcessDto.Request request) {
+    public CronProcessDto.Response makeCronProcess(UUID cronJobId, CronProcessDto.Request request) {
 
         CronJob cronJob = cronJobRepository.findById(cronJobId)
             .orElseThrow(() -> new CronJobNotFoundException());
@@ -60,7 +59,7 @@ public class CronProcessService {
         return response;
     }
 
-    public CronProcessDto.Response findCronProcess(String serverIp, UUID cronJobId, String pid) {
+    public CronProcessDto.Response findCronProcess(String pid) {
 
         CronProcess savedCronProcess = cronProcessRepository.findByPid(pid)
             .orElseThrow(() -> new CronProcessNotFoundException());
@@ -71,8 +70,7 @@ public class CronProcessService {
     }
 
     @Transactional
-    public CronProcessDto.Response changeCronProcess(String serverIp, UUID cronJobId, String pid,
-        CronProcessDto.Request request) {
+    public CronProcessDto.Response changeCronProcess(String pid, CronProcessDto.Request request) {
 
         CronProcess cronProcess = cronProcessRepository.findByPid(pid)
             .orElseThrow(() -> new CronProcessNotFoundException());
