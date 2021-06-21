@@ -28,7 +28,7 @@ public class CronServerServiceTest {
     @Test
     public void 서버등록() throws Exception {
         // Given
-        String ip = "1:1:1:1";
+        String ip = "1.1.1.1";
         CronServer mock = new CronServer(ip);
         given(cronServerRepository.save(any())).willReturn(mock);
         // When
@@ -42,7 +42,7 @@ public class CronServerServiceTest {
     @Test(expected = AlreadyRegisteredServerException.class)
     public void 이미_등록된_서버_등록시_예외() throws Exception {
         // Given
-        String ip = "1:1:1:1";
+        String ip = "1.1.1.1";
         CronServer mock = new CronServer(ip);
         given(cronServerRepository.save(any())).willReturn(mock);
         // When
@@ -56,8 +56,8 @@ public class CronServerServiceTest {
     @Test
     public void 서버수정() throws Exception {
         // Given
-        String oldIp = "1:1:1:1";
-        String newIp = "1:1:1:2";
+        String oldIp = "1.1.1.1";
+        String newIp = "1.1.1.2";
         CronServer mock = new CronServer(oldIp);
         given(cronServerRepository.save(any())).willReturn(mock);
         // When
@@ -75,10 +75,10 @@ public class CronServerServiceTest {
     @Test(expected = NotExistingServerException.class)
     public void 미등록_서버_수정시_예외() throws Exception {
         // Given
-        String ip = "1:1:1:1";
+        String ip = "1.1.1.1";
         given(cronServerRepository.findByIp(ip)).willReturn(Optional.empty());
         // When
-        cronServerService.updateCronServer(ip, "123123");
+        cronServerService.updateCronServer(ip, "1.1.1.2");
         // Then
         Assert.fail("예외가 발생해야 한다.");
     }
@@ -86,8 +86,8 @@ public class CronServerServiceTest {
     @Test(expected = AlreadyRegisteredServerException.class)
     public void 이미_등록된_서버로_수정시_예외() throws Exception {
         // Given
-        String registeredIp = "1:1:1:1";
-        String randomIp = "1:1:1:2";
+        String registeredIp = "1.1.1.1";
+        String randomIp = "1.1.1.2";
         CronServer mock = new CronServer(registeredIp);
         given(cronServerRepository.findByIp(registeredIp)).willReturn(Optional.of(mock));
         given(cronServerRepository.findByIp(randomIp)).willReturn(Optional.of(mock));
@@ -100,7 +100,7 @@ public class CronServerServiceTest {
     @Test
     public void 서버삭제() throws Exception {
         // Given
-        String ip = "1:1:1:1";
+        String ip = "1.1.1.1";
         CronServer mock = new CronServer(ip);
         given(cronServerRepository.save(any())).willReturn(mock);
         cronServerService.addCronServer(ip);
@@ -115,7 +115,7 @@ public class CronServerServiceTest {
     @Test(expected = NotExistingServerException.class)
     public void 미등록_서버_삭제시_예외() throws Exception {
         // Given
-        String ip = "1:1:1:1";
+        String ip = "1.1.1.1";
         CronServer mock = new CronServer(ip);
         given(cronServerRepository.save(any())).willReturn(mock);
         cronServerService.addCronServer(ip);
