@@ -55,25 +55,26 @@ class CronProcessServiceTest {
         // 해당하는 잡의 프로세스가 존재하는 경우
         //given
         MockitoAnnotations.openMocks(this);
-        CronServer cronServer = new CronServer();
-        CronJob cronJob = new CronJob();
-        CronProcess cronProcess = new CronProcess();
-        CronProcess cronProcess2 = new CronProcess();
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
+        CronServer cronServer = new CronServer();
         cronServer.setIp("0.0.0.0");
 
+        CronJob cronJob = new CronJob();
         cronJob.setServer(cronServer);
         cronJob.setCronExpr("test");
         cronJob.setCronName("test");
 
-        cronProcess.setPid("1");
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        cronProcess.setStartTime(timestamp);
-        cronProcess.setCronJob(cronJob);
-
-        cronProcess2.setPid("2");
-        cronProcess2.setStartTime(timestamp);
-        cronProcess2.setCronJob(cronJob);
+        CronProcess cronProcess = CronProcess.builder()
+            .pid("1")
+            .startTime(timestamp)
+            .cronJob(cronJob)
+            .build();
+        CronProcess cronProcess2 = CronProcess.builder()
+            .pid("2")
+            .startTime(timestamp)
+            .cronJob(cronJob)
+            .build();
 
         List<CronProcess> cronProcessList = new ArrayList<>();
         cronProcessList.add(cronProcess);
@@ -134,7 +135,7 @@ class CronProcessServiceTest {
         request.setPid("28");
         request.setStartTime(timestamp);
         Response response = cronProcessService
-            .makeCronProcess("0.0.0.0",UUID.fromString("123e4567-e89b-12d3-a456-556642440001"),
+            .makeCronProcess("0.0.0.0", UUID.fromString("123e4567-e89b-12d3-a456-556642440001"),
                 request);
 
         //then
@@ -171,11 +172,10 @@ class CronProcessServiceTest {
         cronJob.setCronExpr("test");
         cronJob.setCronName("test");
 
-        Optional<CronProcess> cronProcess = Optional.of(new CronProcess());
-        cronProcess.get().setId(1L);
-        cronProcess.get().setStartTime(timestamp);
-        cronProcess.get().setPid("28");
-        cronProcess.get().setCronJob(cronJob);
+        Optional<CronProcess> cronProcess = Optional
+            .of(CronProcess.builder().id(1L).pid("28").startTime(timestamp).cronJob(cronJob)
+                .build());
+        BDDMockito.given(cronProcessRepository.findByPid("28")).willReturn(cronProcess);
 
         BDDMockito.given(
             cronProcessRepository.findByPid("28"))
@@ -223,11 +223,10 @@ class CronProcessServiceTest {
         cronJob.setCronExpr("test");
         cronJob.setCronName("test");
 
-        Optional<CronProcess> testCronPrcess = Optional.of(new CronProcess());
-        testCronPrcess.get().setStartTime(timestamp);
-        testCronPrcess.get().setId(1L);
-        testCronPrcess.get().setPid("28");
-        testCronPrcess.get().setCronJob(cronJob);
+        //setter -> Builder
+        Optional<CronProcess> testCronPrcess = Optional
+            .of(CronProcess.builder().id(1L).pid("28").startTime(timestamp).cronJob(cronJob)
+                .build());
         BDDMockito.given(cronProcessRepository.findByPid("28")).willReturn(testCronPrcess);
 
         //when

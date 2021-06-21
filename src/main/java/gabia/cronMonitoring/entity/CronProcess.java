@@ -11,12 +11,17 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "cron_process")
 public class CronProcess {
 
@@ -35,4 +40,8 @@ public class CronProcess {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cron_job_id")
     private CronJob cronJob;
+
+    public void changeEndTime(Timestamp endTime){
+        this.endTime = endTime;
+    }
 }

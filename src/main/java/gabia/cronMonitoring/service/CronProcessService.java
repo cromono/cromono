@@ -51,11 +51,13 @@ public class CronProcessService {
         CronJob cronJob = cronJobRepository.findById(cronJobId)
             .orElseThrow(() -> new CronJobNotFoundException());
 
-        CronProcess cronProcess = new CronProcess();
-        cronProcess.setPid(request.getPid());
-        cronProcess.setStartTime(request.getStartTime());
-        cronProcess.setEndTime(request.getEndTime());
-        cronProcess.setCronJob(cronJob);
+        // setter -> Builder
+        CronProcess cronProcess = CronProcess.builder()
+            .pid(request.getPid())
+            .startTime(request.getStartTime())
+            .endTime(request.getEndTime())
+            .cronJob(cronJob)
+            .build();
         CronProcess savedCronProcess = cronProcessRepository.save(cronProcess);
 
         CronProcessDto.Response response = CronProcessDto.Response.from(savedCronProcess);
@@ -82,7 +84,8 @@ public class CronProcessService {
         CronProcess cronProcess = cronProcessRepository.findByPid(pid)
             .orElseThrow(() -> new CronProcessNotFoundException());
 
-        cronProcess.setEndTime(request.getEndTime());
+        // setter -> 내부 method
+        cronProcess.changeEndTime(request.getEndTime());
         CronProcess savedCronProcess = cronProcessRepository.save(cronProcess);
         CronProcessDto.Response response = CronProcessDto.Response.from(savedCronProcess);
 
