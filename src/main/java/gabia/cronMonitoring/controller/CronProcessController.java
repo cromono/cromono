@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process")
 public class CronProcessController {
 
-    CronProcessService cronProcessService;
+    private final CronProcessService cronProcessService;
 
     @Autowired
     public CronProcessController(CronProcessService cronProcessService) {

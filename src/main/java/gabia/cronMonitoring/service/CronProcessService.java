@@ -31,9 +31,8 @@ public class CronProcessService {
 
     public List<CronProcessDto.Response> findAllCronProcess(UUID cronJobId) {
 
-        List<CronProcessDto.Response> response = new ArrayList<>();
-
-        response = cronProcessRepository.findAllByCronJob_Id(cronJobId).stream()
+        List<CronProcessDto.Response> response = cronProcessRepository
+            .findAllByCronJob_Id(cronJobId).stream()
             .map(dto -> CronProcessDto.Response.from(dto))
             .collect(Collectors.toList());
 
@@ -61,10 +60,10 @@ public class CronProcessService {
 
     public CronProcessDto.Response findCronProcess(String pid) {
 
-        CronProcess savedCronProcess = cronProcessRepository.findByPid(pid)
+        CronProcess cronProcess = cronProcessRepository.findByPid(pid)
             .orElseThrow(() -> new CronProcessNotFoundException());
 
-        CronProcessDto.Response response = CronProcessDto.Response.from(savedCronProcess);
+        CronProcessDto.Response response = CronProcessDto.Response.from(cronProcess);
 
         return response;
     }
@@ -76,8 +75,8 @@ public class CronProcessService {
             .orElseThrow(() -> new CronProcessNotFoundException());
 
         cronProcess.changeEndTime(request.getEndTime());
-        CronProcess savedCronProcess = cronProcessRepository.save(cronProcess);
-        CronProcessDto.Response response = CronProcessDto.Response.from(savedCronProcess);
+        CronProcess changedCronProcess = cronProcessRepository.save(cronProcess);
+        CronProcessDto.Response response = CronProcessDto.Response.from(changedCronProcess);
 
         return response;
     }
