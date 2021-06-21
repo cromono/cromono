@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +45,7 @@ public class CronProcessService {
         return response;
     }
 
+    @Transactional
     public CronProcessDto.Response makeCronProcess(String serverIp, UUID cronJobId,
         CronProcessDto.Request request) {
 
@@ -78,6 +80,7 @@ public class CronProcessService {
         return response;
     }
 
+    @Transactional
     public CronProcessDto.Response changeCronProcess(String serverIp, UUID cronJobId, String pid,
         CronProcessDto.Request request) {
 
