@@ -1,6 +1,6 @@
 package gabia.cronMonitoring.exception.cron.server;
 
-public class NotValidIPException extends RuntimeException{
+public class NotValidIPException extends RuntimeException {
 
     public NotValidIPException() {
         super();

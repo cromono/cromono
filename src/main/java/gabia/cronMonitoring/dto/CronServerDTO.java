@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CronServerDTO {
+
     private String serverIp;
 
     public static CronServerDTO from(CronServer cronServer) {

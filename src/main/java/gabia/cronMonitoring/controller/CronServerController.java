@@ -39,7 +39,8 @@ public class CronServerController {
 
     @PatchMapping("/cron-servers/{serverIp}")
     @ResponseBody
-    public ResponseEntity<CronServerDTO> patchCronServer(@PathVariable(name = "serverIp") String serverIp,
+    public ResponseEntity<CronServerDTO> patchCronServer(
+        @PathVariable(name = "serverIp") String serverIp,
         @RequestBody CronServerDTO cronServerDTO) {
         CronServerDTO cronServer = cronServerService
             .updateCronServer(serverIp, cronServerDTO.getServerIp());

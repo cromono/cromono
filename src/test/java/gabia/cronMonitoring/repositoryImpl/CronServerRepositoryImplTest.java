@@ -1,6 +1,6 @@
 package gabia.cronMonitoring.repositoryImpl;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import gabia.cronMonitoring.entity.CronServer;
 import java.util.List;
