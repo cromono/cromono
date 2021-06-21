@@ -204,7 +204,7 @@ public class CronJobServiceTest {
         boolean ret = cronJobService.deleteCronJob(uuid);
 
         //then
-        Assertions.assertThat(ret).isTrue();
+        Assertions.assertThat(ret).isFalse();
     }
 
     @Test(expected = CronJobNotFoundException.class)
