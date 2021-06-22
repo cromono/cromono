@@ -1,7 +1,5 @@
 package gabia.cronMonitoring.entity;
 
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.util.Date;
 import java.util.UUID;
 import javax.persistence.Column;
@@ -15,15 +13,18 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
 
 @Entity
 @Getter
 @Setter
 @Table(name = "cron_job")
+@AllArgsConstructor
+@NoArgsConstructor
 public class CronJob {
 
     @Id

@@ -1,9 +1,9 @@
-package gabia.cronMonitoring.controller;
+package gabia.cronMonitoring.exception.cron.handler;
 
 import gabia.cronMonitoring.dto.CronProcessDto;
 import gabia.cronMonitoring.dto.CronProcessDto.ErrorResponse;
-import gabia.cronMonitoring.exception.CronJobNotFoundException;
-import gabia.cronMonitoring.exception.CronProcessNotFoundException;
+import gabia.cronMonitoring.exception.cron.process.CronJobNotFoundException;
+import gabia.cronMonitoring.exception.cron.process.CronProcessNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

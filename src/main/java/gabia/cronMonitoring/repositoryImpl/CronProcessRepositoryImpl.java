@@ -1,6 +1,7 @@
-package gabia.cronMonitoring.repository;
+package gabia.cronMonitoring.repositoryImpl;
 
 import gabia.cronMonitoring.entity.CronProcess;
+import gabia.cronMonitoring.repository.CronProcessRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
