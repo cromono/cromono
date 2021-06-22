@@ -5,6 +5,7 @@ import gabia.cronMonitoring.entity.CronProcess;
 import gabia.cronMonitoring.entity.CronServer;
 import java.sql.Timestamp;
 import java.util.List;
+import javax.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -27,6 +28,9 @@ class CronProcessRepositoryTest {
     @Autowired
     CronServerRepository cronServerRepository;
 
+    @Autowired
+    EntityManager em;
+
     @Test
     void findAllByCronJob_Id() {
         //given
@@ -46,14 +50,14 @@ class CronProcessRepositoryTest {
             .cronJob(cronJob)
             .startTime(timestamp)
             .build();
-        cronProcessRepository.save(cronProcess);
+        em.persist(cronProcess);
 
         CronProcess cronProcess2 = CronProcess.builder()
             .pid("12")
             .cronJob(cronJob)
             .startTime(timestamp)
             .build();
-        cronProcessRepository.save(cronProcess2);
+        em.persist(cronProcess2);
 
         //when
         List<CronProcess> allByCronJobId = cronProcessRepository
@@ -84,7 +88,7 @@ class CronProcessRepositoryTest {
             .cronJob(cronJob)
             .startTime(timestamp)
             .build();
-        cronProcessRepository.save(cronProcess);
+        em.persist(cronProcess);
 
         //when
         CronProcess cronProcess1 = cronProcessRepository.findByPid("1").get();
