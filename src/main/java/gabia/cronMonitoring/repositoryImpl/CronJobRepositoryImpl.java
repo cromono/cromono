@@ -32,7 +32,7 @@ public class CronJobRepositoryImpl implements CronJobRepository {
 
     @Override
     public List<CronJob> findByServer(String cronServerIp) {
-        return em.createQuery("select cj from CronJob cj where cj.server.ip =: serverIp", CronJob.class)
+        return em.createQuery("select cj from CronJob cj join fetch cj.server s where cj.server.ip =: serverIp ", CronJob.class)
             .setParameter("serverIp",cronServerIp).getResultList();
     }
 
