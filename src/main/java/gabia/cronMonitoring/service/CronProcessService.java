@@ -7,27 +7,19 @@ import gabia.cronMonitoring.exception.CronJobNotFoundException;
 import gabia.cronMonitoring.exception.CronProcessNotFoundException;
 import gabia.cronMonitoring.repository.CronJobRepository;
 import gabia.cronMonitoring.repository.CronProcessRepository;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class CronProcessService {
 
     private final CronProcessRepository cronProcessRepository;
     private final CronJobRepository cronJobRepository;
-
-    @Autowired
-    public CronProcessService(CronProcessRepository cronProcessRepository,
-        CronJobRepository cronJobRepository) {
-
-        this.cronProcessRepository = cronProcessRepository;
-        this.cronJobRepository = cronJobRepository;
-    }
 
     public List<CronProcessDto.Response> findAllCronProcess(UUID cronJobId) {
 

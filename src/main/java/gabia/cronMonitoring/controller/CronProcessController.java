@@ -5,7 +5,7 @@ import gabia.cronMonitoring.dto.CronProcessDto.Response;
 import gabia.cronMonitoring.service.CronProcessService;
 import java.util.List;
 import java.util.UUID;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,17 +16,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping(path = "/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process")
 public class CronProcessController {
 
     private final CronProcessService cronProcessService;
-
-    @Autowired
-    public CronProcessController(CronProcessService cronProcessService) {
-
-        this.cronProcessService = cronProcessService;
-    }
 
     @GetMapping(path = "/")
     public ResponseEntity<List<CronProcessDto.Response>> getCronProcessList(
