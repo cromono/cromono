@@ -3,7 +3,9 @@ package gabia.cronMonitoring.repositoryImpl;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import gabia.cronMonitoring.entity.CronServer;
+import gabia.cronMonitoring.repository.CronServerRepository;
 import java.util.List;
+import javax.persistence.EntityManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +15,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Transactional
 public class CronServerRepositoryImplTest {
 
     @Autowired
-    CronServerRepositoryImpl cronServerRepository;
+    CronServerRepository cronServerRepository;
+
+    @Autowired
+    EntityManager em;
 
     @Test
-    @Transactional
     public void save() {
         // Given
         CronServer cronServer = new CronServer("1:1:1:1");
@@ -30,26 +35,24 @@ public class CronServerRepositoryImplTest {
     }
 
     @Test
-    @Transactional
     public void findByIp() {
         // Given
         CronServer cronServer = new CronServer("1:1:1:1");
-        CronServer saveServer = cronServerRepository.save(cronServer);
+        em.persist(cronServer);
         // When
         CronServer findServer = cronServerRepository.findByIp("1:1:1:1").get();
         // Then
-        assertThat(findServer).isEqualTo(saveServer);
+        assertThat(findServer).isEqualTo(cronServer);
     }
 
     @Test
-    @Transactional
     public void findAll() {
         // Given
         CronServer server1 = new CronServer("1:1:1:1");
-        cronServerRepository.save(server1);
+        em.persist(server1);
 
         CronServer server2 = new CronServer("1:1:1:2");
-        cronServerRepository.save(server2);
+        em.persist(server2);
         // When
         List<CronServer> result = cronServerRepository.findAll();
         // Then
@@ -57,11 +60,10 @@ public class CronServerRepositoryImplTest {
     }
 
     @Test
-    @Transactional
     public void delete() {
         // Given
         CronServer cronServer = new CronServer("1:1:1:1");
-        cronServerRepository.save(cronServer);
+        em.persist(cronServer);
         // When
         cronServerRepository.delete(cronServer);
         // Then

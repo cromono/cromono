@@ -35,7 +35,8 @@ public class CronServerControllerTest {
     @MockBean
     private CronServerService cronServerService;
 
-    ObjectMapper mapper = new ObjectMapper();
+    @Autowired
+    ObjectMapper mapper;
 
     @Test
     public void 서버_목록_GET() throws Exception {

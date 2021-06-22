@@ -17,8 +17,10 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(MockitoJUnitRunner.class)
+@Transactional
 public class CronServerServiceTest {
 
     @InjectMocks

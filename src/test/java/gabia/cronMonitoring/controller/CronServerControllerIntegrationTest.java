@@ -38,7 +38,8 @@ public class CronServerControllerIntegrationTest {
     @Autowired
     private CronServerController cronServerController;
 
-    ObjectMapper mapper = new ObjectMapper();
+    @Autowired
+    ObjectMapper mapper;
 
     @Before
     public void setup() {
