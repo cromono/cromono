@@ -1,16 +1,14 @@
 package gabia.cronMonitoring.service;
 
-import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import gabia.cronMonitoring.dto.CronProcessDto;
 import gabia.cronMonitoring.dto.CronProcessDto.Request;
 import gabia.cronMonitoring.dto.CronProcessDto.Response;
 import gabia.cronMonitoring.entity.CronJob;
 import gabia.cronMonitoring.entity.CronProcess;
 import gabia.cronMonitoring.entity.CronServer;
-import gabia.cronMonitoring.exception.CronJobNotFoundException;
-import gabia.cronMonitoring.exception.CronProcessNotFoundException;
+import gabia.cronMonitoring.exception.cron.process.CronJobNotFoundException;
+import gabia.cronMonitoring.exception.cron.process.CronProcessNotFoundException;
 import gabia.cronMonitoring.repository.CronJobRepository;
 import gabia.cronMonitoring.repository.CronProcessRepository;
 import gabia.cronMonitoring.repository.CronServerRepository;
