@@ -1,5 +1,6 @@
 package gabia.cronMonitoring.entity;
 
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,13 +18,13 @@ import lombok.Setter;
 @Setter
 @Table(name = "cron_server")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CronServer {
+public class CronServer implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "server_ip", unique = true)
+    @Column(name = "server_ip",unique = true)
     @NotNull
     private String ip;
 
