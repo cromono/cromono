@@ -5,6 +5,7 @@ import gabia.cronMonitoring.repository.CronServerRepository;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -19,7 +20,8 @@ public class CronServerRepositoryImpl implements CronServerRepository {
         if (cronServer.getId() == null) {
             em.persist(cronServer);
             return cronServer;
-        } else {
+        }
+        else {
             return em.merge(cronServer);
         }
     }
