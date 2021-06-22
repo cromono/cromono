@@ -18,4 +18,6 @@ public class CronMonitorUtil {
         throws JsonProcessingException {
         return new ObjectMapper().readValue(jsonStr,classObj);
     }
+
 }
+

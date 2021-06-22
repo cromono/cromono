@@ -1,13 +1,10 @@
 package gabia.cronMonitoring.entity;
 
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.util.Date;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -19,7 +16,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Getter
@@ -45,11 +41,12 @@ public class CronJob {
 
     @Temporal(TemporalType.TIME)
     private Date minStartTime;
+
     @Temporal(TemporalType.TIME)
     private Date maxEndTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "server_ip")
+    @JoinColumn(name = "server_ip", referencedColumnName = "server_ip")
     private CronServer server;
 
     public CronJob() {
