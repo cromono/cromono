@@ -55,8 +55,7 @@ public class CronJobIntegrationTest {
     public void 서버로_크론_JOB_조회_성공() throws Exception {
         //given
         String serverIp = "192.168.0.1";
-        CronServer cronServer = new CronServer();
-        cronServer.setIp(serverIp);
+        CronServer cronServer = new CronServer(serverIp);
         cronServerRepository.save(cronServer);
 
         for (int i = 0; i < 10; i++) {
@@ -89,8 +88,7 @@ public class CronJobIntegrationTest {
     @Transactional
     public void 크론_JOB_생성_성공() throws Exception {
         String serverIp = "192.168.0.1";
-        CronServer cronServer = new CronServer();
-        cronServer.setIp(serverIp);
+        CronServer cronServer = new CronServer(serverIp);
         cronServerRepository.save(cronServer);
 
         String cronName = "test1.sh";
@@ -121,8 +119,7 @@ public class CronJobIntegrationTest {
     public void 크론_JOB_수정_성공() throws Exception {
         //given
         String serverIp = "192.168.0.1";
-        CronServer cronServer = new CronServer();
-        cronServer.setIp(serverIp);
+        CronServer cronServer = new CronServer(serverIp);
         cronServerRepository.save(cronServer);
 
         String cronName = "test1.sh";
@@ -161,8 +158,7 @@ public class CronJobIntegrationTest {
     public void 크론_JOB_삭제_성공() throws Exception {
         //given
         String serverIp = "192.168.0.1";
-        CronServer cronServer = new CronServer();
-        cronServer.setIp(serverIp);
+        CronServer cronServer = new CronServer(serverIp);
         cronServerRepository.save(cronServer);
 
         int firstSize = cronJobRepository.findByServer(serverIp).size();

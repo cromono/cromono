@@ -3,6 +3,7 @@ package gabia.cronMonitoring.repositoryImpl;
 import gabia.cronMonitoring.entity.CronJob;
 import gabia.cronMonitoring.entity.CronServer;
 import gabia.cronMonitoring.repository.CronJobRepository;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -15,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @RequiredArgsConstructor
-public class CronJobRepositoryImpl implements CronJobRepository {
+public class CronJobRepositoryImpl implements CronJobRepository{
 
     private final EntityManager em;
 

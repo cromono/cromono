@@ -93,7 +93,7 @@ public class CronJobControllerTest {
         CronJobDTO cronJobDTO = new CronJobDTO(cronJobId, cronName, cronExpr, sDate, eDate,
             serverIp);
         CronJob cronJob = new CronJob(cronJobId, cronName, cronExpr, sDate, eDate,
-            new CronServer());
+            new CronServer(serverIp));
 
         String requestJson = CronMonitorUtil.objToJson(cronJobDTO);
         String responseJson = CronMonitorUtil.objToJson(new CronJobResult<>(cronJobId));

@@ -186,8 +186,7 @@ class CronJobRepositoryImplTest {
     }
 
     public CronServer createCronServer(String ip) {
-        CronServer cronServer = new CronServer();
-        cronServer.setIp(ip);
+        CronServer cronServer = new CronServer(ip);
         return cronServer;
     }
 
