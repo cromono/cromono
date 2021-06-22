@@ -1,4 +1,4 @@
-package gabia.cronMonitoring.exception;
+package gabia.cronMonitoring.exception.cron.process;
 
 import lombok.Getter;
 import lombok.Setter;

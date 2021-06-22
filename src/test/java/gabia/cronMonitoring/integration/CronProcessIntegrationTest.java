@@ -1,10 +1,11 @@
-package gabia.cronMonitoring.controller;
+package gabia.cronMonitoring.integration;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gabia.cronMonitoring.controller.CronProcessController;
 import gabia.cronMonitoring.dto.CronProcessDto.Request;
 import gabia.cronMonitoring.entity.CronJob;
 import gabia.cronMonitoring.entity.CronProcess;
@@ -29,7 +30,7 @@ import org.springframework.web.context.WebApplicationContext;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Transactional
-public class CronProcessControllerIntegrationTest {
+public class CronProcessIntegrationTest {
 
     private MockMvc mvc;
 

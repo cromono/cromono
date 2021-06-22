@@ -11,7 +11,7 @@ import gabia.cronMonitoring.dto.CronProcessDto.Response;
 import gabia.cronMonitoring.entity.CronJob;
 import gabia.cronMonitoring.entity.CronProcess;
 import gabia.cronMonitoring.entity.CronServer;
-import gabia.cronMonitoring.exception.CronProcessNotFoundException;
+import gabia.cronMonitoring.exception.cron.process.CronProcessNotFoundException;
 import gabia.cronMonitoring.repository.CronJobRepository;
 import gabia.cronMonitoring.repository.CronProcessRepository;
 import java.sql.Timestamp;
