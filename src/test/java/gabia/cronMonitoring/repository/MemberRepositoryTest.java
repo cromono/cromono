@@ -21,7 +21,7 @@ public class MemberRepositoryTest {
     @Test
     @Transactional //이 트랜잭셔널이 테스트 밑에있으면 데이터를 롤백해버린다. 하기싫으면 @Rollback(false)
     @Rollback(false) //이거 안해두면 인서트 쿼리 안나옴
-    public void testMember() throws Exception {
+    public void testMember() {
         //given
         Member member = new Member();
         member.setUsername("memberA");
