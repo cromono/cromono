@@ -47,8 +47,7 @@ class CronProcessServiceTest {
         openMocks(this);
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
-        CronServer cronServer = new CronServer();
-        cronServer.setIp("0.0.0.0");
+        CronServer cronServer = new CronServer("0.0.0.0");
 
         CronJob cronJob = new CronJob();
         cronJob.setServer(cronServer);

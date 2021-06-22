@@ -34,8 +34,7 @@ class CronProcessRepositoryTest {
     @Test
     void findAllByCronJob_Id() {
         //given
-        CronServer cronServer = new CronServer();
-        cronServer.setIp("0.0.0.0");
+        CronServer cronServer = new CronServer("0.0.0.0");
         cronServerRepository.save(cronServer);
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -72,8 +71,7 @@ class CronProcessRepositoryTest {
     @Test
     void findByPid() {
         //given
-        CronServer cronServer = new CronServer();
-        cronServer.setIp("0.0.0.0");
+        CronServer cronServer = new CronServer("0.0.0.0");
         cronServerRepository.save(cronServer);
 
         CronJob cronJob = new CronJob();
@@ -101,8 +99,7 @@ class CronProcessRepositoryTest {
     @Test
     void save() {
         //given
-        CronServer cronServer = new CronServer();
-        cronServer.setIp("0.0.0.0");
+        CronServer cronServer = new CronServer("0.0.0.0");
         cronServerRepository.save(cronServer);
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());

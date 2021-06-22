@@ -47,8 +47,7 @@ public class CronProcessServiceIntegrationTest {
         //given
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
-        CronServer cronServer = new CronServer();
-        cronServer.setIp("0.0.0.0");
+        CronServer cronServer = new CronServer("0.0.0.0");
         cronServerRepository.save(cronServer);
 
         CronJob cronJob = new CronJob();
@@ -85,8 +84,7 @@ public class CronProcessServiceIntegrationTest {
         //given
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
-        CronServer cronServer = new CronServer();
-        cronServer.setIp("0.0.0.0");
+        CronServer cronServer = new CronServer("0.0.0.0");
         cronServerRepository.save(cronServer);
 
         CronJob cronJob = new CronJob();
@@ -126,8 +124,7 @@ public class CronProcessServiceIntegrationTest {
         //given
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
-        CronServer cronServer = new CronServer();
-        cronServer.setIp("0.0.0.0");
+        CronServer cronServer = new CronServer("0.0.0.0");
         cronServerRepository.save(cronServer);
 
         CronJob cronJob = new CronJob();
@@ -160,8 +157,7 @@ public class CronProcessServiceIntegrationTest {
         //given
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
-        CronServer cronServer = new CronServer();
-        cronServer.setIp("0.0.0.0");
+        CronServer cronServer = new CronServer("0.0.0.0");
         cronServerRepository.save(cronServer);
 
         CronJob cronJob = new CronJob();
@@ -190,8 +186,7 @@ public class CronProcessServiceIntegrationTest {
         //given
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
-        CronServer cronServer = new CronServer();
-        cronServer.setIp("0.0.0.0");
+        CronServer cronServer = new CronServer("0.0.0.0");
         cronServerRepository.save(cronServer);
 
         CronJob cronJob = new CronJob();
@@ -224,8 +219,7 @@ public class CronProcessServiceIntegrationTest {
         //given
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
-        CronServer cronServer = new CronServer();
-        cronServer.setIp("0.0.0.0");
+        CronServer cronServer = new CronServer("0.0.0.0");
         cronServerRepository.save(cronServer);
 
         CronJob cronJob = new CronJob();
