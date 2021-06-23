@@ -8,6 +8,7 @@ import com.influxdb.query.FluxTable;
 import gabia.cronMonitoring.repository.CronLogRepository;
 import gabia.cronMonitoring.entity.CronLog;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 
@@ -17,7 +18,7 @@ public class CronLogRepositoryImpl implements CronLogRepository {
     private static final String server = "http://182.162.142.151:8086/";
     private static final char[] token =
         "W90KOru9HsUcsbJ-7NDZvl-ECE5OdsKe3F8LsuNlY5pNQr9mtrE887RnARrNP1Jr6MgE3BACeXptTOkp6E5ibQ=="
-        .toCharArray();
+            .toCharArray();
     private static final String org = "Gabia";
     private static final String bucket = "Cron";
 
@@ -46,19 +47,14 @@ public class CronLogRepositoryImpl implements CronLogRepository {
 
         List<FluxTable> tables = queryApi.query(flux);
 
-        List<CronLog> cronLogs = new ArrayList<>();
+        List<CronLog> cronLogs = new LinkedList<>();
 
         for (FluxTable table : tables) {
             List<FluxRecord> records = table.getRecords();
             for (FluxRecord record : records) {
-                CronLog cronLog = CronLog.builder()
-                    .start(record.getStart())
-                    .stop(record.getStop())
-                    .time(record.getTime())
-                    .cronProcess(cronProcess)
-                    .value(record.getValueByKey("_value").toString())
-                    .build();
-
+                CronLog cronLog =
+                    new CronLog(record.getTime(), cronProcess, record.getStart(), record.getStop(),
+                        record.getValueByKey("_value").toString());
                 cronLogs.add(cronLog);
             }
         }

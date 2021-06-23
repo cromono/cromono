@@ -238,19 +238,9 @@ class CronProcessServiceTest {
         //given
         openMocks(this);
         List<CronLog> responses = new ArrayList<>();
-        CronLog cronLog = CronLog.builder()
-            .cronProcess("1")
-            .start(Instant.now())
-            .stop(Instant.now())
-            .value("test log1")
-            .build();
+        CronLog cronLog = new CronLog(Instant.now(), "1", Instant.now(), Instant.now(), "test log");
+        CronLog cronLog2 = new CronLog(Instant.now(), "1", Instant.now(), Instant.now(), "test log1");
 
-        CronLog cronLog2 = CronLog.builder()
-            .cronProcess("1")
-            .start(Instant.now())
-            .stop(Instant.now())
-            .value("test log1")
-            .build();
 
         responses.add(cronLog);
         responses.add(cronLog2);

@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Measurement(name = "cron_log")
 public class CronLog {
 
@@ -23,15 +22,12 @@ public class CronLog {
     @Column(tag = true)
     private String cronProcess;
 
-    @Column
+    @Column(timestamp = true)
     private Instant start;
 
-    @Column
+    @Column(timestamp = true)
     private Instant stop;
 
     @Column
     private String value;
-
-    @Column
-    private Instant time;
 }
