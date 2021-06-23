@@ -1,31 +1,33 @@
 package gabia.cronMonitoring.entity;
 
-import java.sql.Timestamp;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import com.influxdb.annotations.Column;
+import com.influxdb.annotations.Measurement;
+import java.time.Instant;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
-@Entity
 @Getter
-@Setter
-@Table(name = "cron_log")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Measurement(name = "cron_log")
 public class CronLog {
 
-    @Id
-    @GeneratedValue
-    private Timestamp logTime;
+    @Column(timestamp = true)
+    private Instant logTime;
 
-    @NotNull
-    private String log;
+    @Column(tag = true)
+    private String cronProcess;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pid")
-    private CronProcess cronProcess;
+    @Column(timestamp = true)
+    private Instant start;
+
+    @Column(timestamp = true)
+    private Instant stop;
+
+    @Column
+    private String value;
 }

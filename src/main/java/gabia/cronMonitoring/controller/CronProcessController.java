@@ -1,5 +1,6 @@
 package gabia.cronMonitoring.controller;
 
+import gabia.cronMonitoring.dto.CronLogDto;
 import gabia.cronMonitoring.dto.CronProcessDto;
 import gabia.cronMonitoring.dto.CronProcessDto.Response;
 import gabia.cronMonitoring.service.CronProcessService;
@@ -59,6 +60,16 @@ public class CronProcessController {
 
         Response cronProcess = cronProcessService.changeCronProcess(pid, request);
         return new ResponseEntity<>(cronProcess, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "{pid}/logs")
+    public ResponseEntity<List<CronLogDto.Response>> getCronLogs(
+        @PathVariable(name = "serverIp") String serverIp,
+        @PathVariable(name = "cronJobId") UUID cronJobId, @PathVariable(name = "pid") String pid) {
+
+        List<CronLogDto.Response> cronLogs = cronProcessService.findCronLogs(pid);
+
+        return new ResponseEntity<>(cronLogs, HttpStatus.OK);
 
     }
 
