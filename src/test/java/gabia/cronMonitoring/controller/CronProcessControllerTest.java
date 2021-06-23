@@ -8,10 +8,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gabia.cronMonitoring.dto.CronLogDto;
 import gabia.cronMonitoring.dto.CronProcessDto.Request;
 import gabia.cronMonitoring.dto.CronProcessDto.Response;
 import gabia.cronMonitoring.service.CronProcessService;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -158,8 +160,6 @@ public class CronProcessControllerTest {
         ObjectMapper mapper = new ObjectMapper();
         String requestJson = mapper.writeValueAsString(request);
 
-
-
         //then
         mvc.perform(
             patch("/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process/{pid}", "0.0.0.0",
@@ -170,6 +170,41 @@ public class CronProcessControllerTest {
             .andExpect(jsonPath("$.pid").value("12"))
             .andExpect(jsonPath("$.cronJobId")
                 .value("123e4567-e89b-12d3-a456-556642440000"))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    public void findCronLogs() throws Exception{
+        //given
+        List<CronLogDto.Response> responses = new ArrayList<>();
+
+        CronLogDto.Response response = new CronLogDto.Response();
+        response.setCronProcess("1");
+        response.setValue("test log");
+        response.setStart(Instant.now());
+        response.setStop(Instant.now());
+
+        CronLogDto.Response response2 = new CronLogDto.Response();
+        response2.setCronProcess("1");
+        response2.setValue("test log2");
+        response2.setStart(Instant.now());
+        response2.setStop(Instant.now());
+
+        responses.add(response);
+        responses.add(response2);
+
+        //when
+        given(cronProcessService.findCronLogs("1")).willReturn(responses);
+
+        //then
+        mvc.perform(
+            get("/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process/{pid}/logs", "0.0.0.0",
+                UUID.fromString("123e4567-e89b-12d3-a456-556642440000"), "1"))
+            .andDo(print())
+            .andExpect(jsonPath("$[0].cronProcess").value("1"))
+            .andExpect(jsonPath("$[0].value").value("test log"))
+            .andExpect(jsonPath("$[1].cronProcess").value("1"))
+            .andExpect(jsonPath("$[1].value").value("test log2"))
             .andExpect(status().isOk());
     }
 
