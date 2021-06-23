@@ -5,16 +5,20 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.MockitoAnnotations.*;
 
+import gabia.cronMonitoring.dto.CronLogDto;
 import gabia.cronMonitoring.dto.CronProcessDto;
 import gabia.cronMonitoring.dto.CronProcessDto.Request;
 import gabia.cronMonitoring.dto.CronProcessDto.Response;
 import gabia.cronMonitoring.entity.CronJob;
+import gabia.cronMonitoring.entity.CronLog;
 import gabia.cronMonitoring.entity.CronProcess;
 import gabia.cronMonitoring.entity.CronServer;
 import gabia.cronMonitoring.exception.cron.process.CronProcessNotFoundException;
 import gabia.cronMonitoring.repository.CronJobRepository;
+import gabia.cronMonitoring.repository.CronLogRepository;
 import gabia.cronMonitoring.repository.CronProcessRepository;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +41,9 @@ class CronProcessServiceTest {
 
     @Mock
     private CronJobRepository cronJobRepository;
+
+    @Mock
+    private CronLogRepository cronLogRepository;
 
     @InjectMocks
     private CronProcessService cronProcessService;
@@ -223,6 +230,38 @@ class CronProcessServiceTest {
             request.setEndTime(timestamp);
             cronProcessService.changeCronProcess("2", request);
         });
+
+    }
+
+    @Test
+    void findCronLogs() {
+        //given
+        openMocks(this);
+        List<CronLog> responses = new ArrayList<>();
+        CronLog cronLog = new CronLog(Instant.now(), "1", Instant.now(), Instant.now(), "test log");
+        CronLog cronLog2 = new CronLog(Instant.now(), "1", Instant.now(), Instant.now(), "test log1");
+
+
+        responses.add(cronLog);
+        responses.add(cronLog2);
+
+        given(cronLogRepository.findByTag("1")).willReturn(responses);
+
+        //when
+        List<CronLogDto.Response> cronLogs = cronProcessService.findCronLogs("1");
+
+        //then
+        Assertions.assertThat(cronLogs.get(0).getCronProcess()).isEqualTo("1");
+        Assertions.assertThat(cronLogs.get(0).getValue()).isEqualTo(cronLog.getValue());
+        Assertions.assertThat(cronLogs.get(0).getStart()).isEqualTo(cronLog.getStart());
+        Assertions.assertThat(cronLogs.get(0).getStop()).isEqualTo(cronLog.getStop());
+
+        Assertions.assertThat(cronLogs.get(1).getCronProcess()).isEqualTo("1");
+        Assertions.assertThat(cronLogs.get(1).getValue()).isEqualTo(cronLog2.getValue());
+        Assertions.assertThat(cronLogs.get(1).getStart()).isEqualTo(cronLog2.getStart());
+        Assertions.assertThat(cronLogs.get(1).getStop()).isEqualTo(cronLog2.getStop());
+
+
 
     }
 }
