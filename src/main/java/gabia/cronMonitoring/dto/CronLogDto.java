@@ -1,7 +1,7 @@
 package gabia.cronMonitoring.dto;
 
-import java.sql.Timestamp;
-import java.util.UUID;
+import gabia.cronMonitoring.entity.CronLog;
+import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,23 +13,17 @@ public class CronLogDto {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class Request {
-
-        String pid;
-        Timestamp startTime;
-        Timestamp endTime;
-    }
-
-    @Getter
-    @Setter
-    @AllArgsConstructor
-    @NoArgsConstructor
     public static class Response {
 
-        UUID cronJobId;
-        String pid;
-        Timestamp startTime;
-        Timestamp endTime;
+        String cronProcess;
+        Instant start;
+        Instant stop;
+        String value;
+
+        public static CronLogDto.Response from(CronLog cronLog) {
+            return new CronLogDto.Response(cronLog.getCronProcess(), cronLog.getStart(),
+                cronLog.getStop(), cronLog.getValue());
+        }
     }
 
 }
