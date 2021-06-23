@@ -1,11 +1,13 @@
 package gabia.cronMonitoring.service;
 
+import gabia.cronMonitoring.dto.CronLogDto;
 import gabia.cronMonitoring.dto.CronProcessDto;
 import gabia.cronMonitoring.entity.CronJob;
 import gabia.cronMonitoring.entity.CronProcess;
 import gabia.cronMonitoring.exception.cron.process.CronJobNotFoundException;
 import gabia.cronMonitoring.exception.cron.process.CronProcessNotFoundException;
 import gabia.cronMonitoring.repository.CronJobRepository;
+import gabia.cronMonitoring.repository.CronLogRepository;
 import gabia.cronMonitoring.repository.CronProcessRepository;
 import java.util.List;
 import java.util.UUID;
@@ -20,6 +22,7 @@ public class CronProcessService {
 
     private final CronProcessRepository cronProcessRepository;
     private final CronJobRepository cronJobRepository;
+    private final CronLogRepository cronLogRepository;
 
     public List<CronProcessDto.Response> findAllCronProcess(UUID cronJobId) {
 
@@ -73,4 +76,12 @@ public class CronProcessService {
         return response;
     }
 
+    public List<CronLogDto.Response> findCronLogs(String pid) {
+
+        List<CronLogDto.Response> response = cronLogRepository.findByTag(pid).stream()
+            .map(dto -> CronLogDto.Response.from(dto))
+            .collect(Collectors.toList());
+        return response;
+
+    }
 }
