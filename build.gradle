@@ -33,6 +33,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation group: 'com.github.ulisesbocchio', name: 'jasypt-spring-boot-starter', version: '3.0.2'
 	implementation 'com.influxdb:influxdb-client-java:2.3.0'
+	implementation group: 'com.squareup.retrofit2', name: 'retrofit', version: '2.7.2'
 
 //JUnit4 추가
 	testImplementation("org.junit.vintage:junit-vintage-engine") {
