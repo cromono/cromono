@@ -1,4 +1,4 @@
-package gabia.cronMonitoring.controller;
+package gabia.cronMonitoring.integration;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gabia.cronMonitoring.controller.CronServerController;
 import gabia.cronMonitoring.dto.CronServerDTO;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ import org.springframework.web.context.WebApplicationContext;
 @Transactional
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class CronServerControllerIntegrationTest {
+public class CronServerIntegrationTest {
 
     @Autowired
     private WebApplicationContext wac;
