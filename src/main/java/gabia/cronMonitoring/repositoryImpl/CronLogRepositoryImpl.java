@@ -15,8 +15,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class CronLogRepositoryImpl implements CronLogRepository {
 
-//    private static final String server = "http://182.162.142.151:8086/";
-    private static final String server = "http://10.7.27.11:8086/";
+//    private static final String server = "http://182.162.142.151:8086/"; // 공인 IP
+    private static final String server = "http://10.7.27.9:8086/"; // 사설 IP
     private static final char[] token =
         "W90KOru9HsUcsbJ-7NDZvl-ECE5OdsKe3F8LsuNlY5pNQr9mtrE887RnARrNP1Jr6MgE3BACeXptTOkp6E5ibQ=="
             .toCharArray();
