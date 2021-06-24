@@ -35,11 +35,15 @@ dependencies {
 	implementation 'com.influxdb:influxdb-client-java:2.3.0'
 	implementation group: 'com.squareup.retrofit2', name: 'retrofit', version: '2.7.2'
 
-//JUnit4 추가
+	//JUnit4 추가
 	testImplementation("org.junit.vintage:junit-vintage-engine") {
 		exclude group: "org.hamcrest", module: "hamcrest-core"
 
 	}
+
+	//Spring Security 추가
+	implementation "org.springframework.boot:spring-boot-starter-security"
+	implementation 'org.springframework.security:spring-security-test'
 }
 
 test {

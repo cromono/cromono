@@ -1,4 +1,4 @@
-package gabia.cronMonitoring;
+package gabia.cronMonitoring.config;
 
 import org.jasypt.encryption.StringEncryptor;
 import org.jasypt.encryption.pbe.PooledPBEBigDecimalEncryptor;
