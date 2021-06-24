@@ -18,12 +18,13 @@ import lombok.Setter;
 public class Team {
 
     @Id
+//    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "team_id")
+    @Column(name = "team_account")
     @NotNull
-    private String teamId;
+    private String teamAccount;
 
     @Column(name = "team_name")
     @NotNull

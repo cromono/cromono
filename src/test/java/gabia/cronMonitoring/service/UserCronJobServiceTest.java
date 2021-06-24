@@ -10,6 +10,7 @@ import gabia.cronMonitoring.entity.CronJob;
 import gabia.cronMonitoring.entity.CronServer;
 import gabia.cronMonitoring.entity.User;
 import gabia.cronMonitoring.entity.UserCronJob;
+import gabia.cronMonitoring.repository.CronJobRepositoryDataJpa;
 import gabia.cronMonitoring.repository.UserCronJobRepository;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,13 +29,16 @@ public class UserCronJobServiceTest {
     @Mock
     private UserCronJobRepository userCronJobRepository;
 
+    @Mock
+    private CronJobRepositoryDataJpa cronJobRepository;
+
     @InjectMocks
     private UserCronJobService userCronJobService;
 
-    @Before
-    public void init() {
-        userCronJobService = new UserCronJobService(this.userCronJobRepository);
-    }
+//    @Before
+//    public void init() {
+//        userCronJobService = new UserCronJobService(this.userCronJobRepository, this.cronJobRepository);
+//    }
 
     @Test
     public void findAllUserCronJob() {

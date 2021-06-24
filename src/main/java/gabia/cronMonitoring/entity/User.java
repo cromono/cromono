@@ -17,12 +17,13 @@ import lombok.Setter;
 public class User {
 
     @Id
+    @Column(name="user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id")
+    @Column(name = "account")
     @NotNull
-    private String userId;
+    private String account;
 
     @Column(name = "name")
     @NotNull
