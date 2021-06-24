@@ -10,4 +10,6 @@ public interface UserCronJobRepository extends JpaRepository<UserCronJob, Long> 
     List<UserCronJob> findByUserAccount(String account);
 
     void deleteByCronJobIdAndUserAccount(UUID cronJobId, String account);
+
+    UserCronJob save(UserCronJob userCronJob);
 }

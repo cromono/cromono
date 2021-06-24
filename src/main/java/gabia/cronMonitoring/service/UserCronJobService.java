@@ -68,6 +68,4 @@ public class UserCronJobService {
 
         userCronJobRepository.deleteByCronJobIdAndUserAccount(cronJobId, account);
     }
-
-
 }
