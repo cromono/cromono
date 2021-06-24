@@ -1,7 +1,5 @@
 package gabia.cronMonitoring.entity;
 
-import java.io.Serializable;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -19,14 +17,14 @@ import lombok.Setter;
 
 @Entity
 @Getter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@Setter
 @Table(name = "user_cron_job")
-public class UserCronJob implements Serializable {
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class UserCronJob {
 
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -35,8 +33,6 @@ public class UserCronJob implements Serializable {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cron_job_id", referencedColumnName = "cron_job_id")
+    @JoinColumn(name = "cron_job_id")
     private CronJob cronJob;
-
-//    @JoinColumn(name = "server_ip", referencedColumnName = "server_ip")
 }
