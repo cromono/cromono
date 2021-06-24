@@ -1,4 +1,4 @@
-package gabia.cronMonitoring.service.exception;
+package gabia.cronMonitoring.exception.cron.job;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
