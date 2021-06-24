@@ -5,7 +5,7 @@ import gabia.cronMonitoring.dto.CronProcessDto.ErrorResponse;
 import gabia.cronMonitoring.dto.UserCronJobDTO;
 import gabia.cronMonitoring.exception.cron.process.CronJobNotFoundException;
 import gabia.cronMonitoring.exception.cron.process.CronProcessNotFoundException;
-import gabia.cronMonitoring.exception.cron.process.UserNotFoundException;
+import gabia.cronMonitoring.exception.cron.user.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
