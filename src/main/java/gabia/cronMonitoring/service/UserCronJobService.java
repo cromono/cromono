@@ -6,7 +6,7 @@ import gabia.cronMonitoring.entity.CronJob;
 import gabia.cronMonitoring.entity.User;
 import gabia.cronMonitoring.entity.UserCronJob;
 import gabia.cronMonitoring.exception.cron.process.CronJobNotFoundException;
-import gabia.cronMonitoring.exception.cron.process.UserNotFoundException;
+import gabia.cronMonitoring.exception.cron.user.UserNotFoundException;
 import gabia.cronMonitoring.repository.CronJobRepositoryDataJpa;
 import gabia.cronMonitoring.repository.UserCronJobRepository;
 import gabia.cronMonitoring.repository.UserRepository;
@@ -38,9 +38,9 @@ public class UserCronJobService {
     }
 
     @Transactional
-    public UserCronJobDTO.Response addUserCronJob(String account, UUID cronJobId) {
+    public UserCronJobDTO.Response addUserCronJob(String account, UserCronJobDTO.Request request) {
 
-        CronJob cronJob = cronJobRepository.findById(cronJobId)
+        CronJob cronJob = cronJobRepository.findById(request.getCronJobId())
             .orElseThrow(() -> new CronJobNotFoundException());
 
         User user = userRepository.findByAccount(account)
