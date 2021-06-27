@@ -58,6 +58,12 @@ public class UserService /*implements UserDetailsService*/ {
         return UserDTO.Response.from(userRepository.save(newUser));
     }
 
+    public UserDTO.Response getUser(UserDTO.Request request) {
+        User user = userRepository.findByAccount(request.getAccount())
+            .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자입니다."));
+        return UserDTO.Response.from(user);
+    }
+
     public List<UserDTO.Response> getUsers() {
         List<UserDTO.Response> response = userRepository.findAll().stream()
             .map(user -> UserDTO.Response.from(user))
@@ -66,10 +72,10 @@ public class UserService /*implements UserDetailsService*/ {
     }
 
     @Transactional
-    public UserDTO.Response updateUser(UserDTO.Request request) {
-        User user = userRepository.findByAccount(request.getAccount())
-            .orElseThrow(() -> new UserNotFoundException());
-        if (!user.getAccount().equals(request.getAccount())) {
+    public UserDTO.Response updateUser(String userAccount, UserDTO.Request request) {
+        User user = userRepository.findByAccount(userAccount)
+            .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자입니다."));
+        if (!userAccount.equals(request.getAccount())) {
             userRepository.findByAccount(request.getAccount()).ifPresent(none -> {
                 throw new ExistingInputException("이미 등록된 ID입니다.");
             });
@@ -103,7 +109,7 @@ public class UserService /*implements UserDetailsService*/ {
     @Transactional
     public void deleteUser(UserDTO.Request request) {
         User user = userRepository.findByAccount(request.getAccount())
-            .orElseThrow(() -> new UserNotFoundException());
+            .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자입니다."));
         userRepository.delete(user);
     }
 

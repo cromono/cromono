@@ -96,7 +96,6 @@ public class CronServerControllerTest {
         CronServerDTO cronServerDTO = new CronServerDTO("1.1.1.1");
         String request = mapper.writeValueAsString(cronServerDTO);
         // When
-        String expectByServerIp = "$.serverIp";
         // Then
         mockMvc.perform(delete("/cron-servers/{serverIp}", "1.1.1.1")
             .contentType(MediaType.APPLICATION_JSON)

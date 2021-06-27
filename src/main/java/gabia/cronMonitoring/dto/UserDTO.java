@@ -32,9 +32,17 @@ public class UserDTO {
     public static class Response {
 
         String account;
+        String name;
+        String email;
+        UserRole role;
 
         public static Response from(User user) {
-            return new Response(user.getAccount());
+            Response response = new Response();
+            response.setAccount(user.getAccount());
+            response.setName(user.getName());
+            response.setEmail(user.getEmail());
+            response.setRole(user.getRole());
+            return response;
         }
     }
 

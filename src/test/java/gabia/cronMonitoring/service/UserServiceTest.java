@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import gabia.cronMonitoring.dto.UserDTO;
+import gabia.cronMonitoring.dto.UserDTO.Request;
 import gabia.cronMonitoring.dto.UserDTO.Response;
 import gabia.cronMonitoring.entity.Enum.UserRole;
 import gabia.cronMonitoring.entity.User;
@@ -215,14 +216,71 @@ public class UserServiceTest {
             .build());
 
         List<Response> userDTOs = new ArrayList<>();
-        userDTOs.add(new UserDTO.Response("test1"));
-        userDTOs.add(new UserDTO.Response("test2"));
-        userDTOs.add(new UserDTO.Response("test3"));
+        Response response1 = new Response();
+        response1.setAccount("test1");
+        response1.setEmail("test1");
+        response1.setName("test1");
+        response1.setRole(UserRole.USER);
+        Response response2 = new Response();
+        response2.setAccount("test2");
+        response2.setEmail("test2");
+        response2.setName("test2");
+        response2.setRole(UserRole.USER);
+        Response response3 = new Response();
+        response3.setAccount("test3");
+        response3.setEmail("test3");
+        response3.setName("test3");
+        response3.setRole(UserRole.USER);
+        userDTOs.add(response1);
+        userDTOs.add(response2);
+        userDTOs.add(response3);
         // When
         when(userRepository.findAll()).thenReturn(users);
         List<Response> savedUsers = userService.getUsers();
         // Then
         Assertions.assertThat(savedUsers).isEqualTo(userDTOs);
+    }
+
+    @Test
+    public void 사용자_정보_조회() throws Exception {
+        // Given
+        User user = User.builder()
+            .account("test1")
+            .name("test1")
+            .email("test1")
+            .password("test1")
+            .role(UserRole.USER)
+            .build();
+        Response response = new Response();
+        response.setAccount("test1");
+        response.setEmail("test1");
+        response.setName("test1");
+        response.setRole(UserRole.USER);
+        UserDTO.Request request = new Request();
+        request.setAccount(user.getAccount());
+        // When
+        when(userRepository.findByAccount(user.getAccount())).thenReturn(Optional.of(user));
+        Response getUserResponse = userService.getUser(request);
+        // Then
+        Assertions.assertThat(getUserResponse).isEqualTo(response);
+    }
+
+    @Test
+    public void 미등록_사용자_조회시_예외() throws Exception {
+        // Given
+        User user = User.builder()
+            .account("test1")
+            .name("test1")
+            .email("test1")
+            .password("test1")
+            .role(UserRole.USER)
+            .build();
+        UserDTO.Request request = new Request();
+        request.setAccount(user.getAccount());
+        // When
+        when(userRepository.findByAccount(user.getAccount())).thenReturn(Optional.empty());
+        // Then
+        assertThrows(UserNotFoundException.class, () -> userService.getUser(request));
     }
 
     @Test
@@ -248,7 +306,7 @@ public class UserServiceTest {
         request.setPassword(password);
         // When
         when(userRepository.findByAccount(account)).thenReturn(Optional.of(user));
-        Response response = userService.updateUser(request);
+        Response response = userService.updateUser("test", request);
         when(userRepository.findByAccount(response.getAccount())).thenReturn(Optional.of(user));
         // Then
         Assertions.assertThat(userRepository.findByAccount(account).get().getName())
@@ -271,7 +329,7 @@ public class UserServiceTest {
         // When
         when(userRepository.findByAccount(account)).thenReturn(Optional.empty());
         // Then
-        assertThrows(UserNotFoundException.class, () -> userService.updateUser(request));
+        assertThrows(UserNotFoundException.class, () -> userService.updateUser(account, request));
     }
 
     @Test
@@ -296,9 +354,10 @@ public class UserServiceTest {
         request.setEmail(email);
         request.setPassword(password);
         // When
+        when(userRepository.findByAccount(oldAccount)).thenReturn(Optional.of(user));
         when(userRepository.findByAccount(newAccount)).thenReturn(Optional.of(user));
         // Then
-        assertThrows(ExistingInputException.class, () -> userService.updateUser(request));
+        assertThrows(ExistingInputException.class, () -> userService.updateUser(oldAccount, request));
     }
 
     @Test
@@ -326,7 +385,7 @@ public class UserServiceTest {
         when(userRepository.findByAccount(account)).thenReturn(Optional.of(user));
         when(userRepository.findByEmail(newEmail)).thenReturn(Optional.of(user));
         // Then
-        assertThrows(ExistingInputException.class, () -> userService.updateUser(request));
+        assertThrows(ExistingInputException.class, () -> userService.updateUser(account, request));
     }
 
     @Test
