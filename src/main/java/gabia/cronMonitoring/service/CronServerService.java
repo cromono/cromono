@@ -24,9 +24,9 @@ public class CronServerService {
     private InetAddressValidator inetAddressValidator = InetAddressValidator.getInstance();
 
     public List<CronServerDTO> getCronServers() {
-        return cronServerRepository.findAll().stream().map(s -> CronServerDTO.from(s))
-            .collect(
-                Collectors.toList());
+        return cronServerRepository.findAll().stream()
+            .map(s -> CronServerDTO.from(s))
+            .collect(Collectors.toList());
     }
 
     public CronServerDTO getCronServer(String ip) {

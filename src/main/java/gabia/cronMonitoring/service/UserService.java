@@ -1,6 +1,7 @@
 package gabia.cronMonitoring.service;
 
 import gabia.cronMonitoring.dto.UserDTO;
+import gabia.cronMonitoring.dto.UserDTO.Response;
 import gabia.cronMonitoring.entity.Enum.UserRole;
 import gabia.cronMonitoring.entity.User;
 import gabia.cronMonitoring.entity.UserDetailsImpl;
@@ -26,6 +27,7 @@ public class UserService /*implements UserDetailsService*/ {
 
     private final UserRepository userRepository;
 
+    @Transactional
     public UserDTO.Response addUser(UserDTO.Request request) {
         if (request.getAccount().isEmpty()) {
             throw new InputNotFoundException("ID를 입력하지 않았습니다.");
@@ -57,20 +59,27 @@ public class UserService /*implements UserDetailsService*/ {
     }
 
     public List<UserDTO.Response> getUsers() {
-        return userRepository.findAll().stream().map(user -> UserDTO.Response.from(user)).collect(
-            Collectors.toList());
+        List<UserDTO.Response> response = userRepository.findAll().stream()
+            .map(user -> UserDTO.Response.from(user))
+            .collect(Collectors.toList());
+        return response;
     }
 
     @Transactional
     public UserDTO.Response updateUser(UserDTO.Request request) {
         User user = userRepository.findByAccount(request.getAccount())
             .orElseThrow(() -> new UserNotFoundException());
-        userRepository.findByAccount(request.getAccount()).ifPresent(none -> {
-            throw new ExistingInputException("이미 등록된 ID입니다.");
-        });
-        userRepository.findByEmail(request.getEmail()).ifPresent(none -> {
-            throw new ExistingInputException("이미 등록된 메일 주소입니다.");
-        });
+        if (!user.getAccount().equals(request.getAccount())) {
+            userRepository.findByAccount(request.getAccount()).ifPresent(none -> {
+                throw new ExistingInputException("이미 등록된 ID입니다.");
+            });
+        }
+
+        if (!user.getEmail().equals(request.getEmail())) {
+            userRepository.findByEmail(request.getEmail()).ifPresent(none -> {
+                throw new ExistingInputException("이미 등록된 메일 주소입니다.");
+            });
+        }
         if (!request.getAccount().isEmpty()) {
             user.setAccount(request.getAccount());
         }
@@ -83,7 +92,7 @@ public class UserService /*implements UserDetailsService*/ {
         if (!request.getPassword().isEmpty()) {
             user.setPassword(request.getPassword());
         }
-        if (!request.getRole().toString().isEmpty()) {
+        if (request.getRole() != null) {
             user.setRole(request.getRole());
         }
         userRepository.save(user);
@@ -91,6 +100,7 @@ public class UserService /*implements UserDetailsService*/ {
         return UserDTO.Response.from(user);
     }
 
+    @Transactional
     public void deleteUser(UserDTO.Request request) {
         User user = userRepository.findByAccount(request.getAccount())
             .orElseThrow(() -> new UserNotFoundException());

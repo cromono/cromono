@@ -3,6 +3,7 @@ package gabia.cronMonitoring.dto;
 import gabia.cronMonitoring.entity.Enum.UserRole;
 import gabia.cronMonitoring.entity.User;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +14,7 @@ public class UserDTO {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
+    @Data
     public static class Request {
 
         String account;
@@ -26,6 +28,7 @@ public class UserDTO {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
+    @Data
     public static class Response {
 
         String account;
@@ -39,6 +42,7 @@ public class UserDTO {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
+    @Data
     public static class ErrorResponse {
         String errorMsg;
         String errorCode;
