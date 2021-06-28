@@ -11,8 +11,6 @@ import lombok.Setter;
 public class CronLogDto {
 
     @Data
-    @Getter
-    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Response {

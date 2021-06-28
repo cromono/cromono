@@ -11,8 +11,6 @@ import lombok.Setter;
 public class UserCronJobDTO {
 
     @Data
-    @Getter
-    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Request {
@@ -21,8 +19,6 @@ public class UserCronJobDTO {
     }
 
     @Data
-    @Getter
-    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Response {
@@ -37,8 +33,6 @@ public class UserCronJobDTO {
     }
 
     @Data
-    @Getter
-    @Setter
     @AllArgsConstructor
     public static class ErrorResponse {
 

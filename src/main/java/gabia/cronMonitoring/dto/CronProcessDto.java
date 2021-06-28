@@ -12,8 +12,6 @@ import lombok.Setter;
 public class CronProcessDto {
 
     @Data
-    @Getter
-    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Request {
@@ -24,8 +22,6 @@ public class CronProcessDto {
     }
 
     @Data
-    @Getter
-    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Response {
@@ -42,8 +38,6 @@ public class CronProcessDto {
     }
 
     @Data
-    @Getter
-    @Setter
     @AllArgsConstructor
     public static class ErrorResponse {
 
