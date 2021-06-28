@@ -10,7 +10,7 @@ public class TeamNotFoundException extends RuntimeException {
     private String message;
 
     public TeamNotFoundException() {
-        this.message = "Do not find User";
+        this.message = "Do not find Team";
     }
 
     public TeamNotFoundException(String message) {
