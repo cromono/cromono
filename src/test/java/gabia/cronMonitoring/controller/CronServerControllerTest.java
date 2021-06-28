@@ -10,33 +10,44 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gabia.cronMonitoring.dto.CronServerDTO;
 import gabia.cronMonitoring.service.CronServerService;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-@RunWith(SpringRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @WebMvcTest(CronServerController.class)
 public class CronServerControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Mock
     private CronServerService cronServerService;
 
-    @Autowired
-    ObjectMapper mapper;
+    @InjectMocks
+    private CronServerController cronServerController;
+
+    @Before
+    public void setup() {
+        cronServerController = new CronServerController(cronServerService);
+        mockMvc = standaloneSetup(cronServerController).build();
+    }
+
+    ObjectMapper mapper = new ObjectMapper();
 
     @Test
     public void 서버_목록_GET() throws Exception {

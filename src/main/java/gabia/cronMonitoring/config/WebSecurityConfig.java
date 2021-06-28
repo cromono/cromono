@@ -1,8 +1,8 @@
 package gabia.cronMonitoring.config;
 
-import gabia.cronMonitoring.jwt.JwtSecurityConfig;
 import gabia.cronMonitoring.jwt.JwtAccessDeniedHandler;
 import gabia.cronMonitoring.jwt.JwtAuthenticationEntryPoint;
+import gabia.cronMonitoring.jwt.JwtSecurityConfig;
 import gabia.cronMonitoring.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -15,8 +15,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
