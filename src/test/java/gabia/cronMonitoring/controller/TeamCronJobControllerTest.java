@@ -1,6 +1,5 @@
 package gabia.cronMonitoring.controller;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -65,7 +64,6 @@ public class TeamCronJobControllerTest {
         allResponse.add(testResponse2);
 
         //when
-
         given(teamCronJobService.findAllTeamCronJob("test")).willReturn(allResponse);
 
         //then
@@ -82,7 +80,6 @@ public class TeamCronJobControllerTest {
     public void 팀_크론잡_추가() throws Exception {
 
         //given
-
         TeamCronJobDTO.Response testResponse = new TeamCronJobDTO.Response();
         testResponse.setTeamAccount("test");
         testResponse.setCronJobId(UUID.randomUUID());
@@ -94,7 +91,7 @@ public class TeamCronJobControllerTest {
         ObjectMapper mapper = new ObjectMapper();
         String requestJson = mapper.writeValueAsString(request);
 
-        given(teamCronJobService.addTeamCronJob(any(), any()))
+        given(teamCronJobService.addTeamCronJob("test", request))
             .willReturn(testResponse);
 
         //then

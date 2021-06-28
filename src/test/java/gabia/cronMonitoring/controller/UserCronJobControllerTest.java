@@ -1,25 +1,20 @@
 package gabia.cronMonitoring.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gabia.cronMonitoring.dto.CronLogDto;
-import gabia.cronMonitoring.dto.CronProcessDto.Response;
 import gabia.cronMonitoring.dto.UserCronJobDTO;
 import gabia.cronMonitoring.dto.UserCronJobDTO.Request;
-import gabia.cronMonitoring.entity.UserCronJob;
-import gabia.cronMonitoring.service.CronProcessService;
 import gabia.cronMonitoring.service.UserCronJobService;
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
@@ -98,7 +93,7 @@ public class UserCronJobControllerTest {
         ObjectMapper mapper = new ObjectMapper();
         String requestJson = mapper.writeValueAsString(request);
 
-        given(userCronJobService.addUserCronJob(any(), any()))
+        given(userCronJobService.addUserCronJob("test", request))
             .willReturn(testResponse);
 
         //then

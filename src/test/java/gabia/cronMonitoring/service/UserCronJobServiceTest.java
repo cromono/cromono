@@ -90,7 +90,7 @@ class UserCronJobServiceTest {
         userCronJobList.add(userCronJob1);
         userCronJobList.add(userCronJob2);
 
-        given(userCronJobRepository.findByUserAccount(any()))
+        given(userCronJobRepository.findByUserAccount("test"))
             .willReturn(userCronJobList);
 
         //when

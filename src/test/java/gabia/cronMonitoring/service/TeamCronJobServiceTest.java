@@ -88,7 +88,7 @@ class TeamCronJobServiceTest {
         teamCronJobList.add(teamCronJob1);
         teamCronJobList.add(teamCronJob2);
 
-        given(teamCronJobRepository.findByTeamAccount(any()))
+        given(teamCronJobRepository.findByTeamAccount("test"))
             .willReturn(teamCronJobList);
 
         //when
