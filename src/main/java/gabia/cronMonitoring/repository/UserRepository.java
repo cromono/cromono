@@ -1,5 +1,10 @@
 package gabia.cronMonitoring.repository;
 
-public interface UserRepository {
+import gabia.cronMonitoring.entity.User;
+import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
+public interface UserRepository extends JpaRepository<User, Long> {
+
+    Optional<User> findByAccount(String account);
 }

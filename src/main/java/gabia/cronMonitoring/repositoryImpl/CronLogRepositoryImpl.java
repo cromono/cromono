@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class CronLogRepositoryImpl implements CronLogRepository {
 
-    //    private static final String server = "http://182.162.142.151:8086/"; // 공인 IP
+//        private static final String server = "http://182.162.142.151:8086/"; // 공인 IP
     private static final String server = "http://10.7.27.9:8086/"; // 사설 IP
     private static final char[] token =
         "W90KOru9HsUcsbJ-7NDZvl-ECE5OdsKe3F8LsuNlY5pNQr9mtrE887RnARrNP1Jr6MgE3BACeXptTOkp6E5ibQ=="
@@ -33,7 +33,8 @@ public class CronLogRepositoryImpl implements CronLogRepository {
         StringBuilder stringBuilder = new StringBuilder();
 
         String from = "from(bucket: \"Cron\")\n";
-        String range = "|> range(start: -1d)";
+        //TODO: 기간 제약으로 인해 테스트 코드가 작동하는 기한에 제약이 생김
+        String range = "|> range(start: -60d)";
         stringBuilder.append("|> filter(fn: (r) => (r[\"_measurement\"] == \"cron_log\" ");
         stringBuilder.append("and r[\"_field\"] == \"log\" ");
         stringBuilder.append("and r[\"cronProcess\"] ");
