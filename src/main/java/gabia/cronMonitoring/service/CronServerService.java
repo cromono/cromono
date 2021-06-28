@@ -28,11 +28,12 @@ public class CronServerService {
             .map(s -> CronServerDTO.from(s))
             .collect(Collectors.toList());
     }
-
-    public CronServerDTO getCronServer(String ip) {
-        CronServer cronServer = cronServerRepository.findByIp(ip).get();
-        return CronServerDTO.from(cronServer);
-    }
+    
+    // 추후 필요시 주석해제
+//    public CronServerDTO getCronServer(String ip) {
+//        CronServer cronServer = cronServerRepository.findByIp(ip).get();
+//        return CronServerDTO.from(cronServer);
+//    }
 
     @Transactional
     public CronServerDTO addCronServer(String ip) {

@@ -1,7 +1,7 @@
 package gabia.cronMonitoring.controller;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -13,7 +13,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gabia.cronMonitoring.dto.UserDTO.Request;
 import gabia.cronMonitoring.dto.UserDTO.Response;
 import gabia.cronMonitoring.entity.Enum.UserRole;
-import gabia.cronMonitoring.entity.User;
+import gabia.cronMonitoring.jwt.JwtAccessDeniedHandler;
+import gabia.cronMonitoring.jwt.JwtAuthenticationEntryPoint;
+import gabia.cronMonitoring.jwt.TokenProvider;
 import gabia.cronMonitoring.service.UserService;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +24,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(UserController.class)
+@WithMockUser(roles = "USER")
 class UserControllerTest {
+
+    @MockBean
+    TokenProvider tokenProvider;
+
+    @MockBean
+    JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
+    @MockBean
+    JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Autowired
     private MockMvc mockMvc;
@@ -44,27 +57,28 @@ class UserControllerTest {
         response1.setAccount("test1");
         response1.setEmail("test1");
         response1.setName("test1");
-        response1.setRole(UserRole.USER);
+        response1.setRole(UserRole.ROLE_USER);
 
         Response response2 = new Response();
         response2.setAccount("test2");
         response2.setEmail("test2");
         response2.setName("test2");
-        response2.setRole(UserRole.USER);
+        response2.setRole(UserRole.ROLE_USER);
 
         Response response3 = new Response();
         response3.setAccount("test3");
         response3.setEmail("test3");
         response3.setName("test3");
-        response3.setRole(UserRole.USER);
+        response3.setRole(UserRole.ROLE_USER);
 
         users.add(response1);
         users.add(response2);
         users.add(response3);
 
-        given(userService.getUsers()).willReturn(users);
         // When
         String expectAllUsers = "$.[*]";
+        when(userService.getUsers()).thenReturn(users);
+
         // Then
         mockMvc.perform(get("/users"))
             .andDo(print())
@@ -83,11 +97,12 @@ class UserControllerTest {
         response.setAccount("test1");
         response.setEmail("test1");
         response.setName("test1");
-        response.setRole(UserRole.USER);
+        response.setRole(UserRole.ROLE_USER);
 
-        given(userService.getUser(request)).willReturn(response);
         // When
         String expectByUserAccount = "$.account";
+        when(userService.getUser(request)).thenReturn(response);
+
         // Then
         mockMvc.perform(get("/users/{userId}", "test1"))
             .andDo(print())
@@ -105,11 +120,12 @@ class UserControllerTest {
         response.setAccount("test2");
         response.setEmail("test1");
         response.setName("test1");
-        response.setRole(UserRole.USER);
+        response.setRole(UserRole.ROLE_USER);
 
-        given(userService.updateUser("test1", request)).willReturn(response);
         // When
         String expectByUserAccount = "$.account";
+        when(userService.updateUser("test1", request)).thenReturn(response);
+
         // Then
         mockMvc.perform(patch("/users/{userId}", "test1")
             .contentType(MediaType.APPLICATION_JSON)

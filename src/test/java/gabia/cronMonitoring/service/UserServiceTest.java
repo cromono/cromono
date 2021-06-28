@@ -11,6 +11,7 @@ import gabia.cronMonitoring.entity.Enum.UserRole;
 import gabia.cronMonitoring.entity.User;
 import gabia.cronMonitoring.exception.user.ExistingInputException;
 import gabia.cronMonitoring.exception.user.InputNotFoundException;
+import gabia.cronMonitoring.exception.user.NotValidEmailException;
 import gabia.cronMonitoring.exception.user.UserNotFoundException;
 import gabia.cronMonitoring.repository.UserRepository;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,6 +34,8 @@ public class UserServiceTest {
     UserService userService;
     @Mock
     UserRepository userRepository;
+    @Mock
+    PasswordEncoder passwordEncoder;
 
     @Test
     public void 회원가입() throws Exception {
@@ -45,7 +49,8 @@ public class UserServiceTest {
             .name(name)
             .email(email)
             .password(password)
-            .role(UserRole.USER)
+            .role(UserRole.ROLE_USER)
+            .activated(true)
             .build();
         when(userRepository.save(any())).thenReturn(newUser);
         UserDTO.Request request = new UserDTO.Request();
@@ -54,10 +59,11 @@ public class UserServiceTest {
         request.setEmail(email);
         request.setPassword(password);
         // When
+        when(passwordEncoder.encode(any())).thenReturn("test");
         Response response = userService.addUser(request);
         when(userRepository.findByAccount(response.getAccount())).thenReturn(Optional.of(newUser));
         // Then
-        Assertions.assertThat(newUser).isEqualTo(userRepository.findByAccount(account).get());
+        Assertions.assertThat(newUser).isEqualTo(userRepository.findByAccount(response.getAccount()).get());
     }
 
     @Test
@@ -144,17 +150,15 @@ public class UserServiceTest {
             .name(name)
             .email(email)
             .password(password)
-            .role(UserRole.USER)
+            .role(UserRole.ROLE_USER)
             .build();
 
-        when(userRepository.save(any())).thenReturn(newUser);
         UserDTO.Request request = new UserDTO.Request();
         request.setAccount(account);
         request.setName(name);
         request.setEmail(email);
         request.setPassword(password);
         // When
-        userService.addUser(request);
         when(userRepository.findByAccount(account)).thenReturn(Optional.of(newUser));
         // Then
         assertThrows(ExistingInputException.class, () -> userService.addUser(request));
@@ -173,7 +177,7 @@ public class UserServiceTest {
             .name(name)
             .email(email)
             .password(password)
-            .role(UserRole.USER)
+            .role(UserRole.ROLE_USER)
             .build();
 
         UserDTO.Request request = new UserDTO.Request();
@@ -182,11 +186,28 @@ public class UserServiceTest {
         request.setEmail(email);
         request.setPassword(password);
         // When
-        when(userRepository.save(any())).thenReturn(newUser);
-        userService.addUser(request);
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(newUser));
         // Then
         assertThrows(ExistingInputException.class, () -> userService.addUser(request));
+    }
+
+    @Test
+    public void 유효하지_않은_이메일로_가입시_예외() {
+        // Given
+        String account = "test";
+        String newAccount = "test1";
+        String name = "test";
+        String email = "test";
+        String password = "test";
+
+        UserDTO.Request request = new UserDTO.Request();
+        request.setAccount(newAccount);
+        request.setName(name);
+        request.setEmail(email);
+        request.setPassword(password);
+        // When
+        // Then
+        assertThrows(NotValidEmailException.class, () -> userService.addUser(request));
     }
 
     @Test
@@ -198,21 +219,21 @@ public class UserServiceTest {
             .name("test1")
             .email("test1")
             .password("test1")
-            .role(UserRole.USER)
+            .role(UserRole.ROLE_USER)
             .build());
         users.add(User.builder()
             .account("test2")
             .name("test2")
             .email("test2")
             .password("test2")
-            .role(UserRole.USER)
+            .role(UserRole.ROLE_USER)
             .build());
         users.add(User.builder()
             .account("test3")
             .name("test3")
             .email("test3")
             .password("test3")
-            .role(UserRole.USER)
+            .role(UserRole.ROLE_USER)
             .build());
 
         List<Response> userDTOs = new ArrayList<>();
@@ -220,17 +241,17 @@ public class UserServiceTest {
         response1.setAccount("test1");
         response1.setEmail("test1");
         response1.setName("test1");
-        response1.setRole(UserRole.USER);
+        response1.setRole(UserRole.ROLE_USER);
         Response response2 = new Response();
         response2.setAccount("test2");
         response2.setEmail("test2");
         response2.setName("test2");
-        response2.setRole(UserRole.USER);
+        response2.setRole(UserRole.ROLE_USER);
         Response response3 = new Response();
         response3.setAccount("test3");
         response3.setEmail("test3");
         response3.setName("test3");
-        response3.setRole(UserRole.USER);
+        response3.setRole(UserRole.ROLE_USER);
         userDTOs.add(response1);
         userDTOs.add(response2);
         userDTOs.add(response3);
@@ -249,13 +270,13 @@ public class UserServiceTest {
             .name("test1")
             .email("test1")
             .password("test1")
-            .role(UserRole.USER)
+            .role(UserRole.ROLE_USER)
             .build();
         Response response = new Response();
         response.setAccount("test1");
         response.setEmail("test1");
         response.setName("test1");
-        response.setRole(UserRole.USER);
+        response.setRole(UserRole.ROLE_USER);
         UserDTO.Request request = new Request();
         request.setAccount(user.getAccount());
         // When
@@ -273,7 +294,7 @@ public class UserServiceTest {
             .name("test1")
             .email("test1")
             .password("test1")
-            .role(UserRole.USER)
+            .role(UserRole.ROLE_USER)
             .build();
         UserDTO.Request request = new Request();
         request.setAccount(user.getAccount());
@@ -296,7 +317,7 @@ public class UserServiceTest {
             .name(oldName)
             .email(email)
             .password(password)
-            .role(UserRole.USER)
+            .role(UserRole.ROLE_USER)
             .build();
 
         UserDTO.Request request = new UserDTO.Request();
@@ -345,7 +366,7 @@ public class UserServiceTest {
             .name(name)
             .email(email)
             .password(password)
-            .role(UserRole.USER)
+            .role(UserRole.ROLE_USER)
             .build();
 
         UserDTO.Request request = new UserDTO.Request();
@@ -373,7 +394,7 @@ public class UserServiceTest {
             .name(name)
             .email(oldEmail)
             .password(password)
-            .role(UserRole.USER)
+            .role(UserRole.ROLE_USER)
             .build();
 
         UserDTO.Request request = new UserDTO.Request();
@@ -401,7 +422,7 @@ public class UserServiceTest {
             .name(name)
             .email(oldEmail)
             .password(password)
-            .role(UserRole.USER)
+            .role(UserRole.ROLE_USER)
             .build();
 
         UserDTO.Request request = new UserDTO.Request();

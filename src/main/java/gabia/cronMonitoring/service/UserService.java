@@ -1,31 +1,31 @@
 package gabia.cronMonitoring.service;
 
 import gabia.cronMonitoring.dto.UserDTO;
-import gabia.cronMonitoring.dto.UserDTO.Response;
 import gabia.cronMonitoring.entity.Enum.UserRole;
 import gabia.cronMonitoring.entity.User;
-import gabia.cronMonitoring.entity.UserDetailsImpl;
 import gabia.cronMonitoring.exception.user.ExistingInputException;
 import gabia.cronMonitoring.exception.user.InputNotFoundException;
+import gabia.cronMonitoring.exception.user.NotValidEmailException;
 import gabia.cronMonitoring.exception.user.UserNotFoundException;
 import gabia.cronMonitoring.repository.UserRepository;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.apache.commons.validator.routines.EmailValidator;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class UserService /*implements UserDetailsService*/ {
+public class UserService {
 
     private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
+
+    private EmailValidator emailValidator = EmailValidator.getInstance();
 
     @Transactional
     public UserDTO.Response addUser(UserDTO.Request request) {
@@ -37,6 +37,9 @@ public class UserService /*implements UserDetailsService*/ {
         }
         if (request.getEmail().isEmpty()) {
             throw new InputNotFoundException("메일 주소를 입력하지 않았습니다.");
+        }
+        if (!emailValidator.isValid(request.getEmail())) {
+            throw new NotValidEmailException("유효한 메일주소가 아닙니다.");
         }
         if (request.getPassword().isEmpty()) {
             throw new InputNotFoundException("패스워드를 입력하지 않았습니다.");
@@ -51,8 +54,9 @@ public class UserService /*implements UserDetailsService*/ {
             .account(request.getAccount())
             .name(request.getName())
             .email(request.getEmail())
-            .password(request.getPassword())
-            .role(UserRole.USER)
+            .password(passwordEncoder.encode(request.getPassword()))
+            .role(UserRole.ROLE_USER)
+            .activated(true)
             .build();
 
         return UserDTO.Response.from(userRepository.save(newUser));
@@ -113,8 +117,4 @@ public class UserService /*implements UserDetailsService*/ {
         userRepository.delete(user);
     }
 
-//    @Override
-//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//        return userRepository.findByAccount(username).map(user -> new UserDetailsImpl())
-//    }
 }

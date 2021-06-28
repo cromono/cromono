@@ -10,8 +10,6 @@ import lombok.Setter;
 
 public class UserDTO {
 
-    @Getter
-    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     @Data
@@ -24,8 +22,6 @@ public class UserDTO {
         UserRole role;
     }
 
-    @Getter
-    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     @Data
@@ -46,8 +42,6 @@ public class UserDTO {
         }
     }
 
-    @Getter
-    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     @Data

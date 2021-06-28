@@ -1,5 +1,6 @@
 package gabia.cronMonitoring.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import gabia.cronMonitoring.entity.Enum.UserRole;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -57,5 +58,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-
+    @JsonIgnore
+    @Column(name = "activated")
+    private boolean activated;
 }

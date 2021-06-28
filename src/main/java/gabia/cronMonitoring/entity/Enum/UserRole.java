@@ -1,5 +1,5 @@
 package gabia.cronMonitoring.entity.Enum;
 
 public enum UserRole {
-    ROOT, USER
+    ROLE_ROOT, ROLE_USER
 }
