@@ -13,14 +13,14 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CronMonitorUtil {
 
-    private static  ObjectMapper mapper;
+    private static ObjectMapper mapper;
 
     @Autowired
-    private CronMonitorUtil(ObjectMapper mapper){
-        this.mapper=mapper;
+    private CronMonitorUtil(ObjectMapper mapper) {
+        this.mapper = mapper;
     }
 
-    public static  <T> String objToJson(T obj) throws JsonProcessingException {
+    public static <T> String objToJson(T obj) throws JsonProcessingException {
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         return ow.writeValueAsString(obj);
@@ -28,7 +28,13 @@ public class CronMonitorUtil {
 
     public static <T> T jsonStrToObj(String jsonStr, Class<T> classObj)
         throws JsonProcessingException {
-        return mapper.readValue(jsonStr,classObj);
+        return mapper.readValue(jsonStr, classObj);
+    }
+
+    public static void initForTest() {
+        if (mapper == null) {
+            mapper = new ObjectMapper();
+        }
     }
 
 }

@@ -35,7 +35,7 @@ public class TeamService {
 
         Team team = teamRepository
             .save(
-                Team.builder().name(request.getName()).account(request.getAccount()).build());
+                Team.builder().name(request.getName()).account(request.getTeamAccount()).build());
 
         TeamUser teamUser = teamUserRepository
             .save(TeamUser.builder().team(team).user(user).authority(
@@ -66,7 +66,8 @@ public class TeamService {
         Team foundedTeam = teamRepository.findByAccount(teamAccount)
             .orElseThrow(() -> new TeamNotFoundException("존재하지 않는 팀"));
 
-        TeamUser teamUser = teamUserRepository.findByTeamAccountAndUserAccount(teamAccount, userAccount)
+        TeamUser teamUser = teamUserRepository
+            .findByTeamAccountAndUserAccount(teamAccount, userAccount)
             .orElseThrow(() -> new NotTeamMemberException("팀원이 아닙니다"));
 
         if (teamUser.getAuthority() == AuthType.User) {
@@ -79,10 +80,10 @@ public class TeamService {
 
     @Transactional
     public TeamDTO.Response changeTeam(TeamDTO.Request request, String userAccount) {
-        Team team = teamRepository.findByAccount(request.getAccount())
+        Team team = teamRepository.findByAccount(request.getTeamAccount())
             .orElseThrow(() -> new TeamNotFoundException("존재하지 않는 팀"));
         TeamUser teamUser = teamUserRepository
-            .findByTeamAccountAndUserAccount(request.getAccount(), userAccount).get();
+            .findByTeamAccountAndUserAccount(request.getTeamAccount(), userAccount).get();
 
         if (teamUser.getAuthority() == AuthType.User) {
             throw new AuthException("수정 권한이 없습니다");

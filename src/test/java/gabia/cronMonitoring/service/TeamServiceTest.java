@@ -53,7 +53,8 @@ public class TeamServiceTest {
         TeamUser teamUser = TeamUser.builder().id(1L).user(user).team(team)
             .authority(AuthType.UserManager).build();
 
-        TeamDTO.Request request = new TeamDTO.Request(team.getAccount(), team.getName());
+        TeamDTO.Request request = new TeamDTO.Request(team.getAccount(), team.getName(),
+            user.getAccount());
         TeamDTO.Response response = new TeamDTO.Response(team.getAccount(), team.getName());
 
         given(userRepository.findByAccount(user.getAccount())).willReturn(
@@ -65,8 +66,8 @@ public class TeamServiceTest {
         TeamDTO.Response answer = teamService.createTeam(request, user.getAccount());
 
         //then
-        Assertions.assertThat(answer.getAccount())
-            .isEqualTo(TeamDTO.Response.from(team).getAccount());
+        Assertions.assertThat(answer.getTeamAccount())
+            .isEqualTo(TeamDTO.Response.from(team).getTeamAccount());
 
     }
 
@@ -77,7 +78,8 @@ public class TeamServiceTest {
         User user = User.builder().id(1L).account("gabiaUser1").password("1").email("yhw@gabia.com")
             .name("윤현우").build();
         Team team = Team.builder().id(1L).account("team-account-1").name("크론모니터링팀").build();
-        TeamDTO.Request request = new TeamDTO.Request(team.getAccount(), team.getName());
+        TeamDTO.Request request = new TeamDTO.Request(team.getAccount(), team.getName(),
+            user.getAccount());
         given(userRepository.findByAccount(user.getAccount())).willReturn(Optional.empty());
 
         //when
@@ -121,9 +123,9 @@ public class TeamServiceTest {
         TeamDTO.Response foundedTeam = teamService.findTeam(team3.getAccount());
 
         //then
-        Assertions.assertThat(foundedTeam.getAccount()).isNotEqualTo(team1.getAccount());
-        Assertions.assertThat(foundedTeam.getAccount()).isNotEqualTo(team2.getAccount());
-        Assertions.assertThat(foundedTeam.getAccount()).isEqualTo(team3.getAccount());
+        Assertions.assertThat(foundedTeam.getTeamAccount()).isNotEqualTo(team1.getAccount());
+        Assertions.assertThat(foundedTeam.getTeamAccount()).isNotEqualTo(team2.getAccount());
+        Assertions.assertThat(foundedTeam.getTeamAccount()).isEqualTo(team3.getAccount());
     }
 
     @Test(expected = TeamNotFoundException.class)
@@ -269,7 +271,8 @@ public class TeamServiceTest {
         TeamUser teamUser1 = TeamUser.builder().team(team1).user(user1)
             .authority(AuthType.UserManager)
             .build();
-        TeamDTO.Request request = new TeamDTO.Request(team1.getAccount(), "이름변경");
+        TeamDTO.Request request = new TeamDTO.Request(team1.getAccount(), "이름변경",
+            user1.getAccount());
         given((teamRepository.findByAccount(team1.getAccount()))).willReturn(Optional.of(team1));
         given(teamUserRepository
             .findByTeamAccountAndUserAccount(team1.getAccount(), user1.getAccount()))
@@ -277,9 +280,10 @@ public class TeamServiceTest {
         //when
         TeamDTO.Response response = teamService.changeTeam(request, user1.getAccount());
         //then
-        Assertions.assertThat(response.getAccount()).isEqualTo(team1.getAccount());
+        Assertions.assertThat(response.getTeamAccount()).isEqualTo(team1.getAccount());
         Assertions.assertThat(response.getName()).isEqualTo("이름변경");
     }
+
     @Test(expected = TeamNotFoundException.class)
     @Transactional
     public void changeTeam_팀수정_실패_존재하지않는팀() {
@@ -289,7 +293,8 @@ public class TeamServiceTest {
         User user1 = User.builder().account("gabiaUser1").password("1").email("yhw@gabia.com")
             .name("윤현우").build();
 
-        TeamDTO.Request request = new TeamDTO.Request(team1.getAccount(), team1.getName());
+        TeamDTO.Request request = new TeamDTO.Request(team1.getAccount(), team1.getName(),
+            user1.getAccount());
 
         given(teamRepository.findByAccount(team1.getAccount())).willReturn(Optional.empty());
         //when
@@ -309,7 +314,8 @@ public class TeamServiceTest {
         TeamUser teamUser1 = TeamUser.builder().team(team1).user(user1)
             .authority(AuthType.User)
             .build();
-        TeamDTO.Request request = new TeamDTO.Request(team1.getAccount(), "이름변경");
+        TeamDTO.Request request = new TeamDTO.Request(team1.getAccount(), "이름변경",
+            user1.getAccount());
         given((teamRepository.findByAccount(team1.getAccount()))).willReturn(Optional.of(team1));
         given(teamUserRepository
             .findByTeamAccountAndUserAccount(team1.getAccount(), user1.getAccount()))

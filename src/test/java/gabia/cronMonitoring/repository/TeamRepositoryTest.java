@@ -75,7 +75,7 @@ public class TeamRepositoryTest {
 
     @Test
     @Transactional
-    public void deleteByTeamId() throws Exception {
+    public void deleteByTeamAccount() throws Exception {
         //given
         Team team = new Team(null, "team-id-1", "크론모니터링팀1");
 
@@ -84,10 +84,9 @@ public class TeamRepositoryTest {
         //then
         em.flush();
         em.clear();
-        Long targetId= team.getId();
-        teamRepository.deleteByAccount(team.getAccount());
-
-        Assertions.assertThat(teamRepository.findById(targetId)).isEmpty();
+        String teamAccount = team.getAccount();
+        teamRepository.deleteByAccount(teamAccount);
+        Assertions.assertThat(teamRepository.findById(team.getId())).isEmpty();
     }
 
 }
