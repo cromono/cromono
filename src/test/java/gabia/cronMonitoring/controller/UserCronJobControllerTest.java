@@ -31,7 +31,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 @RunWith(MockitoJUnitRunner.class)
-@WebMvcTest(CronProcessController.class)
+@WebMvcTest(UserCronJobController.class)
 public class UserCronJobControllerTest {
 
     @Autowired
