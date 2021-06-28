@@ -1,6 +1,6 @@
 package gabia.cronMonitoring.dto;
 
-import gabia.cronMonitoring.entity.UserCronJob;
+import gabia.cronMonitoring.entity.TeamCronJob;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-public class UserCronJobDTO {
+public class TeamCronJobDTO {
 
     @Data
     @Getter
@@ -28,11 +28,11 @@ public class UserCronJobDTO {
     public static class Response {
 
         UUID cronJobId;
-        String userAccount;
+        String teamAccount;
 
-        public static UserCronJobDTO.Response from(UserCronJob userCronJob) {
-            return new UserCronJobDTO.Response(userCronJob.getCronJob().getId(),
-                userCronJob.getUser().getAccount());
+        public static TeamCronJobDTO.Response from(TeamCronJob teamCronJob) {
+            return new TeamCronJobDTO.Response(teamCronJob.getCronJob().getId(),
+                teamCronJob.getTeam().getAccount());
         }
     }
 
@@ -50,6 +50,5 @@ public class UserCronJobDTO {
             this.errorCode = "404";
         }
     }
-
 
 }
