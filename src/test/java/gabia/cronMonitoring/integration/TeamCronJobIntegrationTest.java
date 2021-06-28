@@ -1,5 +1,7 @@
 package gabia.cronMonitoring.integration;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -20,8 +22,10 @@ import gabia.cronMonitoring.repository.CronServerRepository;
 import gabia.cronMonitoring.repository.TeamCronJobRepository;
 import gabia.cronMonitoring.repository.TeamRepository;
 import gabia.cronMonitoring.service.CronProcessService;
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -137,11 +141,6 @@ public class TeamCronJobIntegrationTest {
         team.setName("jyj");
         teamRepository.save(team);
 
-        TeamCronJob teamCronJob = TeamCronJob.builder()
-            .team(team)
-            .cronJob(cronJob)
-            .build();
-
         //when
         TeamCronJobDTO.Request request = new Request();
         request.setCronJobId(cronJob.getId());
@@ -193,13 +192,12 @@ public class TeamCronJobIntegrationTest {
 
         //then
         mvc.perform(
-            post("/cron-read-auths/teams/{teamId}/crons/", "Lucas")
+            delete("/cron-read-auths/teams/{teamId}/crons/{cronJobId}", "Lucas", teamCronJob.getCronJob().getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
             .andDo(print())
-            .andExpect(jsonPath("$.teamAccount", team.getId()).exists())
-            .andExpect(jsonPath("$.cronJobId", cronJob.getId()).exists())
             .andExpect(status().isOk());
+        Assertions.assertEquals(teamCronJobRepository.findAll().isEmpty(), true);
     }
 
 }

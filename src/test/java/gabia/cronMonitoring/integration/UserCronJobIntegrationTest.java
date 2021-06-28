@@ -1,5 +1,6 @@
 package gabia.cronMonitoring.integration;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -23,6 +24,7 @@ import gabia.cronMonitoring.service.CronProcessService;
 import java.sql.Timestamp;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -202,13 +204,12 @@ public class UserCronJobIntegrationTest {
 
         //then
         mvc.perform(
-            post("/cron-read-auths/users/{userId}/crons/", "Lucas")
+            delete("/cron-read-auths/users/{userId}/crons/", "Lucas")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
             .andDo(print())
-            .andExpect(jsonPath("$.userId", user.getId()).exists())
-            .andExpect(jsonPath("$.cronJobId", cronJob.getId()).exists())
             .andExpect(status().isOk());
+        Assertions.assertEquals(userCronJobRepository.findAll().isEmpty(), true);
     }
 
 
