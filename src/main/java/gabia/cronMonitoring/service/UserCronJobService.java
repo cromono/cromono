@@ -7,6 +7,8 @@ import gabia.cronMonitoring.entity.User;
 import gabia.cronMonitoring.entity.UserCronJob;
 import gabia.cronMonitoring.exception.cron.process.CronJobNotFoundException;
 import gabia.cronMonitoring.exception.cron.user.UserNotFoundException;
+import gabia.cronMonitoring.exception.teamcronjob.AlreadyExistTeamCronJobException;
+import gabia.cronMonitoring.exception.usercronjob.AlreadyExistUserCronJobException;
 import gabia.cronMonitoring.repository.CronJobRepositoryDataJpa;
 import gabia.cronMonitoring.repository.UserCronJobRepository;
 import gabia.cronMonitoring.repository.UserRepository;
@@ -49,6 +51,11 @@ public class UserCronJobService {
             .user(user)
             .cronJob(cronJob)
             .build();
+
+        userCronJobRepository.findByUserAccountAndCronJobId(account, request.getCronJobId())
+            .ifPresent(present -> {
+                throw new AlreadyExistUserCronJobException();
+            });
 
         UserCronJob savedUserCronJob = userCronJobRepository.save(userCronJob);
 

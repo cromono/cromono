@@ -41,7 +41,7 @@ public class UserCronJobDTO {
 
         public ErrorResponse(String errorMsg) {
             this.errorMsg = errorMsg;
-            this.errorCode = "404";
+            this.errorCode = "409";
         }
     }
 

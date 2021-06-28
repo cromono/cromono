@@ -2,6 +2,7 @@ package gabia.cronMonitoring.repository;
 
 import gabia.cronMonitoring.entity.UserCronJob;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -12,4 +13,6 @@ public interface UserCronJobRepository extends JpaRepository<UserCronJob, Long> 
     void deleteByCronJobIdAndUserAccount(UUID cronJobId, String account);
 
     UserCronJob save(UserCronJob userCronJob);
+
+    Optional<UserCronJob> findByUserAccountAndCronJobId(String account, UUID cronJobId);
 }

@@ -7,6 +7,7 @@ import gabia.cronMonitoring.entity.Team;
 import gabia.cronMonitoring.entity.TeamCronJob;
 import gabia.cronMonitoring.exception.cron.process.CronJobNotFoundException;
 import gabia.cronMonitoring.exception.cron.team.TeamNotFoundException;
+import gabia.cronMonitoring.exception.teamcronjob.AlreadyExistTeamCronJobException;
 import gabia.cronMonitoring.repository.CronJobRepositoryDataJpa;
 import gabia.cronMonitoring.repository.TeamCronJobRepository;
 import gabia.cronMonitoring.repository.TeamRepository;
@@ -49,6 +50,11 @@ public class TeamCronJobService {
             .team(team)
             .cronJob(cronJob)
             .build();
+
+        teamCronJobRepository.findByTeamAccountAndCronJobId(account, request.getCronJobId())
+            .ifPresent(present -> {
+                throw new AlreadyExistTeamCronJobException();
+            });
 
         TeamCronJob savedTeamCronJob = teamCronJobRepository.save(teamCronJob);
 
