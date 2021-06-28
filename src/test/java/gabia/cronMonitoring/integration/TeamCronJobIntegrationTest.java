@@ -1,5 +1,6 @@
 package gabia.cronMonitoring.integration;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -8,20 +9,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gabia.cronMonitoring.controller.UserCronJobController;
-import gabia.cronMonitoring.dto.UserCronJobDTO;
-import gabia.cronMonitoring.dto.UserCronJobDTO.Request;
+import gabia.cronMonitoring.controller.TeamCronJobController;
+import gabia.cronMonitoring.dto.TeamCronJobDTO;
+import gabia.cronMonitoring.dto.TeamCronJobDTO.Request;
 import gabia.cronMonitoring.entity.CronJob;
 import gabia.cronMonitoring.entity.CronServer;
-import gabia.cronMonitoring.entity.User;
-import gabia.cronMonitoring.entity.UserCronJob;
+import gabia.cronMonitoring.entity.Team;
+import gabia.cronMonitoring.entity.TeamCronJob;
 import gabia.cronMonitoring.repository.CronJobRepository;
 import gabia.cronMonitoring.repository.CronProcessRepository;
 import gabia.cronMonitoring.repository.CronServerRepository;
-import gabia.cronMonitoring.repository.UserCronJobRepository;
-import gabia.cronMonitoring.repository.UserRepository;
+import gabia.cronMonitoring.repository.TeamCronJobRepository;
+import gabia.cronMonitoring.repository.TeamRepository;
 import gabia.cronMonitoring.service.CronProcessService;
-import java.sql.Timestamp;
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
@@ -38,7 +39,7 @@ import org.springframework.web.context.WebApplicationContext;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Transactional
-public class UserCronJobIntegrationTest {
+public class TeamCronJobIntegrationTest {
 
     private MockMvc mvc;
 
@@ -55,13 +56,13 @@ public class UserCronJobIntegrationTest {
     CronProcessRepository cronProcessRepository;
 
     @Autowired
-    UserRepository userRepository;
+    TeamRepository teamRepository;
 
     @Autowired
-    UserCronJobRepository userCronJobRepository;
+    TeamCronJobRepository teamCronJobRepository;
 
     @Autowired
-    UserCronJobController userCronJobController;
+    TeamCronJobController teamCronJobController;
 
     @Autowired
     private WebApplicationContext wac;
@@ -72,11 +73,9 @@ public class UserCronJobIntegrationTest {
     }
 
     @Test
-    public void 모든_유저크론잡_조회() throws Exception {
+    public void 모든_팀크론잡_조회() throws Exception {
 
         //given
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-
         CronServer cronServer = new CronServer("0.0.0.0");
         cronServerRepository.save(cronServer);
 
@@ -93,41 +92,39 @@ public class UserCronJobIntegrationTest {
         cronJobRepository.save(cronJob);
         cronJobRepository.save(cronJob2);
 
-        User user = new User();
-        user.setAccount("Lucas");
-        user.setPassword("test");
-        user.setName("jyj");
-        user.setEmail("test@gabia.com");
+        Team team = new Team();
+        team.setAccount("Lucas");
+        team.setName("jyj");
 
-        userRepository.save(user);
+        teamRepository.save(team);
 
-        UserCronJob userCronJob = UserCronJob.builder()
-            .user(user)
+        TeamCronJob teamCronJob = TeamCronJob.builder()
+            .team(team)
             .cronJob(cronJob)
             .build();
 
-        UserCronJob userCronJob2 = UserCronJob.builder()
-            .user(user)
+        TeamCronJob teamCronJob2 = TeamCronJob.builder()
+            .team(team)
             .cronJob(cronJob2)
             .build();
 
-        UserCronJob savedUserCronJob = userCronJobRepository.save(userCronJob);
-        UserCronJob savedUserCronJob2 = userCronJobRepository.save(userCronJob2);
+        TeamCronJob savedTeamCronJob = teamCronJobRepository.save(teamCronJob);
+        TeamCronJob savedTeamCronJob2 = teamCronJobRepository.save(teamCronJob2);
         //when
 
         //then
         mvc.perform(
-            get("/cron-read-auths/users/{userId}/crons/", "Lucas"))
+            get("/cron-read-auths/teams/{teamId}/crons/", "Lucas"))
             .andDo(print())
-            .andExpect(jsonPath("$[0].userAccount", savedUserCronJob.getUser().getId()).exists())
-            .andExpect(jsonPath("$[1].userAccount", savedUserCronJob2.getUser().getId()).exists())
-            .andExpect(jsonPath("$[0].cronJobId", savedUserCronJob.getCronJob().getId()).exists())
-            .andExpect(jsonPath("$[1].cronJobId", savedUserCronJob2.getCronJob().getId()).exists())
+            .andExpect(jsonPath("$[0].teamAccount", savedTeamCronJob.getTeam().getId()).exists())
+            .andExpect(jsonPath("$[1].teamAccount", savedTeamCronJob2.getTeam().getId()).exists())
+            .andExpect(jsonPath("$[0].cronJobId", savedTeamCronJob.getCronJob().getId()).exists())
+            .andExpect(jsonPath("$[1].cronJobId", savedTeamCronJob2.getCronJob().getId()).exists())
             .andExpect(status().isOk());
     }
 
     @Test
-    public void 유저크론잡_추가() throws Exception {
+    public void 팀크론잡_추가() throws Exception {
 
         //given
         CronServer cronServer = new CronServer("0.0.0.0");
@@ -139,20 +136,13 @@ public class UserCronJobIntegrationTest {
         cronJob.setCronName("test");
         cronJobRepository.save(cronJob);
 
-        User user = new User();
-        user.setAccount("Lucas");
-        user.setPassword("test");
-        user.setName("jyj");
-        user.setEmail("test@gabia.com");
-        userRepository.save(user);
-
-        UserCronJob userCronJob = UserCronJob.builder()
-            .user(user)
-            .cronJob(cronJob)
-            .build();
+        Team team = new Team();
+        team.setAccount("Lucas");
+        team.setName("jyj");
+        teamRepository.save(team);
 
         //when
-        UserCronJobDTO.Request request = new Request();
+        TeamCronJobDTO.Request request = new Request();
         request.setCronJobId(cronJob.getId());
 
         ObjectMapper mapper = new ObjectMapper();
@@ -160,17 +150,17 @@ public class UserCronJobIntegrationTest {
 
         //then
         mvc.perform(
-            post("/cron-read-auths/users/{userId}/crons/", "Lucas")
+            post("/cron-read-auths/teams/{teamId}/crons/", "Lucas")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
             .andDo(print())
-            .andExpect(jsonPath("$.userAccount", user.getId()).exists())
+            .andExpect(jsonPath("$.teamAccount", team.getId()).exists())
             .andExpect(jsonPath("$.cronJobId", cronJob.getId()).exists())
             .andExpect(status().isOk());
     }
 
     @Test
-    public void 유저크론잡_삭제() throws Exception {
+    public void 팀크론잡_삭제() throws Exception {
 
         //given
         CronServer cronServer = new CronServer("0.0.0.0");
@@ -182,21 +172,19 @@ public class UserCronJobIntegrationTest {
         cronJob.setCronName("test");
         cronJobRepository.save(cronJob);
 
-        User user = new User();
-        user.setAccount("Lucas");
-        user.setPassword("test");
-        user.setName("jyj");
-        user.setEmail("test@gabia.com");
-        userRepository.save(user);
+        Team team = new Team();
+        team.setAccount("Lucas");
+        team.setName("jyj");
+        teamRepository.save(team);
 
-        UserCronJob userCronJob = UserCronJob.builder()
-            .user(user)
+        TeamCronJob teamCronJob = TeamCronJob.builder()
+            .team(team)
             .cronJob(cronJob)
             .build();
-        userCronJobRepository.save(userCronJob);
+        teamCronJobRepository.save(teamCronJob);
 
         //when
-        UserCronJobDTO.Request request = new Request();
+        TeamCronJobDTO.Request request = new Request();
         request.setCronJobId(cronJob.getId());
 
         ObjectMapper mapper = new ObjectMapper();
@@ -204,13 +192,12 @@ public class UserCronJobIntegrationTest {
 
         //then
         mvc.perform(
-            delete("/cron-read-auths/users/{userId}/crons/{cronJobId}", "Lucas", userCronJob.getCronJob().getId())
+            delete("/cron-read-auths/teams/{teamId}/crons/{cronJobId}", "Lucas", teamCronJob.getCronJob().getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
             .andDo(print())
             .andExpect(status().isOk());
-        Assertions.assertEquals(userCronJobRepository.findAll().isEmpty(), true);
+        Assertions.assertEquals(teamCronJobRepository.findAll().isEmpty(), true);
     }
-
 
 }

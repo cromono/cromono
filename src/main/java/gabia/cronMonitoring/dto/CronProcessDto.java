@@ -4,12 +4,14 @@ import gabia.cronMonitoring.entity.CronProcess;
 import java.sql.Timestamp;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 public class CronProcessDto {
 
+    @Data
     @Getter
     @Setter
     @AllArgsConstructor
@@ -21,6 +23,7 @@ public class CronProcessDto {
         Timestamp endTime;
     }
 
+    @Data
     @Getter
     @Setter
     @AllArgsConstructor
@@ -38,6 +41,7 @@ public class CronProcessDto {
         }
     }
 
+    @Data
     @Getter
     @Setter
     @AllArgsConstructor
