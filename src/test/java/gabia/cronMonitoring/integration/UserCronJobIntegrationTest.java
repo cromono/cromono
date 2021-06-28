@@ -204,7 +204,7 @@ public class UserCronJobIntegrationTest {
 
         //then
         mvc.perform(
-            delete("/cron-read-auths/users/{userId}/crons/", "Lucas")
+            delete("/cron-read-auths/users/{userId}/crons/{cronJobId}", "Lucas", userCronJob.getCronJob().getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
             .andDo(print())
