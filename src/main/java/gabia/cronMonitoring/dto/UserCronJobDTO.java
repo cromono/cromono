@@ -28,7 +28,7 @@ public class UserCronJobDTO {
     public static class Response {
 
         UUID cronJobId;
-        String UserId;
+        String userAccount;
 
         public static UserCronJobDTO.Response from(UserCronJob userCronJob) {
             return new UserCronJobDTO.Response(userCronJob.getCronJob().getId(),
