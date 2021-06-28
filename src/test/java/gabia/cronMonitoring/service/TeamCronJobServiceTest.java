@@ -15,6 +15,7 @@ import gabia.cronMonitoring.entity.Team;
 import gabia.cronMonitoring.entity.TeamCronJob;
 import gabia.cronMonitoring.exception.cron.process.CronJobNotFoundException;
 import gabia.cronMonitoring.exception.cron.team.TeamNotFoundException;
+import gabia.cronMonitoring.exception.teamcronjob.AlreadyExistTeamCronJobException;
 import gabia.cronMonitoring.repository.CronJobRepositoryDataJpa;
 import gabia.cronMonitoring.repository.TeamCronJobRepository;
 import gabia.cronMonitoring.repository.TeamRepository;
@@ -215,6 +216,49 @@ class TeamCronJobServiceTest {
 
         //when
         assertThrows(CronJobNotFoundException.class, () -> {
+            TeamCronJobDTO.Request request = new Request();
+            request.setCronJobId(cronJob.getId());
+            Response response = teamCronJobService.addTeamCronJob("test", request);
+        });
+
+    }
+
+    @Test
+    void addTeamCronJob_팀_크론잡이_이미_존재하는_경우() {
+        //given
+        openMocks(this);
+
+        CronServer cronServer = new CronServer("0.0.0.0");
+
+        Team team = new Team();
+        team.setId(1L);
+        team.setAccount("test");
+        team.setName("test");
+
+        CronJob cronJob = new CronJob();
+        cronJob.setId(UUID.randomUUID());
+        cronJob.setServer(cronServer);
+        cronJob.setCronExpr("test");
+        cronJob.setCronName("test");
+
+        TeamCronJob teamCronJob = TeamCronJob.builder()
+            .id(1L)
+            .team(team)
+            .cronJob(cronJob)
+            .build();
+
+        teamCronJobRepository.save(teamCronJob);
+
+        given(cronJobRepository.findById(cronJob.getId())).willReturn(Optional.of(cronJob));
+        given(teamRepository.findByAccount("test")).willReturn(Optional.of(team));
+        given(teamCronJobRepository.findByTeamAccountAndCronJobId("test", cronJob.getId()))
+            .willReturn(Optional.of(teamCronJob));
+
+        given(teamCronJobRepository.save(any(TeamCronJob.class)))
+            .willAnswer(AdditionalAnswers.returnsFirstArg());
+
+        //when
+        assertThrows(AlreadyExistTeamCronJobException.class, () -> {
             TeamCronJobDTO.Request request = new Request();
             request.setCronJobId(cronJob.getId());
             Response response = teamCronJobService.addTeamCronJob("test", request);

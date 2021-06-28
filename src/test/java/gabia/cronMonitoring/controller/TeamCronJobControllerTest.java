@@ -15,6 +15,7 @@ import gabia.cronMonitoring.dto.TeamCronJobDTO.Request;
 import gabia.cronMonitoring.exception.cron.handler.ControllerExceptionHandler;
 import gabia.cronMonitoring.exception.cron.process.CronJobNotFoundException;
 import gabia.cronMonitoring.exception.cron.team.TeamNotFoundException;
+import gabia.cronMonitoring.exception.teamcronjob.AlreadyExistTeamCronJobException;
 import gabia.cronMonitoring.service.TeamCronJobService;
 import java.util.ArrayList;
 import java.util.List;
@@ -164,6 +165,33 @@ public class TeamCronJobControllerTest {
             .andDo(print())
             .andExpect(jsonPath("$.errorMsg", "Do not find Team").exists())
             .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void 팀_크론잡_추가_이미_존재하는_팀크론잡인_경우() throws Exception {
+
+        //given
+        TeamCronJobDTO.Response testResponse = new TeamCronJobDTO.Response();
+        testResponse.setTeamAccount("test");
+        testResponse.setCronJobId(UUID.randomUUID());
+
+        //when
+        TeamCronJobDTO.Request request = new Request();
+        request.setCronJobId(UUID.randomUUID());
+
+        ObjectMapper mapper = new ObjectMapper();
+        String requestJson = mapper.writeValueAsString(request);
+
+        given(teamCronJobService.addTeamCronJob("test", request))
+            .willThrow(new AlreadyExistTeamCronJobException());
+
+        //then
+        mvc.perform(post("/cron-read-auths/teams/{teamId}/crons/", "test")
+            .content(requestJson)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(jsonPath("$.errorMsg", "Already exist team cron job").exists())
+            .andExpect(status().isConflict());
     }
 
     @Test

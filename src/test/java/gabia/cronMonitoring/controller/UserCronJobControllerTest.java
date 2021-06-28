@@ -15,6 +15,7 @@ import gabia.cronMonitoring.dto.UserCronJobDTO.Request;
 import gabia.cronMonitoring.exception.cron.handler.ControllerExceptionHandler;
 import gabia.cronMonitoring.exception.cron.process.CronJobNotFoundException;
 import gabia.cronMonitoring.exception.cron.user.UserNotFoundException;
+import gabia.cronMonitoring.exception.usercronjob.AlreadyExistUserCronJobException;
 import gabia.cronMonitoring.service.UserCronJobService;
 import java.util.ArrayList;
 import java.util.List;
@@ -166,6 +167,33 @@ public class UserCronJobControllerTest {
             .andDo(print())
             .andExpect(jsonPath("$.errorMsg", "Do not find User").exists())
             .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void 유저_크론잡_추가_이미_존재하는_유저크론잡인_경우() throws Exception {
+
+        //given
+        UserCronJobDTO.Response testResponse = new UserCronJobDTO.Response();
+        testResponse.setUserAccount("test");
+        testResponse.setCronJobId(UUID.randomUUID());
+
+        //when
+        UserCronJobDTO.Request request = new UserCronJobDTO.Request();
+        request.setCronJobId(UUID.randomUUID());
+
+        ObjectMapper mapper = new ObjectMapper();
+        String requestJson = mapper.writeValueAsString(request);
+
+        given(userCronJobService.addUserCronJob("test", request))
+            .willThrow(new AlreadyExistUserCronJobException());
+
+        //then
+        mvc.perform(post("/cron-read-auths/users/{userId}/crons/", "test")
+            .content(requestJson)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(jsonPath("$.errorMsg", "Already exist user cron job").exists())
+            .andExpect(status().isConflict());
     }
 
     @Test

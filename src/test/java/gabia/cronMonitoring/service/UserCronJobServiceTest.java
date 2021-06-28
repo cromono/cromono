@@ -15,6 +15,7 @@ import gabia.cronMonitoring.entity.User;
 import gabia.cronMonitoring.entity.UserCronJob;
 import gabia.cronMonitoring.exception.cron.process.CronJobNotFoundException;
 import gabia.cronMonitoring.exception.cron.user.UserNotFoundException;
+import gabia.cronMonitoring.exception.usercronjob.AlreadyExistUserCronJobException;
 import gabia.cronMonitoring.repository.CronJobRepositoryDataJpa;
 import gabia.cronMonitoring.repository.UserCronJobRepository;
 import gabia.cronMonitoring.repository.UserRepository;
@@ -223,6 +224,49 @@ class UserCronJobServiceTest {
 
         //when
         assertThrows(CronJobNotFoundException.class, () -> {
+            UserCronJobDTO.Request request = new Request();
+            request.setCronJobId(cronJob.getId());
+            Response response = userCronJobService.addUserCronJob("test", request);
+        });
+
+    }
+
+    @Test
+    void addUserCronJob_유저_크론잡이_이미_존재하는_경우() {
+        //given
+        openMocks(this);
+
+        CronServer cronServer = new CronServer("0.0.0.0");
+
+        User user = new User();
+        user.setId(1L);
+        user.setAccount("test");
+        user.setEmail("test");
+        user.setName("test");
+        user.setPassword("test");
+
+        CronJob cronJob = new CronJob();
+        cronJob.setId(UUID.randomUUID());
+        cronJob.setServer(cronServer);
+        cronJob.setCronExpr("test");
+        cronJob.setCronName("test");
+
+        UserCronJob userCronJob1 = UserCronJob.builder()
+            .id(1L)
+            .user(user)
+            .cronJob(cronJob)
+            .build();
+
+        given(cronJobRepository.findById(cronJob.getId())).willReturn(Optional.of(cronJob));
+        given(userRepository.findByAccount("test")).willReturn(Optional.of(user));
+        given(userCronJobRepository.findByUserAccountAndCronJobId("test", cronJob.getId()))
+            .willReturn(Optional.of(userCronJob1));
+
+        given(userCronJobRepository.save(any(UserCronJob.class)))
+            .willAnswer(AdditionalAnswers.returnsFirstArg());
+
+        //when
+        assertThrows(AlreadyExistUserCronJobException.class, () -> {
             UserCronJobDTO.Request request = new Request();
             request.setCronJobId(cronJob.getId());
             Response response = userCronJobService.addUserCronJob("test", request);
