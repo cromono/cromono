@@ -98,9 +98,9 @@ class UserCronJobServiceTest {
             .findAllUserCronJob("test");
 
         //then
-        Assertions.assertThat(allUserReadAuth.get(0).getUserId()).isEqualTo("test");
+        Assertions.assertThat(allUserReadAuth.get(0).getUserAccount()).isEqualTo("test");
         Assertions.assertThat(allUserReadAuth.get(0).getCronJobId()).isEqualTo(cronJob.getId());
-        Assertions.assertThat(allUserReadAuth.get(1).getUserId()).isEqualTo("test");
+        Assertions.assertThat(allUserReadAuth.get(1).getUserAccount()).isEqualTo("test");
         Assertions.assertThat(allUserReadAuth.get(1).getCronJobId()).isEqualTo(cronJob2.getId());
     }
 
@@ -143,7 +143,7 @@ class UserCronJobServiceTest {
         Response response = userCronJobService.addUserCronJob("test", request);
 
         //then
-        Assertions.assertThat(response.getUserId()).isEqualTo("test");
+        Assertions.assertThat(response.getUserAccount()).isEqualTo("test");
         Assertions.assertThat(response.getCronJobId()).isEqualTo(cronJob.getId());
 
     }

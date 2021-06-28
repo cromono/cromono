@@ -12,6 +12,9 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gabia.cronMonitoring.dto.TeamCronJobDTO;
 import gabia.cronMonitoring.dto.TeamCronJobDTO.Request;
+import gabia.cronMonitoring.exception.cron.handler.ControllerExceptionHandler;
+import gabia.cronMonitoring.exception.cron.process.CronJobNotFoundException;
+import gabia.cronMonitoring.exception.cron.team.TeamNotFoundException;
 import gabia.cronMonitoring.service.TeamCronJobService;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,12 +41,17 @@ public class TeamCronJobControllerTest {
     TeamCronJobService teamCronJobService;
 
     @InjectMocks
+    ControllerExceptionHandler controllerExceptionHandler;
+
+    @InjectMocks
     TeamCronJobController teamCronJobController;
 
     @Before
     public void setUpMockMvc() {
         teamCronJobController = new TeamCronJobController(teamCronJobService);
-        mvc = standaloneSetup(teamCronJobController).build();
+        mvc = standaloneSetup(teamCronJobController)
+            .setControllerAdvice(controllerExceptionHandler)
+            .build();
     }
 
     @Test
@@ -102,6 +110,60 @@ public class TeamCronJobControllerTest {
             .andExpect(jsonPath("$.teamAccount", "test").exists())
             .andExpect(jsonPath("$.cronJobId", testResponse.getCronJobId()).exists())
             .andExpect(status().isOk());
+    }
+
+    @Test
+    public void 팀_크론잡_추가_크론잡이_없는_경우() throws Exception {
+
+        //given
+        TeamCronJobDTO.Response testResponse = new TeamCronJobDTO.Response();
+        testResponse.setTeamAccount("test");
+        testResponse.setCronJobId(UUID.randomUUID());
+
+        //when
+        TeamCronJobDTO.Request request = new Request();
+        request.setCronJobId(UUID.randomUUID());
+
+        ObjectMapper mapper = new ObjectMapper();
+        String requestJson = mapper.writeValueAsString(request);
+
+        given(teamCronJobService.addTeamCronJob("test", request))
+            .willThrow(new CronJobNotFoundException());
+
+        //then
+        mvc.perform(post("/cron-read-auths/teams/{teamId}/crons/", "test")
+            .content(requestJson)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(jsonPath("$.errorMsg", "Do not find Cron Job").exists())
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void 팀_크론잡_추가_팀이_없는_경우() throws Exception {
+
+        //given
+        TeamCronJobDTO.Response testResponse = new TeamCronJobDTO.Response();
+        testResponse.setTeamAccount("test");
+        testResponse.setCronJobId(UUID.randomUUID());
+
+        //when
+        TeamCronJobDTO.Request request = new Request();
+        request.setCronJobId(UUID.randomUUID());
+
+        ObjectMapper mapper = new ObjectMapper();
+        String requestJson = mapper.writeValueAsString(request);
+
+        given(teamCronJobService.addTeamCronJob("test", request))
+            .willThrow(new TeamNotFoundException());
+
+        //then
+        mvc.perform(post("/cron-read-auths/teams/{teamId}/crons/", "test")
+            .content(requestJson)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(jsonPath("$.errorMsg", "Do not find Team").exists())
+            .andExpect(status().isNotFound());
     }
 
     @Test
