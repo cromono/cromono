@@ -161,22 +161,34 @@ public class TeamIntegrationTest {
 
     @Test
     @Transactional
-    @Rollback(false)
     public void 팀_삭제_성공() throws Exception {
-        User user = User.builder().name("윤현우").email("yhw@gabia.com").password("1234")
+        User user1 = User.builder().name("윤현우").email("yhw@gabia.com").password("1234")
             .account("yhw").build();
-        userRepository.save(user);
+        User user2 = User.builder().name("김기정").email("kkj@gabia.com").password("1234")
+            .account("kkj").build();
+        User user3 = User.builder().name("주영준").email("jyj@gabia.com").password("1234")
+            .account("jyj").build();
+
+        userRepository.save(user1);
+        userRepository.save(user2);
+        userRepository.save(user3);
 
         Team team = Team.builder().account("team1").name("cronmonitor").build();
         teamRepository.save(team);
 
-        TeamUser teamUser =
-            TeamUser.builder().user(user).team(team).authority(AuthType.UserManager).build();
-        teamUserRepository.save(teamUser);
+        TeamUser teamUser1 =
+            TeamUser.builder().user(user1).team(team).authority(AuthType.UserManager).build();
+        TeamUser teamUser2 =
+            TeamUser.builder().user(user2).team(team).authority(AuthType.UserManager).build();
+        TeamUser teamUser3 =
+            TeamUser.builder().user(user3).team(team).authority(AuthType.UserManager).build();
+        teamUserRepository.save(teamUser1);
+        teamUserRepository.save(teamUser2);
+        teamUserRepository.save(teamUser3);
 
         TeamDTO.Request teamDTORequest = new TeamDTO.Request();
         teamDTORequest.setTeamAccount("team1");
-        teamDTORequest.setName("webhook");
+        teamDTORequest.setName("cronmonitor");
         teamDTORequest.setUserAccount("yhw");
 
         String requestJson = CronMonitorUtil.objToJson(teamDTORequest);
@@ -186,7 +198,6 @@ public class TeamIntegrationTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestJson))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.name").value("webhook"))
             .andDo(print())
             .andReturn().getResponse().getContentAsString();
     }

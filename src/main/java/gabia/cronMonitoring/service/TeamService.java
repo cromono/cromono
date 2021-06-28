@@ -73,9 +73,8 @@ public class TeamService {
         if (teamUser.getAuthority() == AuthType.User) {
             throw new AuthException("삭제 권한이 없습니다");
         }
-
-        teamRepository.deleteByAccount(teamAccount);
         teamUserRepository.deleteByTeamAccount(foundedTeam.getAccount());
+        teamRepository.deleteByAccount(teamAccount);
     }
 
     @Transactional
