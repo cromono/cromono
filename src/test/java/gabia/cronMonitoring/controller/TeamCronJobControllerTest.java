@@ -48,7 +48,7 @@ public class TeamCronJobControllerTest {
     }
 
     @Test
-    public void 모든_유저_크론잡_조회() throws Exception {
+    public void 모든_팀_크론잡_조회() throws Exception {
 
         //given
         List<TeamCronJobDTO.Response> allResponse = new ArrayList<>();
@@ -79,7 +79,7 @@ public class TeamCronJobControllerTest {
     }
 
     @Test
-    public void 유저_크론잡_추가() throws Exception {
+    public void 팀_크론잡_추가() throws Exception {
 
         //given
 
@@ -108,7 +108,7 @@ public class TeamCronJobControllerTest {
     }
 
     @Test
-    public void 유저_크론잡_삭제() throws Exception {
+    public void 팀_크론잡_삭제() throws Exception {
 
         //given
         TeamCronJobDTO.Response testResponse = new TeamCronJobDTO.Response();
