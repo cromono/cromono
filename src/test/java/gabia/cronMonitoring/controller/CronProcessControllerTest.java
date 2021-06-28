@@ -1,11 +1,13 @@
 package gabia.cronMonitoring.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gabia.cronMonitoring.dto.CronLogDto;
@@ -105,7 +107,8 @@ public class CronProcessControllerTest {
         ObjectMapper mapper = new ObjectMapper();
         String requestJson = mapper.writeValueAsString(request);
 
-        given(cronProcessService.makeCronProcess(any(), any())).willReturn(response);
+        given(cronProcessService.makeCronProcess(response.getCronJobId(), request))
+            .willReturn(response);
 
         //then
         mvc.perform(post("/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process/", "0.0.0.0",
@@ -155,7 +158,7 @@ public class CronProcessControllerTest {
         Request request = new Request();
         request.setPid("12");
 
-        given(cronProcessService.changeCronProcess(any(), any())).willReturn(response);
+        given(cronProcessService.changeCronProcess("12", request)).willReturn(response);
 
         ObjectMapper mapper = new ObjectMapper();
         String requestJson = mapper.writeValueAsString(request);
@@ -174,7 +177,7 @@ public class CronProcessControllerTest {
     }
 
     @Test
-    public void findCronLogs() throws Exception{
+    public void findCronLogs() throws Exception {
         //given
         List<CronLogDto.Response> responses = new ArrayList<>();
 
