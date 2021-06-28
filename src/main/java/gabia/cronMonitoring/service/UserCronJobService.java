@@ -27,7 +27,6 @@ public class UserCronJobService {
 
     public List<Response> findAllUserCronJob(String account) {
 
-        List<UserCronJob> test = userCronJobRepository.findByUserAccount(account);
         List<UserCronJobDTO.Response> responses = userCronJobRepository.findByUserAccount(account)
             .stream()
             .map(dto -> UserCronJobDTO.Response.from(dto))

@@ -27,7 +27,6 @@ public class TeamCronJobService {
 
     public List<Response> findAllTeamCronJob(String account) {
 
-        List<TeamCronJob> test = teamCronJobRepository.findByTeamAccount(account);
         List<TeamCronJobDTO.Response> responses = teamCronJobRepository.findByTeamAccount(account)
             .stream()
             .map(dto -> TeamCronJobDTO.Response.from(dto))
