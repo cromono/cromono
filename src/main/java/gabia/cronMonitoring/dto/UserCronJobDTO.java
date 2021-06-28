@@ -3,12 +3,14 @@ package gabia.cronMonitoring.dto;
 import gabia.cronMonitoring.entity.UserCronJob;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 public class UserCronJobDTO {
 
+    @Data
     @Getter
     @Setter
     @AllArgsConstructor
@@ -18,6 +20,7 @@ public class UserCronJobDTO {
         UUID cronJobId;
     }
 
+    @Data
     @Getter
     @Setter
     @AllArgsConstructor
@@ -33,6 +36,7 @@ public class UserCronJobDTO {
         }
     }
 
+    @Data
     @Getter
     @Setter
     @AllArgsConstructor
