@@ -167,7 +167,7 @@ public class UserCronJobControllerTest {
             .andExpect(jsonPath("$.errorMsg", "Do not find User").exists())
             .andExpect(status().isNotFound());
     }
-    
+
     @Test
     public void 유저_크론잡_삭제() throws Exception {
 

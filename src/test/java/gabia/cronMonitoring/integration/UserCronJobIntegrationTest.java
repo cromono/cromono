@@ -16,12 +16,9 @@ import gabia.cronMonitoring.entity.CronServer;
 import gabia.cronMonitoring.entity.User;
 import gabia.cronMonitoring.entity.UserCronJob;
 import gabia.cronMonitoring.repository.CronJobRepository;
-import gabia.cronMonitoring.repository.CronProcessRepository;
 import gabia.cronMonitoring.repository.CronServerRepository;
 import gabia.cronMonitoring.repository.UserCronJobRepository;
 import gabia.cronMonitoring.repository.UserRepository;
-import gabia.cronMonitoring.service.CronProcessService;
-import java.sql.Timestamp;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
@@ -43,16 +40,10 @@ public class UserCronJobIntegrationTest {
     private MockMvc mvc;
 
     @Autowired
-    CronProcessService cronProcessService;
-
-    @Autowired
     CronServerRepository cronServerRepository;
 
     @Autowired
     CronJobRepository cronJobRepository;
-
-    @Autowired
-    CronProcessRepository cronProcessRepository;
 
     @Autowired
     UserRepository userRepository;
@@ -75,8 +66,6 @@ public class UserCronJobIntegrationTest {
     public void 모든_유저크론잡_조회() throws Exception {
 
         //given
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-
         CronServer cronServer = new CronServer("0.0.0.0");
         cronServerRepository.save(cronServer);
 
@@ -204,7 +193,8 @@ public class UserCronJobIntegrationTest {
 
         //then
         mvc.perform(
-            delete("/cron-read-auths/users/{userId}/crons/{cronJobId}", "Lucas", userCronJob.getCronJob().getId())
+            delete("/cron-read-auths/users/{userId}/crons/{cronJobId}", "Lucas",
+                userCronJob.getCronJob().getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
             .andDo(print())

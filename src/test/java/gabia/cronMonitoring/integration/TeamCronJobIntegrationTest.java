@@ -1,6 +1,5 @@
 package gabia.cronMonitoring.integration;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -17,12 +16,9 @@ import gabia.cronMonitoring.entity.CronServer;
 import gabia.cronMonitoring.entity.Team;
 import gabia.cronMonitoring.entity.TeamCronJob;
 import gabia.cronMonitoring.repository.CronJobRepository;
-import gabia.cronMonitoring.repository.CronProcessRepository;
 import gabia.cronMonitoring.repository.CronServerRepository;
 import gabia.cronMonitoring.repository.TeamCronJobRepository;
 import gabia.cronMonitoring.repository.TeamRepository;
-import gabia.cronMonitoring.service.CronProcessService;
-import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
@@ -44,16 +40,10 @@ public class TeamCronJobIntegrationTest {
     private MockMvc mvc;
 
     @Autowired
-    CronProcessService cronProcessService;
-
-    @Autowired
     CronServerRepository cronServerRepository;
 
     @Autowired
     CronJobRepository cronJobRepository;
-
-    @Autowired
-    CronProcessRepository cronProcessRepository;
 
     @Autowired
     TeamRepository teamRepository;
@@ -192,7 +182,8 @@ public class TeamCronJobIntegrationTest {
 
         //then
         mvc.perform(
-            delete("/cron-read-auths/teams/{teamId}/crons/{cronJobId}", "Lucas", teamCronJob.getCronJob().getId())
+            delete("/cron-read-auths/teams/{teamId}/crons/{cronJobId}", "Lucas",
+                teamCronJob.getCronJob().getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
             .andDo(print())
