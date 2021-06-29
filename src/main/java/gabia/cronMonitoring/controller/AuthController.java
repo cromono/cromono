@@ -45,7 +45,7 @@ public class AuthController {
         return new ResponseEntity(new TokenDTO(jwt), httpHeaders, HttpStatus.OK);
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/register")
     public ResponseEntity<TokenDTO> signup(@Valid @RequestBody UserDTO.Request request) {
         Response response = userService.addUser(request);
         ResponseEntity responseEntity = new ResponseEntity(response, HttpStatus.CREATED);
