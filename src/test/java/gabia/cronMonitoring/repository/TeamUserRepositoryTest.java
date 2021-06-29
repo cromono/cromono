@@ -1,6 +1,7 @@
 package gabia.cronMonitoring.repository;
 
 import gabia.cronMonitoring.entity.Enum.AuthType;
+import gabia.cronMonitoring.entity.Enum.UserRole;
 import gabia.cronMonitoring.entity.Team;
 import gabia.cronMonitoring.entity.TeamUser;
 import gabia.cronMonitoring.entity.User;
@@ -11,12 +12,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
+@SpringBootTest(properties = "spring.profiles.active:common")
 @RunWith(SpringRunner.class)
+@WithMockUser(roles = "USER")
 class TeamUserRepositoryTest {
 
     @Autowired
@@ -31,7 +34,7 @@ class TeamUserRepositoryTest {
         //given
         Team team = Team.builder().account("gabiaTeam1").name("cronTeam1").build();
         User user = User.builder().account("gabiaUser1").password("1").email("yhw@gabia.com")
-            .name("윤현우").build();
+            .name("윤현우").role(UserRole.ROLE_USER).build();
         TeamUser teamUser = TeamUser.builder().team(team).user(user).authority(AuthType.User)
             .build();
         em.persist(user);
@@ -53,11 +56,11 @@ class TeamUserRepositoryTest {
     void deleteByTeamAccount() {
         Team team = Team.builder().account("gabiaTeam1").name("cronTeam1").build();
         User user1 = User.builder().account("gabiaUser1").password("1").email("yhw@gabia.com")
-            .name("윤현우").build();
+            .name("윤현우").role(UserRole.ROLE_USER).build();
         User user2 = User.builder().account("gabiaUser2").password("1").email("kkj@gabia.com")
-            .name("김기정").build();
+            .name("김기정").role(UserRole.ROLE_USER).build();
         User user3 = User.builder().account("gabiaUser3").password("1").email("jyj@gabia.com")
-            .name("주영준").build();
+            .name("주영준").role(UserRole.ROLE_USER).build();
         TeamUser teamUser1=TeamUser.builder().team(team).user(user1).authority(AuthType.User).build();
         TeamUser teamUser2=TeamUser.builder().team(team).user(user1).authority(AuthType.User).build();
         TeamUser teamUser3=TeamUser.builder().team(team).user(user1).authority(AuthType.User).build();

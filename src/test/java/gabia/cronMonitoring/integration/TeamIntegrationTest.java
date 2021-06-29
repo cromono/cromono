@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import gabia.cronMonitoring.controller.TeamController;
 import gabia.cronMonitoring.dto.TeamDTO;
 import gabia.cronMonitoring.entity.Enum.AuthType;
+import gabia.cronMonitoring.entity.Enum.UserRole;
 import gabia.cronMonitoring.entity.Team;
 import gabia.cronMonitoring.entity.TeamUser;
 import gabia.cronMonitoring.entity.User;
@@ -26,14 +27,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(properties = "spring.profiles.active:common")
 @AutoConfigureMockMvc
+@WithMockUser(roles = "USER")
 public class TeamIntegrationTest {
 
     @Autowired
@@ -58,7 +61,7 @@ public class TeamIntegrationTest {
     @Transactional
     public void 팀_목록_조회_성공() throws Exception {
         User user = User.builder().name("윤현우").email("yhw@gabia.com").password("1234")
-            .account("yhw").build();
+            .account("yhw").role(UserRole.ROLE_USER).build();
         userRepository.save(user);
 
         for (int i = 0; i < 10; i++) {
@@ -85,7 +88,7 @@ public class TeamIntegrationTest {
     @Transactional
     public void 팀_조회_성공() throws Exception {
         User user = User.builder().name("윤현우").email("yhw@gabia.com").password("1234")
-            .account("yhw").build();
+            .account("yhw").role(UserRole.ROLE_USER).build();
         userRepository.save(user);
 
         for (int i = 0; i < 10; i++) {
@@ -111,7 +114,7 @@ public class TeamIntegrationTest {
     @Transactional
     public void 팀_생성_성공() throws Exception {
         User user = User.builder().name("윤현우").email("yhw@gabia.com").password("1234")
-            .account("yhw").build();
+            .account("yhw").role(UserRole.ROLE_USER).build();
         userRepository.save(user);
 
         TeamDTO.Request teamDTORequest = new TeamDTO.Request();
@@ -133,7 +136,7 @@ public class TeamIntegrationTest {
     @Transactional
     public void 팀_수정_성공() throws Exception {
         User user = User.builder().name("윤현우").email("yhw@gabia.com").password("1234")
-            .account("yhw").build();
+            .account("yhw").role(UserRole.ROLE_USER).build();
         userRepository.save(user);
 
         Team team = Team.builder().account("team1").name("cronmonitor").build();
@@ -163,11 +166,11 @@ public class TeamIntegrationTest {
     @Transactional
     public void 팀_삭제_성공() throws Exception {
         User user1 = User.builder().name("윤현우").email("yhw@gabia.com").password("1234")
-            .account("yhw").build();
+            .account("yhw").role(UserRole.ROLE_USER).build();
         User user2 = User.builder().name("김기정").email("kkj@gabia.com").password("1234")
-            .account("kkj").build();
+            .account("kkj").role(UserRole.ROLE_USER).build();
         User user3 = User.builder().name("주영준").email("jyj@gabia.com").password("1234")
-            .account("jyj").build();
+            .account("jyj").role(UserRole.ROLE_USER).build();
 
         userRepository.save(user1);
         userRepository.save(user2);
