@@ -42,16 +42,16 @@ public class UserDTO {
         }
     }
 
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Data
-    public static class ErrorResponse {
-        String errorMsg;
-        String errorCode;
-
-        public ErrorResponse(String errorMsg) {
-            this.errorMsg = errorMsg;
-            this.errorCode = "404";
-        }
-    }
+//    @AllArgsConstructor
+//    @NoArgsConstructor
+//    @Data
+//    public static class ErrorResponse {
+//        String errorMsg;
+//        String errorCode;
+//
+//        public ErrorResponse(String errorMsg) {
+//            this.errorMsg = errorMsg;
+//            this.errorCode = "404";
+//        }
+//    }
 }
