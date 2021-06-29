@@ -8,7 +8,7 @@ import gabia.cronMonitoring.entity.CronServer;
 import gabia.cronMonitoring.repository.CronJobRepository;
 import gabia.cronMonitoring.repository.CronServerRepository;
 import gabia.cronMonitoring.exception.cron.job.CronJobNotFoundException;
-import gabia.cronMonitoring.exception.cron.job.CronServerNotFoundException;
+import gabia.cronMonitoring.exception.cron.server.CronServerNotFoundException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;

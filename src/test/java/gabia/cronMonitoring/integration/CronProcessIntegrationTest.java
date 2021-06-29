@@ -15,6 +15,7 @@ import gabia.cronMonitoring.repository.CronProcessRepository;
 import gabia.cronMonitoring.repository.CronServerRepository;
 import gabia.cronMonitoring.service.CronProcessService;
 import java.sql.Timestamp;
+import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -217,4 +218,21 @@ public class CronProcessIntegrationTest {
             .andExpect(status().isOk());
     }
 
+    @Test
+    public void findCronLogs() throws Exception{
+        //given
+
+        //when
+
+        //then
+        mvc.perform(
+            get("/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process/{pid}/logs", "0.0.0.0",
+                UUID.fromString("123e4567-e89b-12d3-a456-556642440000"), "1"))
+            .andDo(print())
+            .andExpect(jsonPath("$[0].cronProcess").value("1"))
+            .andExpect(jsonPath("$[0].value").value("test"))
+            .andExpect(jsonPath("$[1].cronProcess").value("1"))
+            .andExpect(jsonPath("$[1].value").value("test"))
+            .andExpect(status().isOk());
+    }
 }

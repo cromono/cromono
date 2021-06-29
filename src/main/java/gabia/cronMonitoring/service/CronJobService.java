@@ -7,7 +7,7 @@ import gabia.cronMonitoring.entity.CronJob;
 import gabia.cronMonitoring.repository.CronJobRepository;
 import gabia.cronMonitoring.repository.CronServerRepository;
 import gabia.cronMonitoring.exception.cron.job.CronJobNotFoundException;
-import gabia.cronMonitoring.exception.cron.job.CronServerNotFoundException;
+import gabia.cronMonitoring.exception.cron.server.CronServerNotFoundException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;

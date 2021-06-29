@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,19 +17,22 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "team")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Team {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "team_id")
     private Long id;
 
-    @Column(name = "team_id")
+    @Column(name = "account", unique = true)
     @NotNull
-    private String teamId;
+    private String account;
 
-    @Column(name = "team_name")
+    @Column(name = "name")
     @NotNull
-    private String teamName;
-
+    private String name;
 
 }
