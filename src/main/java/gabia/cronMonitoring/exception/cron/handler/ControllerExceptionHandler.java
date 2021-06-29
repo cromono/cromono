@@ -2,8 +2,14 @@ package gabia.cronMonitoring.exception.cron.handler;
 
 import gabia.cronMonitoring.dto.CronProcessDto;
 import gabia.cronMonitoring.dto.CronProcessDto.ErrorResponse;
+import gabia.cronMonitoring.dto.TeamCronJobDTO;
+import gabia.cronMonitoring.dto.UserCronJobDTO;
 import gabia.cronMonitoring.exception.cron.process.CronJobNotFoundException;
 import gabia.cronMonitoring.exception.cron.process.CronProcessNotFoundException;
+import gabia.cronMonitoring.exception.cron.team.TeamNotFoundException;
+import gabia.cronMonitoring.exception.cron.user.UserNotFoundException;
+import gabia.cronMonitoring.exception.teamcronjob.AlreadyExistTeamCronJobException;
+import gabia.cronMonitoring.exception.usercronjob.AlreadyExistUserCronJobException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -23,5 +29,35 @@ public class ControllerExceptionHandler {
         CronProcessNotFoundException e) {
         return new ResponseEntity<>(new CronProcessDto.ErrorResponse(e.getMessage()),
             HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<UserCronJobDTO.ErrorResponse> noUser(UserNotFoundException e) {
+
+        return new ResponseEntity<>(new UserCronJobDTO.ErrorResponse(e.getMessage()),
+            HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(TeamNotFoundException.class)
+    public ResponseEntity<TeamCronJobDTO.ErrorResponse> noTeam(TeamNotFoundException e) {
+
+        return new ResponseEntity<>(new TeamCronJobDTO.ErrorResponse(e.getMessage()),
+            HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(AlreadyExistTeamCronJobException.class)
+    public ResponseEntity<TeamCronJobDTO.ErrorResponse> existTeamCronJob(
+        AlreadyExistTeamCronJobException e) {
+
+        return new ResponseEntity<>(new TeamCronJobDTO.ErrorResponse(e.getMessage()),
+            HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(AlreadyExistUserCronJobException.class)
+    public ResponseEntity<UserCronJobDTO.ErrorResponse> existUserCronJob(
+        AlreadyExistUserCronJobException e) {
+
+        return new ResponseEntity<>(new UserCronJobDTO.ErrorResponse(e.getMessage()),
+            HttpStatus.CONFLICT);
     }
 }
