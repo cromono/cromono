@@ -5,6 +5,7 @@ import gabia.cronMonitoring.dto.UserDTO.Request;
 import gabia.cronMonitoring.dto.UserDTO.Response;
 import gabia.cronMonitoring.service.UserService;
 import java.util.List;
+import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
-//@PreAuthorize("hasAnyRole('ROOT', 'USER')")
+@PreAuthorize("hasAnyRole('ROOT', 'USER')")
 public class UserController {
 
     private final UserService userService;
@@ -36,7 +37,7 @@ public class UserController {
 
     @GetMapping(value = "/{userId}")
     @ResponseBody
-    public ResponseEntity<UserDTO.Response> getUser(@PathVariable(name = "userId") String userId) {
+    public ResponseEntity<UserDTO.Response> getUser(@NotBlank @PathVariable(name = "userId") String userId) {
         UserDTO.Request request = new Request();
         request.setAccount(userId);
 
@@ -47,7 +48,7 @@ public class UserController {
 
     @PatchMapping(value = "/{userId}")
     @ResponseBody
-    public ResponseEntity<UserDTO.Response> patchUser(@PathVariable(name = "userId") String userId,
+    public ResponseEntity<UserDTO.Response> patchUser(@NotBlank @PathVariable(name = "userId") String userId,
         @RequestBody UserDTO.Request request) {
         Response response = userService.updateUser(userId, request);
         ResponseEntity responseEntity = new ResponseEntity(response, HttpStatus.OK);
@@ -56,7 +57,7 @@ public class UserController {
 
     @DeleteMapping(value = "/{userId}")
     @ResponseBody
-    public ResponseEntity deleteUser(@PathVariable(name = "userId") String userId) {
+    public ResponseEntity deleteUser(@NotBlank @PathVariable(name = "userId") String userId) {
         UserDTO.Request request = new Request();
         request.setAccount(userId);
         userService.deleteUser(request);

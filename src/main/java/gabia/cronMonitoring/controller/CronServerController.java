@@ -3,6 +3,8 @@ package gabia.cronMonitoring.controller;
 import gabia.cronMonitoring.dto.CronServerDTO;
 import gabia.cronMonitoring.service.CronServerService;
 import java.util.List;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +33,7 @@ public class CronServerController {
 
     @PostMapping(value = "/cron-servers")
     @ResponseBody
-    public ResponseEntity<CronServerDTO> postCronServers(@RequestBody CronServerDTO dto) {
+    public ResponseEntity<CronServerDTO> postCronServers(@Valid @RequestBody CronServerDTO dto) {
         CronServerDTO cronServerDTO = cronServerService.addCronServer(dto.getServerIp());
         ResponseEntity responseEntity = new ResponseEntity(cronServerDTO, HttpStatus.CREATED);
         return responseEntity;
@@ -40,7 +42,7 @@ public class CronServerController {
     @PatchMapping("/cron-servers/{serverIp}")
     @ResponseBody
     public ResponseEntity<CronServerDTO> patchCronServer(
-        @PathVariable(name = "serverIp") String serverIp,
+        @NotBlank @PathVariable(name = "serverIp") String serverIp,
         @RequestBody CronServerDTO cronServerDTO) {
         CronServerDTO cronServer = cronServerService
             .updateCronServer(serverIp, cronServerDTO.getServerIp());
@@ -50,7 +52,7 @@ public class CronServerController {
 
     @DeleteMapping(value = "/cron-servers/{serverIp}")
     @ResponseBody
-    public ResponseEntity deleteCronServer(@PathVariable(name = "serverIp") String serverIp) {
+    public ResponseEntity deleteCronServer(@NotBlank @PathVariable(name = "serverIp") String serverIp) {
         cronServerService.deleteCronServer(serverIp);
         ResponseEntity responseEntity = new ResponseEntity(HttpStatus.NO_CONTENT);
         return responseEntity;
