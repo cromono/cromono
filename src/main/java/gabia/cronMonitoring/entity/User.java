@@ -2,6 +2,7 @@ package gabia.cronMonitoring.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import gabia.cronMonitoring.entity.Enum.UserRole;
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -25,7 +26,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User {
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
