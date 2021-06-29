@@ -3,26 +3,26 @@ package gabia.cronMonitoring.dto;
 import gabia.cronMonitoring.entity.CronProcess;
 import java.sql.Timestamp;
 import java.util.UUID;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 public class CronProcessDto {
 
-    @Getter
-    @Setter
+    @Data
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Request {
 
+        @NotEmpty @NotBlank
         String pid;
         Timestamp startTime;
         Timestamp endTime;
     }
 
-    @Getter
-    @Setter
+    @Data
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Response {
@@ -38,8 +38,7 @@ public class CronProcessDto {
         }
     }
 
-    @Getter
-    @Setter
+    @Data
     @AllArgsConstructor
     public static class ErrorResponse {
 
