@@ -8,4 +8,7 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
 
     Optional<Team> findByAccount(String account);
 
+    void deleteByAccount(String account);
+
+
 }
