@@ -48,6 +48,7 @@ public class CronJobControllerTest {
     public void setup() {
         cronJobController = new CronJobController(cronJobService);
         mockMvc = MockMvcBuilders.standaloneSetup(cronJobController).build();
+        CronMonitorUtil.initForTest();
     }
 
     @Test
