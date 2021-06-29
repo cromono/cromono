@@ -45,7 +45,7 @@ public class TeamController {
     public ResponseEntity<TeamDTO.Response> changeTeamName(
         @PathVariable(name = "teamId") @NotNull String teamId,
         @RequestBody TeamDTO.Request request) {
-        request.setTeamAccount(teamId); // 바디 or pathparam의 teamId중 뭘 쓸지 선택 필요
+        //request.setTeamAccount(teamId); // 바디 or pathparam의 teamId중 뭘 쓸지 선택 필요
         TeamDTO.Response response = teamService.changeTeam(request, request.getUserAccount());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

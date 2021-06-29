@@ -11,36 +11,28 @@ import lombok.Setter;
 public class TeamDTO {
 
     @Data
-    @Getter
-    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Request {
-
         String teamAccount;
         String name;
         String userAccount;
     }
 
     @Data
-    @Getter
-    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Response {
-
         String teamAccount;
         String name;
-
         public static TeamDTO.Response from(Team team) {
             return new TeamDTO.Response(team.getAccount(), team.getName());
         }
     }
 
     @Data
-    @Getter
-    @Setter
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class ErrorResponse {
 
         String errorMsg;

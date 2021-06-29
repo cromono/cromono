@@ -5,6 +5,7 @@ import gabia.cronMonitoring.entity.Enum.AuthType;
 import gabia.cronMonitoring.entity.Team;
 import gabia.cronMonitoring.entity.TeamUser;
 import gabia.cronMonitoring.entity.User;
+import gabia.cronMonitoring.exception.team.TeamExistException;
 import gabia.cronMonitoring.exception.team.TeamNotFoundException;
 import gabia.cronMonitoring.exception.teamUser.AuthException;
 import gabia.cronMonitoring.exception.teamUser.NotTeamMemberException;
@@ -32,6 +33,12 @@ public class TeamService {
 
         User user = userRepository.findByAccount(userAccount)
             .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자 입니다"));
+
+        teamRepository.findByAccount(request.getTeamAccount())
+            .ifPresent(s->{
+                throw new TeamExistException("이미 존재하는 팀 계정 입니다");
+            }
+        );
 
         Team team = teamRepository
             .save(

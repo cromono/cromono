@@ -37,7 +37,7 @@ public class CronJobController {
         @PathVariable("serverIp") @NotEmpty String serverIp) {
         cronJobDTO.setServerIp(serverIp);
         CronJobDTO createdJob = cronJobService.createCronJob(cronJobDTO);
-        return new CronJobResult(createdJob.getId().toString());
+        return new CronJobResult(createdJob.getId());
     }
 
     //크론 job 수정
