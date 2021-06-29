@@ -1,12 +1,11 @@
 package gabia.cronMonitoring.dto;
 
 import gabia.cronMonitoring.entity.TeamCronJob;
+import gabia.cronMonitoring.util.ValidUUID;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 public class TeamCronJobDTO {
 
@@ -15,6 +14,7 @@ public class TeamCronJobDTO {
     @NoArgsConstructor
     public static class Request {
 
+        @ValidUUID
         UUID cronJobId;
     }
 

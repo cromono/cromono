@@ -3,8 +3,11 @@ package gabia.cronMonitoring.controller;
 import gabia.cronMonitoring.dto.UserCronJobDTO;
 import gabia.cronMonitoring.dto.UserCronJobDTO.Response;
 import gabia.cronMonitoring.service.UserCronJobService;
+import gabia.cronMonitoring.util.ValidUUID;
 import java.util.List;
 import java.util.UUID;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +28,7 @@ public class UserCronJobController {
 
     @GetMapping(path = "/")
     public ResponseEntity<List<UserCronJobDTO.Response>> getUserCronJob(
-        @PathVariable(value = "userId") String userId) {
+        @NotEmpty @PathVariable(value = "userId") String userId) {
 
         List<UserCronJobDTO.Response> allUserCronJob = userCronJobService
             .findAllUserCronJob(userId);
@@ -35,8 +38,8 @@ public class UserCronJobController {
 
     @PostMapping(path = "/")
     public ResponseEntity<UserCronJobDTO.Response> postUserCronJob(
-        @PathVariable(value = "userId") String userId,
-        @RequestBody UserCronJobDTO.Request request) {
+        @NotEmpty @PathVariable(value = "userId") String userId,
+        @RequestBody @Valid UserCronJobDTO.Request request) {
 
         Response response = userCronJobService.addUserCronJob(userId, request);
 
@@ -45,8 +48,8 @@ public class UserCronJobController {
 
     @DeleteMapping(path = "/{cronJobId}")
     public ResponseEntity<HttpStatus> deleteUserCronJob(
-        @PathVariable(value = "userId") String userId,
-        @PathVariable(value = "cronJobId") UUID cronJobId) {
+        @NotEmpty @PathVariable(value = "userId") String userId,
+        @ValidUUID @PathVariable(value = "cronJobId") UUID cronJobId) {
 
         userCronJobService.removeUserCronJob(userId, cronJobId);
 
