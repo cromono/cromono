@@ -5,6 +5,7 @@ import static org.mockito.BDDMockito.given;
 
 import gabia.cronMonitoring.dto.TeamDTO;
 import gabia.cronMonitoring.entity.Enum.AuthType;
+import gabia.cronMonitoring.entity.Enum.UserRole;
 import gabia.cronMonitoring.entity.Team;
 import gabia.cronMonitoring.entity.TeamUser;
 import gabia.cronMonitoring.entity.User;
@@ -24,6 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -48,7 +50,7 @@ public class TeamServiceTest {
     public void createTeam_팀_생성_성공() {
         //given
         User user = User.builder().id(1L).account("gabiaUser1").password("1").email("yhw@gabia.com")
-            .name("윤현우").build();
+            .name("윤현우").role(UserRole.ROLE_USER).build();
         Team team = Team.builder().id(1L).account("team-account-1").name("크론모니터링팀").build();
         TeamUser teamUser = TeamUser.builder().id(1L).user(user).team(team)
             .authority(AuthType.UserManager).build();
@@ -76,7 +78,7 @@ public class TeamServiceTest {
     public void createTeam_팀_생성_실패_존재하지않는사용자() {
         //given
         User user = User.builder().id(1L).account("gabiaUser1").password("1").email("yhw@gabia.com")
-            .name("윤현우").build();
+            .name("윤현우").role(UserRole.ROLE_USER).build();
         Team team = Team.builder().id(1L).account("team-account-1").name("크론모니터링팀").build();
         TeamDTO.Request request = new TeamDTO.Request(team.getAccount(), team.getName(),
             user.getAccount());
@@ -150,7 +152,7 @@ public class TeamServiceTest {
         Team team1 = Team.builder().account("gabiaTeam1").name("cronTeam1").build();
 
         User user1 = User.builder().account("gabiaUser1").password("1").email("yhw@gabia.com")
-            .name("윤현우").build();
+            .name("윤현우").role(UserRole.ROLE_USER).build();
 
         TeamUser teamUser1 = TeamUser.builder().team(team1).user(user1)
             .authority(AuthType.UserManager)
@@ -176,7 +178,7 @@ public class TeamServiceTest {
         Team team1 = Team.builder().account("gabiaTeam1").name("cronTeam1").build();
 
         User user1 = User.builder().account("gabiaUser1").password("1").email("yhw@gabia.com")
-            .name("윤현우").build();
+            .name("윤현우").role(UserRole.ROLE_USER).build();
 
         TeamUser teamUser1 = TeamUser.builder().team(team1).user(user1)
             .authority(AuthType.UserManager)
@@ -198,7 +200,7 @@ public class TeamServiceTest {
         Team team1 = Team.builder().account("gabiaTeam1").name("cronTeam1").build();
 
         User user1 = User.builder().account("gabiaUser1").password("1").email("yhw@gabia.com")
-            .name("윤현우").build();
+            .name("윤현우").role(UserRole.ROLE_USER).build();
 
         TeamUser teamUser1 = TeamUser.builder().team(team1).user(user1)
             .authority(AuthType.UserManager)
@@ -220,7 +222,7 @@ public class TeamServiceTest {
         Team team1 = Team.builder().account("gabiaTeam1").name("cronTeam1").build();
 
         User user1 = User.builder().account("gabiaUser1").password("1").email("yhw@gabia.com")
-            .name("윤현우").build();
+            .name("윤현우").role(UserRole.ROLE_USER).build();
 
         TeamUser teamUser1 = TeamUser.builder().team(team1).user(user1)
             .authority(AuthType.UserManager)
@@ -246,7 +248,7 @@ public class TeamServiceTest {
         //given
         Team team1 = Team.builder().account("gabiaTeam1").name("cronTeam1").build();
         User user1 = User.builder().account("gabiaUser1").password("1").email("yhw@gabia.com")
-            .name("윤현우").build();
+            .name("윤현우").role(UserRole.ROLE_USER).build();
         TeamUser teamUser1 = TeamUser.builder().team(team1).user(user1).authority(AuthType.User)
             .build();
         given(userRepository.findByAccount(user1.getAccount())).willReturn(Optional.of(user1));
@@ -266,7 +268,7 @@ public class TeamServiceTest {
         //given
         Team team1 = Team.builder().account("gabiaTeam1").name("cronTeam1").build();
         User user1 = User.builder().account("gabiaUser1").password("1").email("yhw@gabia.com")
-            .name("윤현우").build();
+            .name("윤현우").role(UserRole.ROLE_USER).build();
 
         TeamUser teamUser1 = TeamUser.builder().team(team1).user(user1)
             .authority(AuthType.UserManager)
@@ -291,7 +293,7 @@ public class TeamServiceTest {
         Team team1 = Team.builder().account("gabiaTeam1").name("cronTeam1").build();
 
         User user1 = User.builder().account("gabiaUser1").password("1").email("yhw@gabia.com")
-            .name("윤현우").build();
+            .name("윤현우").role(UserRole.ROLE_USER).build();
 
         TeamDTO.Request request = new TeamDTO.Request(team1.getAccount(), team1.getName(),
             user1.getAccount());
@@ -310,7 +312,7 @@ public class TeamServiceTest {
         //given
         Team team1 = Team.builder().account("gabiaTeam1").name("cronTeam1").build();
         User user1 = User.builder().account("gabiaUser1").password("1").email("yhw@gabia.com")
-            .name("윤현우").build();
+            .name("윤현우").role(UserRole.ROLE_USER).build();
         TeamUser teamUser1 = TeamUser.builder().team(team1).user(user1)
             .authority(AuthType.User)
             .build();

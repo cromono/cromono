@@ -33,7 +33,7 @@ public class CronLogRepositoryImpl implements CronLogRepository {
         StringBuilder stringBuilder = new StringBuilder();
 
         String from = "from(bucket: \"Cron\")\n";
-        //TODO: 기간 제약으로 인해 테스트 코드가 작동하는 기한에 제약이 생김
+        //  TODO: 기간 제약으로 인해 테스트 코드가 작동하는 기한에 제약이 생김
         String range = "|> range(start: -60d)";
         stringBuilder.append("|> filter(fn: (r) => (r[\"_measurement\"] == \"cron_log\" ");
         stringBuilder.append("and r[\"_field\"] == \"log\" ");
