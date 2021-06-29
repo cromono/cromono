@@ -13,6 +13,7 @@ import gabia.cronMonitoring.dto.UserCronJobDTO;
 import gabia.cronMonitoring.dto.UserCronJobDTO.Request;
 import gabia.cronMonitoring.entity.CronJob;
 import gabia.cronMonitoring.entity.CronServer;
+import gabia.cronMonitoring.entity.Enum.UserRole;
 import gabia.cronMonitoring.entity.User;
 import gabia.cronMonitoring.entity.UserCronJob;
 import gabia.cronMonitoring.repository.CronJobRepository;
@@ -33,7 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(properties = "spring.profiles.active:common")
 @Transactional
 public class UserCronJobIntegrationTest {
 
@@ -87,6 +88,7 @@ public class UserCronJobIntegrationTest {
         user.setPassword("test");
         user.setName("jyj");
         user.setEmail("test@gabia.com");
+        user.setRole(UserRole.ROLE_USER);
 
         userRepository.save(user);
 
@@ -133,6 +135,7 @@ public class UserCronJobIntegrationTest {
         user.setPassword("test");
         user.setName("jyj");
         user.setEmail("test@gabia.com");
+        user.setRole(UserRole.ROLE_USER);
         userRepository.save(user);
 
         UserCronJob userCronJob = UserCronJob.builder()
@@ -176,6 +179,7 @@ public class UserCronJobIntegrationTest {
         user.setPassword("test");
         user.setName("jyj");
         user.setEmail("test@gabia.com");
+        user.setRole(UserRole.ROLE_USER);
         userRepository.save(user);
 
         UserCronJob userCronJob = UserCronJob.builder()
