@@ -14,7 +14,6 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(CronJobNotFoundException.class)
     public ResponseEntity<ErrorResponse> noCronJob(CronJobNotFoundException e) {
-
         return new ResponseEntity<>(new CronProcessDto.ErrorResponse(e.getMessage()),
             HttpStatus.NOT_FOUND);
     }
@@ -22,7 +21,6 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(CronProcessNotFoundException.class)
     public ResponseEntity<CronProcessDto.ErrorResponse> noCronProcess(
         CronProcessNotFoundException e) {
-
         return new ResponseEntity<>(new CronProcessDto.ErrorResponse(e.getMessage()),
             HttpStatus.NOT_FOUND);
     }
