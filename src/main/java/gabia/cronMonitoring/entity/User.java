@@ -1,5 +1,6 @@
 package gabia.cronMonitoring.entity;
 
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,22 +8,29 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
 @Table(name = "user")
-public class User {
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long id;
 
-    @Column(name = "user_id")
+    @Column(name = "account", unique = true)
     @NotNull
-    private String userId;
+    private String account;
 
     @Column(name = "name")
     @NotNull

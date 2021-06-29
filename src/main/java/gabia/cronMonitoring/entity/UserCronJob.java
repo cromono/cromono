@@ -9,13 +9,19 @@ import javax.persistence.Inheritance;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
 @Table(name = "user_cron_job")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class UserCronJob {
 
     @Id
@@ -23,7 +29,7 @@ public class UserCronJob {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_account", referencedColumnName = "account")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
