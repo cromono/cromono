@@ -1,4 +1,4 @@
-package gabia.cronMonitoring.service;
+package gabia.cronMonitoring.jwt;
 
 import gabia.cronMonitoring.entity.User;
 import gabia.cronMonitoring.repository.UserRepository;

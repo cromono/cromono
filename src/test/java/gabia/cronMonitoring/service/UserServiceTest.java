@@ -4,9 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import gabia.cronMonitoring.dto.UserDTO;
-import gabia.cronMonitoring.dto.UserDTO.Request;
-import gabia.cronMonitoring.dto.UserDTO.Response;
+import gabia.cronMonitoring.dto.request.UserAccessDTO;
+import gabia.cronMonitoring.dto.response.UserInfoDTO;
 import gabia.cronMonitoring.entity.Enum.UserRole;
 import gabia.cronMonitoring.entity.User;
 import gabia.cronMonitoring.exception.user.ExistingInputException;
@@ -53,17 +52,17 @@ public class UserServiceTest {
             .activated(true)
             .build();
         when(userRepository.save(any())).thenReturn(newUser);
-        UserDTO.Request request = new UserDTO.Request();
+        UserAccessDTO request = new UserAccessDTO();
         request.setAccount(account);
         request.setName(name);
         request.setEmail(email);
         request.setPassword(password);
         // When
         when(passwordEncoder.encode(any())).thenReturn("test");
-        Response response = userService.addUser(request);
-        when(userRepository.findByAccount(response.getAccount())).thenReturn(Optional.of(newUser));
+        UserInfoDTO userInfoDTO = userService.addUser(request);
+        when(userRepository.findByAccount(userInfoDTO.getAccount())).thenReturn(Optional.of(newUser));
         // Then
-        Assertions.assertThat(newUser).isEqualTo(userRepository.findByAccount(response.getAccount()).get());
+        Assertions.assertThat(newUser).isEqualTo(userRepository.findByAccount(userInfoDTO.getAccount()).get());
     }
 
     @Test
@@ -74,7 +73,7 @@ public class UserServiceTest {
         String email = "test@gabia.com";
         String password = "test";
 
-        UserDTO.Request request = new UserDTO.Request();
+        UserAccessDTO request = new UserAccessDTO();
         request.setAccount(account);
         request.setName(name);
         request.setEmail(email);
@@ -92,7 +91,7 @@ public class UserServiceTest {
         String email = "test@gabia.com";
         String password = "test";
 
-        UserDTO.Request request = new UserDTO.Request();
+        UserAccessDTO request = new UserAccessDTO();
         request.setAccount(account);
         request.setName(name);
         request.setEmail(email);
@@ -110,7 +109,7 @@ public class UserServiceTest {
         String email = "";
         String password = "test";
 
-        UserDTO.Request request = new UserDTO.Request();
+        UserAccessDTO request = new UserAccessDTO();
         request.setAccount(account);
         request.setName(name);
         request.setEmail(email);
@@ -128,7 +127,7 @@ public class UserServiceTest {
         String email = "test@gabia.com";
         String password = "";
 
-        UserDTO.Request request = new UserDTO.Request();
+        UserAccessDTO request = new UserAccessDTO();
         request.setAccount(account);
         request.setName(name);
         request.setEmail(email);
@@ -153,7 +152,7 @@ public class UserServiceTest {
             .role(UserRole.ROLE_USER)
             .build();
 
-        UserDTO.Request request = new UserDTO.Request();
+        UserAccessDTO request = new UserAccessDTO();
         request.setAccount(account);
         request.setName(name);
         request.setEmail(email);
@@ -180,7 +179,7 @@ public class UserServiceTest {
             .role(UserRole.ROLE_USER)
             .build();
 
-        UserDTO.Request request = new UserDTO.Request();
+        UserAccessDTO request = new UserAccessDTO();
         request.setAccount(newAccount);
         request.setName(name);
         request.setEmail(email);
@@ -200,7 +199,7 @@ public class UserServiceTest {
         String email = "test";
         String password = "test";
 
-        UserDTO.Request request = new UserDTO.Request();
+        UserAccessDTO request = new UserAccessDTO();
         request.setAccount(newAccount);
         request.setName(name);
         request.setEmail(email);
@@ -236,28 +235,28 @@ public class UserServiceTest {
             .role(UserRole.ROLE_USER)
             .build());
 
-        List<Response> userDTOs = new ArrayList<>();
-        Response response1 = new Response();
-        response1.setAccount("test1");
-        response1.setEmail("test1");
-        response1.setName("test1");
-        response1.setRole(UserRole.ROLE_USER);
-        Response response2 = new Response();
-        response2.setAccount("test2");
-        response2.setEmail("test2");
-        response2.setName("test2");
-        response2.setRole(UserRole.ROLE_USER);
-        Response response3 = new Response();
-        response3.setAccount("test3");
-        response3.setEmail("test3");
-        response3.setName("test3");
-        response3.setRole(UserRole.ROLE_USER);
-        userDTOs.add(response1);
-        userDTOs.add(response2);
-        userDTOs.add(response3);
+        List<UserInfoDTO> userDTOs = new ArrayList<>();
+        UserInfoDTO userInfoDTO1 = new UserInfoDTO();
+        userInfoDTO1.setAccount("test1");
+        userInfoDTO1.setEmail("test1");
+        userInfoDTO1.setName("test1");
+        userInfoDTO1.setRole(UserRole.ROLE_USER);
+        UserInfoDTO userInfoDTO2 = new UserInfoDTO();
+        userInfoDTO2.setAccount("test2");
+        userInfoDTO2.setEmail("test2");
+        userInfoDTO2.setName("test2");
+        userInfoDTO2.setRole(UserRole.ROLE_USER);
+        UserInfoDTO userInfoDTO3 = new UserInfoDTO();
+        userInfoDTO3.setAccount("test3");
+        userInfoDTO3.setEmail("test3");
+        userInfoDTO3.setName("test3");
+        userInfoDTO3.setRole(UserRole.ROLE_USER);
+        userDTOs.add(userInfoDTO1);
+        userDTOs.add(userInfoDTO2);
+        userDTOs.add(userInfoDTO3);
         // When
         when(userRepository.findAll()).thenReturn(users);
-        List<Response> savedUsers = userService.getUsers();
+        List<UserInfoDTO> savedUsers = userService.getUsers();
         // Then
         Assertions.assertThat(savedUsers).isEqualTo(userDTOs);
     }
@@ -272,18 +271,18 @@ public class UserServiceTest {
             .password("test1")
             .role(UserRole.ROLE_USER)
             .build();
-        Response response = new Response();
-        response.setAccount("test1");
-        response.setEmail("test1");
-        response.setName("test1");
-        response.setRole(UserRole.ROLE_USER);
-        UserDTO.Request request = new Request();
+        UserInfoDTO userInfoDTO = new UserInfoDTO();
+        userInfoDTO.setAccount("test1");
+        userInfoDTO.setEmail("test1");
+        userInfoDTO.setName("test1");
+        userInfoDTO.setRole(UserRole.ROLE_USER);
+        UserAccessDTO request = new UserAccessDTO();
         request.setAccount(user.getAccount());
         // When
         when(userRepository.findByAccount(user.getAccount())).thenReturn(Optional.of(user));
-        Response getUserResponse = userService.getUser(request);
+        UserInfoDTO getUserUserInfoDTO = userService.getUser(request);
         // Then
-        Assertions.assertThat(getUserResponse).isEqualTo(response);
+        Assertions.assertThat(getUserUserInfoDTO).isEqualTo(userInfoDTO);
     }
 
     @Test
@@ -296,7 +295,7 @@ public class UserServiceTest {
             .password("test1")
             .role(UserRole.ROLE_USER)
             .build();
-        UserDTO.Request request = new Request();
+        UserAccessDTO request = new UserAccessDTO();
         request.setAccount(user.getAccount());
         // When
         when(userRepository.findByAccount(user.getAccount())).thenReturn(Optional.empty());
@@ -320,15 +319,15 @@ public class UserServiceTest {
             .role(UserRole.ROLE_USER)
             .build();
 
-        UserDTO.Request request = new UserDTO.Request();
+        UserAccessDTO request = new UserAccessDTO();
         request.setAccount(account);
         request.setName(newName);
         request.setEmail(email);
         request.setPassword(password);
         // When
         when(userRepository.findByAccount(account)).thenReturn(Optional.of(user));
-        Response response = userService.updateUser("test", request);
-        when(userRepository.findByAccount(response.getAccount())).thenReturn(Optional.of(user));
+        UserInfoDTO userInfoDTO = userService.updateUser("test", request);
+        when(userRepository.findByAccount(userInfoDTO.getAccount())).thenReturn(Optional.of(user));
         // Then
         Assertions.assertThat(userRepository.findByAccount(account).get().getName())
             .isEqualTo(newName);
@@ -342,7 +341,7 @@ public class UserServiceTest {
         String email = "test@gabia.com";
         String password = "test";
 
-        UserDTO.Request request = new UserDTO.Request();
+        UserAccessDTO request = new UserAccessDTO();
         request.setAccount(account);
         request.setName(name);
         request.setEmail(email);
@@ -369,7 +368,7 @@ public class UserServiceTest {
             .role(UserRole.ROLE_USER)
             .build();
 
-        UserDTO.Request request = new UserDTO.Request();
+        UserAccessDTO request = new UserAccessDTO();
         request.setAccount(newAccount);
         request.setName(name);
         request.setEmail(email);
@@ -397,7 +396,7 @@ public class UserServiceTest {
             .role(UserRole.ROLE_USER)
             .build();
 
-        UserDTO.Request request = new UserDTO.Request();
+        UserAccessDTO request = new UserAccessDTO();
         request.setAccount(account);
         request.setName(name);
         request.setEmail(newEmail);
@@ -425,7 +424,7 @@ public class UserServiceTest {
             .role(UserRole.ROLE_USER)
             .build();
 
-        UserDTO.Request request = new UserDTO.Request();
+        UserAccessDTO request = new UserAccessDTO();
         request.setAccount(account);
         request.setName(name);
         request.setEmail(newEmail);
@@ -449,7 +448,7 @@ public class UserServiceTest {
         String newEmail = "test1@gabia.com";
         String password = "test";
 
-        UserDTO.Request request = new UserDTO.Request();
+        UserAccessDTO request = new UserAccessDTO();
         request.setAccount(account);
         request.setName(name);
         request.setEmail(newEmail);

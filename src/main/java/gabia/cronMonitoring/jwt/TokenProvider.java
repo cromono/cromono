@@ -9,6 +9,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -33,15 +34,18 @@ public class TokenProvider implements InitializingBean {
 
     private final String secret;
     private final long tokenValidityInMilliseconds;
+    private final long refreshTokenValidityInMilliseconds;
 
     private Key key;
 
 
     public TokenProvider(
         @Value("${jwt.secret}") String secret,
-        @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds) {
+        @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds,
+        @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValidityInSeconds) {
         this.secret = secret;
         this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;
+        this.refreshTokenValidityInMilliseconds = refreshTokenValidityInSeconds * 1000;
     }
 
     @Override
@@ -60,6 +64,7 @@ public class TokenProvider implements InitializingBean {
 
         return Jwts.builder()
             .setSubject(authentication.getName())
+            .setIssuedAt(Date.from(Instant.now()))
             .claim(AUTHORITIES_KEY, authorities)
             .signWith(key, SignatureAlgorithm.HS512)
             .setExpiration(validity)

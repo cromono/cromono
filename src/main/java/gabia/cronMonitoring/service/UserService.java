@@ -1,6 +1,7 @@
 package gabia.cronMonitoring.service;
 
-import gabia.cronMonitoring.dto.UserDTO;
+import gabia.cronMonitoring.dto.request.UserAccessDTO;
+import gabia.cronMonitoring.dto.response.UserInfoDTO;
 import gabia.cronMonitoring.entity.Enum.UserRole;
 import gabia.cronMonitoring.entity.User;
 import gabia.cronMonitoring.exception.user.ExistingInputException;
@@ -28,7 +29,7 @@ public class UserService {
     private EmailValidator emailValidator = EmailValidator.getInstance();
 
     @Transactional
-    public UserDTO.Response addUser(UserDTO.Request request) {
+    public UserInfoDTO addUser(UserAccessDTO request) {
         if (request.getAccount().isEmpty()) {
             throw new InputNotFoundException("ID를 입력하지 않았습니다.");
         }
@@ -59,24 +60,24 @@ public class UserService {
             .activated(true)
             .build();
 
-        return UserDTO.Response.from(userRepository.save(newUser));
+        return UserInfoDTO.from(userRepository.save(newUser));
     }
 
-    public UserDTO.Response getUser(UserDTO.Request request) {
+    public UserInfoDTO getUser(UserAccessDTO request) {
         User user = userRepository.findByAccount(request.getAccount())
             .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자입니다."));
-        return UserDTO.Response.from(user);
+        return UserInfoDTO.from(user);
     }
 
-    public List<UserDTO.Response> getUsers() {
-        List<UserDTO.Response> response = userRepository.findAll().stream()
-            .map(user -> UserDTO.Response.from(user))
+    public List<UserInfoDTO> getUsers() {
+        List<UserInfoDTO> userInfoDTO = userRepository.findAll().stream()
+            .map(user -> UserInfoDTO.from(user))
             .collect(Collectors.toList());
-        return response;
+        return userInfoDTO;
     }
 
     @Transactional
-    public UserDTO.Response updateUser(String userAccount, UserDTO.Request request) {
+    public UserInfoDTO updateUser(String userAccount, UserAccessDTO request) {
         User user = userRepository.findByAccount(userAccount)
             .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자입니다."));
         if (!userAccount.equals(request.getAccount())) {
@@ -107,11 +108,11 @@ public class UserService {
         }
         userRepository.save(user);
 
-        return UserDTO.Response.from(user);
+        return UserInfoDTO.from(user);
     }
 
     @Transactional
-    public void deleteUser(UserDTO.Request request) {
+    public void deleteUser(UserAccessDTO request) {
         User user = userRepository.findByAccount(request.getAccount())
             .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자입니다."));
         userRepository.delete(user);

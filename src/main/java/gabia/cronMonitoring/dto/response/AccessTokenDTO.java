@@ -1,4 +1,4 @@
-package gabia.cronMonitoring.dto;
+package gabia.cronMonitoring.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TokenDTO {
+public class AccessTokenDTO {
 
     private String token;
 }

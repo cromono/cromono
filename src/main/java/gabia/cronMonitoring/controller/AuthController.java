@@ -1,12 +1,14 @@
 package gabia.cronMonitoring.controller;
 
-import gabia.cronMonitoring.dto.UserDTO.Response;
+import gabia.cronMonitoring.dto.request.UserAccessDTO;
+import gabia.cronMonitoring.dto.response.UserInfoDTO;
+import gabia.cronMonitoring.service.AuthService;
 import gabia.cronMonitoring.service.UserService;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import gabia.cronMonitoring.dto.UserDTO;
-import gabia.cronMonitoring.dto.TokenDTO;
+import gabia.cronMonitoring.dto.response.AccessTokenDTO;
 import gabia.cronMonitoring.jwt.JwtFilter;
 import gabia.cronMonitoring.jwt.TokenProvider;
 import org.springframework.http.HttpHeaders;
@@ -18,37 +20,37 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("auth")
 public class AuthController {
-    private final TokenProvider tokenProvider;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+
+    private final AuthService authService;
 
     private final UserService userService;
 
-    @PostMapping("/login")
-    public ResponseEntity<TokenDTO> authorize(@Valid @RequestBody UserDTO.Request request) {
+    @PostMapping("/local/login")
+    public ResponseEntity<AccessTokenDTO> login(@Valid @RequestBody UserAccessDTO request) {
 
-        UsernamePasswordAuthenticationToken authenticationToken =
-            new UsernamePasswordAuthenticationToken(request.getAccount(), request.getPassword());
-
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String jwt = tokenProvider.createToken(authentication);
+        AccessTokenDTO tokenDTO = authService.login(request);
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
+        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + tokenDTO.getToken());
 
-        return new ResponseEntity(new TokenDTO(jwt), httpHeaders, HttpStatus.OK);
+        return new ResponseEntity(tokenDTO, httpHeaders, HttpStatus.OK);
     }
 
+    // TODO: 로그아웃 구현
+//    @PostMapping("/local/logout")
+//    public ResponseEntity<TokenDTO> logout() {
+//
+//    }
+
     @PostMapping("/register")
-    public ResponseEntity<TokenDTO> signup(@Valid @RequestBody UserDTO.Request request) {
-        Response response = userService.addUser(request);
-        ResponseEntity responseEntity = new ResponseEntity(response, HttpStatus.CREATED);
+    public ResponseEntity<AccessTokenDTO> register(@Valid @RequestBody UserAccessDTO request) {
+        UserInfoDTO userInfoDTO = userService.addUser(request);
+        ResponseEntity responseEntity = new ResponseEntity(userInfoDTO, HttpStatus.CREATED);
         return responseEntity;
     }
 }
