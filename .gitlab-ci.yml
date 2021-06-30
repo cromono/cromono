@@ -14,12 +14,14 @@ variables:
 
 test-jdk11:
   stage: test
-  image: gradle:6.6.1-jdk11
+  image: gradle:7.0.2-jdk11
   script:
     - 'gradle test jacocoTestReport' # jacoco must be configured to create an xml report
   artifacts:
     paths:
       - build/jacoco/jacoco.xml
+  tags:
+    - cronmonitor
 
 coverage-jdk11:
   # Must be in a stage later than test-jdk11's stage.
@@ -36,6 +38,8 @@ coverage-jdk11:
   artifacts:
     reports:
       cobertura: build/cobertura.xml
+  tags:
+    - cronmonitor
 
 build:
   image: gradle:7.0.2-jdk11
