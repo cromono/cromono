@@ -1,9 +1,10 @@
 plugins {
-	id 'org.springframework.boot' version '2.5.0'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'java'
-	id 'jacoco'
+    id 'org.springframework.boot' version '2.5.0'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+    id 'jacoco'
 	id 'java-library'
+	id "org.barfuin.gradle.jacocolog" version "1.2.4"
 }
 
 group = 'gabia'
@@ -11,37 +12,35 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation group: 'commons-validator', name: 'commons-validator', version: '1.7'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-devtools'
-	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.6'
-	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.h2database:h2'
-	runtimeOnly 'mysql:mysql-connector-java'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	implementation group: 'com.github.ulisesbocchio', name: 'jasypt-spring-boot-starter', version: '3.0.2'
-	implementation 'com.influxdb:influxdb-client-java:2.3.0'
-	implementation group: 'com.squareup.retrofit2', name: 'retrofit', version: '2.7.2'
-
+    implementation group: 'commons-validator', name: 'commons-validator', version: '1.7'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-devtools'
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.6'
+    compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'mysql:mysql-connector-java'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation group: 'com.github.ulisesbocchio', name: 'jasypt-spring-boot-starter', version: '3.0.2'
+    implementation 'com.influxdb:influxdb-client-java:2.3.0'
+    implementation group: 'com.squareup.retrofit2', name: 'retrofit', version: '2.7.2'
 	//JUnit4 추가
-	testImplementation("org.junit.vintage:junit-vintage-engine") {
-		exclude group: "org.hamcrest", module: "hamcrest-core"
-
-	}
+    testImplementation("org.junit.vintage:junit-vintage-engine") {
+        exclude group: "org.hamcrest", module: "hamcrest-core"
+    }
 
 	//Spring Security 추가
 	implementation "org.springframework.boot:spring-boot-starter-security"
@@ -54,44 +53,64 @@ dependencies {
 }
 
 test {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
 
 jacoco {
-	// JaCoCo 버전
-	toolVersion = '0.8.5'
-
+    // JaCoCo 버전
+    toolVersion = '0.8.5'
 //  테스트결과 리포트를 저장할 경로 변경
 //  default는 "${project.reporting.baseDir}/jacoco"
 //  reportsDir = file("$buildDir/customJacocoReportDir")
 }
 
 jacocoTestReport {
-	reports {
-		// 원하는 리포트를 켜고 끌 수 있습니다.
-		html.enabled true
-		xml.enabled false
-		csv.enabled false
-
+    reports {
+        // 원하는 리포트를 켜고 끌 수 있습니다.
+        html.enabled true
+        xml.enabled true
+        csv.enabled false
 //  각 리포트 타입 마다 리포트 저장 경로를 설정할 수 있습니다.
 //  html.destination file("$buildDir/jacocoHtml")
 //  xml.destination file("$buildDir/jacoco.xml")
+    }
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it,
+					exclude: ['**/dto/',
+							  '**/entity/',
+							  '**/exception/',
+                              '**/util/',
+                            '**/mapper/',
+                            '**/jwt/'
+					] )
+		}))
 	}
-	finalizedBy 'jacocoTestCoverageVerification'
+    finalizedBy 'jacocoTestCoverageVerification'
 }
 
 jacocoTestCoverageVerification {
-	violationRules {
-		rule {
-			element = 'CLASS'
+    violationRules {
+        rule {
+            element = 'CLASS'
 
-			limit {
-				counter = 'BRANCH'
-				value = 'COVEREDRATIO'
-				minimum = 0.90
-			}
-
-			excludes =[]
-		}
-	}
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.80
+            }
+            excludes = [
+                    '*.dto.*',
+                    '*.*DTO',
+                    '*.*Dto',
+                    '*.*Exception',
+                    '*.*Handler',
+                    '*.CronMonitoringApplication',
+                    '*.entity.*',
+                    '*.util.*',
+                    '*.mapper.*',
+                    '*.jwt.*'
+            ]
+        }
+    }
 }
