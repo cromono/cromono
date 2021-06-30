@@ -71,6 +71,20 @@ public class TokenProvider implements InitializingBean {
             .compact();
     }
 
+    public String createTokenWithRefreshToken(String refreshToken) {
+        Claims claims = Jwts.claims();
+        claims.put("value", refreshToken);
+        long now = (new Date()).getTime();
+        Date validity = new Date(now + this.refreshTokenValidityInMilliseconds);
+
+        return Jwts.builder()
+            .setIssuedAt(Date.from(Instant.now()))
+            .setClaims(claims)
+            .signWith(key, SignatureAlgorithm.HS512)
+            .setExpiration(validity)
+            .compact();
+    }
+
     public Authentication getAuthentication(String token) {
         Claims claims = Jwts
             .parserBuilder()

@@ -1,20 +1,17 @@
-package gabia.cronMonitoring.dto.response;
+package gabia.cronMonitoring.dto.request;
 
-import java.time.Instant;
+import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Data
-public class AccessTokenDTO {
-
-    private String token;
+public class RefreshTokenDTO {
+    @NotBlank
     private String refreshToken;
-    private Instant expiresAt;
+    private String userAccount;
 }

@@ -1,25 +1,20 @@
 package gabia.cronMonitoring.controller;
 
-import gabia.cronMonitoring.dto.request.UserAccessDTO;
-import gabia.cronMonitoring.dto.response.UserInfoDTO;
+import gabia.cronMonitoring.dto.request.RefreshTokenDTO;
+import gabia.cronMonitoring.dto.request.UserInfoDTO;
+import gabia.cronMonitoring.dto.response.AccessTokenDTO;
+import gabia.cronMonitoring.jwt.JwtFilter;
 import gabia.cronMonitoring.service.AuthService;
 import gabia.cronMonitoring.service.UserService;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import gabia.cronMonitoring.dto.response.AccessTokenDTO;
-import gabia.cronMonitoring.jwt.JwtFilter;
-import gabia.cronMonitoring.jwt.TokenProvider;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,7 +26,7 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/local/login")
-    public ResponseEntity<AccessTokenDTO> login(@Valid @RequestBody UserAccessDTO request) {
+    public ResponseEntity<AccessTokenDTO> login(@Valid @RequestBody UserInfoDTO request) {
 
         AccessTokenDTO tokenDTO = authService.login(request);
 
@@ -41,16 +36,15 @@ public class AuthController {
         return new ResponseEntity(tokenDTO, httpHeaders, HttpStatus.OK);
     }
 
-    // TODO: 로그아웃 구현
-//    @PostMapping("/local/logout")
-//    public ResponseEntity<TokenDTO> logout() {
-//
-//    }
+    @PostMapping("/local/logout")
+    public ResponseEntity<String> logout(@Valid @RequestBody RefreshTokenDTO request) {
+        authService.logout(request);
+        return new ResponseEntity("Refresh Token Deleted Successfully!", HttpStatus.OK);
+    }
 
     @PostMapping("/register")
-    public ResponseEntity<AccessTokenDTO> register(@Valid @RequestBody UserAccessDTO request) {
-        UserInfoDTO userInfoDTO = userService.addUser(request);
-        ResponseEntity responseEntity = new ResponseEntity(userInfoDTO, HttpStatus.CREATED);
-        return responseEntity;
+    public ResponseEntity<AccessTokenDTO> register(@Valid @RequestBody UserInfoDTO request) {
+        gabia.cronMonitoring.dto.response.UserInfoDTO userInfoDTO = userService.addUser(request);
+        return new ResponseEntity(userInfoDTO, HttpStatus.CREATED);
     }
 }

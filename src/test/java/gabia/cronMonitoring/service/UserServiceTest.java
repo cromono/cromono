@@ -4,8 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import gabia.cronMonitoring.dto.request.UserAccessDTO;
-import gabia.cronMonitoring.dto.response.UserInfoDTO;
+import gabia.cronMonitoring.dto.request.UserInfoDTO;
 import gabia.cronMonitoring.entity.Enum.UserRole;
 import gabia.cronMonitoring.entity.User;
 import gabia.cronMonitoring.exception.user.ExistingInputException;
@@ -52,14 +51,14 @@ public class UserServiceTest {
             .activated(true)
             .build();
         when(userRepository.save(any())).thenReturn(newUser);
-        UserAccessDTO request = new UserAccessDTO();
+        UserInfoDTO request = new UserInfoDTO();
         request.setAccount(account);
         request.setName(name);
         request.setEmail(email);
         request.setPassword(password);
         // When
         when(passwordEncoder.encode(any())).thenReturn("test");
-        UserInfoDTO userInfoDTO = userService.addUser(request);
+        gabia.cronMonitoring.dto.response.UserInfoDTO userInfoDTO = userService.addUser(request);
         when(userRepository.findByAccount(userInfoDTO.getAccount())).thenReturn(Optional.of(newUser));
         // Then
         Assertions.assertThat(newUser).isEqualTo(userRepository.findByAccount(userInfoDTO.getAccount()).get());
@@ -73,7 +72,7 @@ public class UserServiceTest {
         String email = "test@gabia.com";
         String password = "test";
 
-        UserAccessDTO request = new UserAccessDTO();
+        UserInfoDTO request = new UserInfoDTO();
         request.setAccount(account);
         request.setName(name);
         request.setEmail(email);
@@ -91,7 +90,7 @@ public class UserServiceTest {
         String email = "test@gabia.com";
         String password = "test";
 
-        UserAccessDTO request = new UserAccessDTO();
+        UserInfoDTO request = new UserInfoDTO();
         request.setAccount(account);
         request.setName(name);
         request.setEmail(email);
@@ -109,7 +108,7 @@ public class UserServiceTest {
         String email = "";
         String password = "test";
 
-        UserAccessDTO request = new UserAccessDTO();
+        UserInfoDTO request = new UserInfoDTO();
         request.setAccount(account);
         request.setName(name);
         request.setEmail(email);
@@ -127,7 +126,7 @@ public class UserServiceTest {
         String email = "test@gabia.com";
         String password = "";
 
-        UserAccessDTO request = new UserAccessDTO();
+        UserInfoDTO request = new UserInfoDTO();
         request.setAccount(account);
         request.setName(name);
         request.setEmail(email);
@@ -152,7 +151,7 @@ public class UserServiceTest {
             .role(UserRole.ROLE_USER)
             .build();
 
-        UserAccessDTO request = new UserAccessDTO();
+        UserInfoDTO request = new UserInfoDTO();
         request.setAccount(account);
         request.setName(name);
         request.setEmail(email);
@@ -179,7 +178,7 @@ public class UserServiceTest {
             .role(UserRole.ROLE_USER)
             .build();
 
-        UserAccessDTO request = new UserAccessDTO();
+        UserInfoDTO request = new UserInfoDTO();
         request.setAccount(newAccount);
         request.setName(name);
         request.setEmail(email);
@@ -199,7 +198,7 @@ public class UserServiceTest {
         String email = "test";
         String password = "test";
 
-        UserAccessDTO request = new UserAccessDTO();
+        UserInfoDTO request = new UserInfoDTO();
         request.setAccount(newAccount);
         request.setName(name);
         request.setEmail(email);
@@ -235,18 +234,18 @@ public class UserServiceTest {
             .role(UserRole.ROLE_USER)
             .build());
 
-        List<UserInfoDTO> userDTOs = new ArrayList<>();
-        UserInfoDTO userInfoDTO1 = new UserInfoDTO();
+        List<gabia.cronMonitoring.dto.response.UserInfoDTO> userDTOs = new ArrayList<>();
+        gabia.cronMonitoring.dto.response.UserInfoDTO userInfoDTO1 = new gabia.cronMonitoring.dto.response.UserInfoDTO();
         userInfoDTO1.setAccount("test1");
         userInfoDTO1.setEmail("test1");
         userInfoDTO1.setName("test1");
         userInfoDTO1.setRole(UserRole.ROLE_USER);
-        UserInfoDTO userInfoDTO2 = new UserInfoDTO();
+        gabia.cronMonitoring.dto.response.UserInfoDTO userInfoDTO2 = new gabia.cronMonitoring.dto.response.UserInfoDTO();
         userInfoDTO2.setAccount("test2");
         userInfoDTO2.setEmail("test2");
         userInfoDTO2.setName("test2");
         userInfoDTO2.setRole(UserRole.ROLE_USER);
-        UserInfoDTO userInfoDTO3 = new UserInfoDTO();
+        gabia.cronMonitoring.dto.response.UserInfoDTO userInfoDTO3 = new gabia.cronMonitoring.dto.response.UserInfoDTO();
         userInfoDTO3.setAccount("test3");
         userInfoDTO3.setEmail("test3");
         userInfoDTO3.setName("test3");
@@ -256,7 +255,7 @@ public class UserServiceTest {
         userDTOs.add(userInfoDTO3);
         // When
         when(userRepository.findAll()).thenReturn(users);
-        List<UserInfoDTO> savedUsers = userService.getUsers();
+        List<gabia.cronMonitoring.dto.response.UserInfoDTO> savedUsers = userService.getUsers();
         // Then
         Assertions.assertThat(savedUsers).isEqualTo(userDTOs);
     }
@@ -271,16 +270,16 @@ public class UserServiceTest {
             .password("test1")
             .role(UserRole.ROLE_USER)
             .build();
-        UserInfoDTO userInfoDTO = new UserInfoDTO();
+        gabia.cronMonitoring.dto.response.UserInfoDTO userInfoDTO = new gabia.cronMonitoring.dto.response.UserInfoDTO();
         userInfoDTO.setAccount("test1");
         userInfoDTO.setEmail("test1");
         userInfoDTO.setName("test1");
         userInfoDTO.setRole(UserRole.ROLE_USER);
-        UserAccessDTO request = new UserAccessDTO();
+        UserInfoDTO request = new UserInfoDTO();
         request.setAccount(user.getAccount());
         // When
         when(userRepository.findByAccount(user.getAccount())).thenReturn(Optional.of(user));
-        UserInfoDTO getUserUserInfoDTO = userService.getUser(request);
+        gabia.cronMonitoring.dto.response.UserInfoDTO getUserUserInfoDTO = userService.getUser(request);
         // Then
         Assertions.assertThat(getUserUserInfoDTO).isEqualTo(userInfoDTO);
     }
@@ -295,7 +294,7 @@ public class UserServiceTest {
             .password("test1")
             .role(UserRole.ROLE_USER)
             .build();
-        UserAccessDTO request = new UserAccessDTO();
+        UserInfoDTO request = new UserInfoDTO();
         request.setAccount(user.getAccount());
         // When
         when(userRepository.findByAccount(user.getAccount())).thenReturn(Optional.empty());
@@ -319,14 +318,14 @@ public class UserServiceTest {
             .role(UserRole.ROLE_USER)
             .build();
 
-        UserAccessDTO request = new UserAccessDTO();
+        UserInfoDTO request = new UserInfoDTO();
         request.setAccount(account);
         request.setName(newName);
         request.setEmail(email);
         request.setPassword(password);
         // When
         when(userRepository.findByAccount(account)).thenReturn(Optional.of(user));
-        UserInfoDTO userInfoDTO = userService.updateUser("test", request);
+        gabia.cronMonitoring.dto.response.UserInfoDTO userInfoDTO = userService.updateUser("test", request);
         when(userRepository.findByAccount(userInfoDTO.getAccount())).thenReturn(Optional.of(user));
         // Then
         Assertions.assertThat(userRepository.findByAccount(account).get().getName())
@@ -341,7 +340,7 @@ public class UserServiceTest {
         String email = "test@gabia.com";
         String password = "test";
 
-        UserAccessDTO request = new UserAccessDTO();
+        UserInfoDTO request = new UserInfoDTO();
         request.setAccount(account);
         request.setName(name);
         request.setEmail(email);
@@ -368,7 +367,7 @@ public class UserServiceTest {
             .role(UserRole.ROLE_USER)
             .build();
 
-        UserAccessDTO request = new UserAccessDTO();
+        UserInfoDTO request = new UserInfoDTO();
         request.setAccount(newAccount);
         request.setName(name);
         request.setEmail(email);
@@ -396,7 +395,7 @@ public class UserServiceTest {
             .role(UserRole.ROLE_USER)
             .build();
 
-        UserAccessDTO request = new UserAccessDTO();
+        UserInfoDTO request = new UserInfoDTO();
         request.setAccount(account);
         request.setName(name);
         request.setEmail(newEmail);
@@ -424,7 +423,7 @@ public class UserServiceTest {
             .role(UserRole.ROLE_USER)
             .build();
 
-        UserAccessDTO request = new UserAccessDTO();
+        UserInfoDTO request = new UserInfoDTO();
         request.setAccount(account);
         request.setName(name);
         request.setEmail(newEmail);
@@ -448,7 +447,7 @@ public class UserServiceTest {
         String newEmail = "test1@gabia.com";
         String password = "test";
 
-        UserAccessDTO request = new UserAccessDTO();
+        UserInfoDTO request = new UserInfoDTO();
         request.setAccount(account);
         request.setName(name);
         request.setEmail(newEmail);

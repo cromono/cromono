@@ -2,13 +2,15 @@ package gabia.cronMonitoring.dto.request;
 
 import gabia.cronMonitoring.entity.Enum.UserRole;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Data
-public class UserAccessDTO {
+public class UserInfoDTO {
 
     String account;
     String name;

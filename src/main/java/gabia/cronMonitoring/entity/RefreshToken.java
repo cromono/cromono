@@ -2,6 +2,7 @@ package gabia.cronMonitoring.entity;
 
 import java.time.Instant;
 import java.util.UUID;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -23,11 +24,8 @@ import org.hibernate.annotations.GenericGenerator;
 @NoArgsConstructor
 public class RefreshToken {
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    private UUID id;
+    private String token;
 
     @NotNull
-    @Temporal(TemporalType.TIME)
     Instant createdDate;
 }
