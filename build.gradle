@@ -81,7 +81,8 @@ jacocoTestReport {
 							  '**/entity/',
 							  '**/exception/',
                               '**/util/',
-                            '**/mapper/'
+                            '**/mapper/',
+                            '**/jwt/'
 					] )
 		}))
 	}
@@ -107,7 +108,8 @@ jacocoTestCoverageVerification {
                     '*.CronMonitoringApplication',
                     '*.entity.*',
                     '*.util.*',
-                    '*.mapper.*'
+                    '*.mapper.*',
+                    '*.jwt.*'
             ]
         }
     }
