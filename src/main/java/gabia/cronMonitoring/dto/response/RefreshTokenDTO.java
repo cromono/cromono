@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class RefreshTokenDTO {
 
-    private Instant expiresAt;
     private String refreshToken;
+    private Instant expiresAt;
 }

@@ -77,6 +77,9 @@ spring:
   config:
     activate:
       on-profile: "common"
+  redis:
+    host: localhost
+    port: 6379
 jwt:
   header: Authorization
   secret: 3zWsvEmwL96CJccvPMWhcIMvmK9vKX07dq6J2mRhlMvT5MMVSdl3QR9Hca859z8Wi9EZGWR3rZKj4rIumwHaQQ

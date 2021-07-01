@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -26,6 +27,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 @Component
+@Getter
 public class TokenProvider implements InitializingBean {
 
     private final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
@@ -66,20 +68,6 @@ public class TokenProvider implements InitializingBean {
             .setSubject(authentication.getName())
             .setIssuedAt(Date.from(Instant.now()))
             .claim(AUTHORITIES_KEY, authorities)
-            .signWith(key, SignatureAlgorithm.HS512)
-            .setExpiration(validity)
-            .compact();
-    }
-
-    public String createTokenWithRefreshToken(String refreshToken) {
-        Claims claims = Jwts.claims();
-        claims.put("value", refreshToken);
-        long now = (new Date()).getTime();
-        Date validity = new Date(now + this.refreshTokenValidityInMilliseconds);
-
-        return Jwts.builder()
-            .setIssuedAt(Date.from(Instant.now()))
-            .setClaims(claims)
             .signWith(key, SignatureAlgorithm.HS512)
             .setExpiration(validity)
             .compact();

@@ -15,6 +15,5 @@ import lombok.Setter;
 public class AccessTokenDTO {
 
     private String token;
-    private String refreshToken;
     private Instant expiresAt;
 }

@@ -1,29 +1,26 @@
 package gabia.cronMonitoring.entity;
 
+import java.io.Serializable;
 import java.time.Instant;
-import java.util.UUID;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.redis.core.RedisHash;
 
-@Entity
+//유효기간 2주
+@RedisHash(timeToLive = 1209600)
+@Builder
 @Getter
-@Setter
-@Table(name = "refresh_token")
-@AllArgsConstructor
-@NoArgsConstructor
-public class RefreshToken {
+public class RefreshToken implements Serializable {
+
     @Id
+    private String id;
+
+    @NotNull
     private String token;
 
     @NotNull

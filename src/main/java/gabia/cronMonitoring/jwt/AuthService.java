@@ -1,10 +1,11 @@
-package gabia.cronMonitoring.service;
+package gabia.cronMonitoring.jwt;
 
-import gabia.cronMonitoring.business.RefreshTokenService;
-import gabia.cronMonitoring.dto.request.RefreshTokenDTO;
 import gabia.cronMonitoring.dto.request.UserInfoDTO;
 import gabia.cronMonitoring.dto.response.AccessTokenDTO;
+import gabia.cronMonitoring.entity.RefreshToken;
 import gabia.cronMonitoring.jwt.TokenProvider;
+import gabia.cronMonitoring.jwt.RefreshTokenService;
+import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -19,7 +20,7 @@ public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final RefreshTokenService refreshTokenService;
 
-    public AccessTokenDTO login(UserInfoDTO request) {
+    public AccessTokenDTO authorize(UserInfoDTO request) {
         UsernamePasswordAuthenticationToken authenticationToken =
             new UsernamePasswordAuthenticationToken(request.getAccount(), request.getPassword());
 
@@ -27,24 +28,29 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = tokenProvider.createToken(authentication);
+        refreshTokenService.generateRefreshToken(request.getAccount());
 
         return AccessTokenDTO.builder()
             .token(jwt)
-            .refreshToken(refreshTokenService.generateRefreshToken().getToken())
+            .expiresAt(Instant.now().plusMillis(tokenProvider.getTokenValidityInMilliseconds()))
             .build();
     }
 
-    public void logout(RefreshTokenDTO request) {
-        refreshTokenService.deleteRefreshToken(request.getRefreshToken());
+    public void unauthorize(String userAccount) {
+        refreshTokenService.deleteRefreshToken(userAccount);
         SecurityContextHolder.clearContext();
     }
 
-    public AccessTokenDTO refreshAccessToken(RefreshTokenDTO request) {
-        refreshTokenService.validateRefreshToken(request.getRefreshToken());
-        String token = tokenProvider.createTokenWithRefreshToken(request.getRefreshToken());
+    public AccessTokenDTO refreshAccessToken(String userAccount) {
+        RefreshToken refreshToken = refreshTokenService.getRefreshTokenByUserAccount(userAccount);
+        refreshTokenService.validateRefreshToken(refreshToken.getToken());
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String jwt = tokenProvider.createToken(authentication);
+
         return AccessTokenDTO.builder()
-            .token(token)
-            .refreshToken(request.getRefreshToken())
+            .token(jwt)
+            .expiresAt(Instant.now().plusMillis(tokenProvider.getTokenValidityInMilliseconds()))
             .build();
     }
 }
