@@ -10,8 +10,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import gabia.cronMonitoring.dto.TeamDTO;
+import gabia.cronMonitoring.dto.TeamUserDTO;
+import gabia.cronMonitoring.entity.Enum.AuthType;
 import gabia.cronMonitoring.service.TeamService;
 import gabia.cronMonitoring.util.CronMonitorUtil;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import org.junit.Before;
@@ -122,8 +125,7 @@ public class TeamControllerTest {
     }
 
     @Test
-    public void 팀명_수정_실패_pathparam없음() throws Exception {
-        String teamAccount = null;
+    public void 팀명_수정_실패_pathparam에맞는값없음() throws Exception {
         mockMvc.perform(patch("/teams/{teamId}", "team1"))
             //then
             .andDo(print())
@@ -147,12 +149,85 @@ public class TeamControllerTest {
     }
 
     @Test
-    public void 팀_삭제_실패_pathparam없음() throws Exception {
-        String teamAccount = null;
+    public void 팀_삭제_실패_pathparam에맞는값없음() throws Exception {
         mockMvc.perform(delete("/teams/{teamId}", "team1"))
             //then
             .andDo(print())
             .andExpect(status().is4xxClientError())
             .andReturn();
+    }
+
+    @Test
+    public void 팀원찾기_성공() throws Exception {
+        //given
+        TeamUserDTO.Response member1 = TeamUserDTO.Response.builder().teamAccount("team1")
+            .userAccount("yhw").userEmail("yhw@gabia.com").userName("윤현우")
+            .authType(AuthType.UserManager).build();
+        TeamUserDTO.Response member2 = TeamUserDTO.Response.builder().teamAccount("team1")
+            .userAccount("kkh").userEmail("kkj@gabia.com").userName("김기정")
+            .authType(AuthType.UserManager).build();
+        TeamUserDTO.Response member3 = TeamUserDTO.Response.builder().teamAccount("team1")
+            .userAccount("jyj").userEmail("jyj@gabia.com").userName("주영준")
+            .authType(AuthType.UserManager).build();
+        List<TeamUserDTO.Response> response = new LinkedList(
+            Arrays.asList(member1, member2, member3));
+
+        given(teamService.findMembers("team1")).willReturn(response);
+        //when
+        mockMvc.perform(get("/teams/{teamId}/users", "team1"))
+            //then
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.[0].userAccount").value("yhw"))
+            .andReturn();
+    }
+
+    @Test
+    public void 팀원등록_성공() throws Exception {
+        TeamUserDTO.Response responseMember = TeamUserDTO.Response.builder().teamAccount("team1")
+            .userAccount("yhw").userEmail("yhw@gabia.com").userName("윤현우")
+            .authType(AuthType.UserManager).build();
+        TeamUserDTO.Request requestMember = TeamUserDTO.Request.builder().teamAccount("team1")
+            .userAccount("yhw").build();
+        given(teamService.addMember(requestMember)).willReturn(responseMember);
+        String requestJson = CronMonitorUtil.objToJson(requestMember);
+
+        mockMvc.perform(post("/teams/{teamId}/users", "team1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect((jsonPath("$.userAccount").value("yhw")));
+    }
+
+    @Test
+    public void 팀원권한수정_성공() throws Exception {
+        TeamUserDTO.Response responseMember = TeamUserDTO.Response.builder().teamAccount("team1")
+            .userAccount("yhw").userEmail("yhw@gabia.com").userName("윤현우")
+            .authType(AuthType.UserManager).build();
+        TeamUserDTO.Request requestMember = TeamUserDTO.Request.builder().teamAccount("team1")
+            .userAccount("yhw").authType(AuthType.UserManager).build();
+        given(teamService.changeMemberAuthType(requestMember)).willReturn(responseMember);
+        String requestJson = CronMonitorUtil.objToJson(requestMember);
+
+        mockMvc.perform(patch("/teams/{teamId}/users", "team1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect((jsonPath("$.authType").value(AuthType.UserManager.toString())));
+    }
+
+    @Test
+    public void 팀원삭제_성공() throws Exception {
+        TeamUserDTO.Request requestMember = TeamUserDTO.Request.builder().teamAccount("team1")
+            .userAccount("yhw").authType(AuthType.UserManager).build();
+        String requestJson = CronMonitorUtil.objToJson(requestMember);
+        mockMvc.perform(delete("/teams/{teamId}/users/{userId}", "team1", "user1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson))
+            .andDo(print())
+            .andExpect(status().isOk());
+
     }
 }

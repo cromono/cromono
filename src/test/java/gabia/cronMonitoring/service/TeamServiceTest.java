@@ -4,6 +4,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import gabia.cronMonitoring.dto.TeamDTO;
+import gabia.cronMonitoring.dto.TeamDTO.Request;
+import gabia.cronMonitoring.dto.TeamUserDTO;
+import gabia.cronMonitoring.dto.UserDTO;
 import gabia.cronMonitoring.entity.Enum.AuthType;
 import gabia.cronMonitoring.entity.Enum.UserRole;
 import gabia.cronMonitoring.entity.Team;
@@ -12,10 +15,12 @@ import gabia.cronMonitoring.entity.User;
 import gabia.cronMonitoring.exception.team.TeamNotFoundException;
 import gabia.cronMonitoring.exception.teamUser.AuthException;
 import gabia.cronMonitoring.exception.teamUser.NotTeamMemberException;
+import gabia.cronMonitoring.exception.teamUser.TeamUserExistException;
 import gabia.cronMonitoring.exception.user.UserNotFoundException;
 import gabia.cronMonitoring.repository.TeamRepository;
 import gabia.cronMonitoring.repository.TeamUserRepository;
 import gabia.cronMonitoring.repository.UserRepository;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -301,7 +306,6 @@ public class TeamServiceTest {
         given(teamRepository.findByAccount(team1.getAccount())).willReturn(Optional.empty());
         //when
         teamService.changeTeam(request, user1.getAccount());
-
         //then
         Assertions.fail("존재하지 않는 팀 수정 예외 테스트 실패");
     }
@@ -326,5 +330,310 @@ public class TeamServiceTest {
         TeamDTO.Response response = teamService.changeTeam(request, user1.getAccount());
         //then
         Assertions.fail("수정 권한이 없는 사용자 예외 테스트 실패");
+    }
+
+    @Test
+    @Transactional
+    public void findMembers_성공() {
+        //given
+        Team team1 = Team.builder().account("gabiaTeam1").name("cronTeam1").build();
+        User user1 = User.builder().account("gabiaUser1").password("1").email("yhw@gabia.com")
+            .name("윤현우").role(UserRole.ROLE_USER).build();
+        User user2 = User.builder().account("gabiaUser2").password("1").email("kkj@gabia.com")
+            .name("김기정").role(UserRole.ROLE_USER).build();
+        User user3 = User.builder().account("gabiaUser3").password("1").email("jyj@gabia.com")
+            .name("주영준").role(UserRole.ROLE_USER).build();
+        TeamUser teamUser1 = TeamUser.builder().team(team1).user(user1)
+            .authority(AuthType.User)
+            .build();
+        TeamUser teamUser2 = TeamUser.builder().team(team1).user(user2)
+            .authority(AuthType.User)
+            .build();
+        TeamUser teamUser3 = TeamUser.builder().team(team1).user(user3)
+            .authority(AuthType.User)
+            .build();
+        List<TeamUser> teamUserList = new LinkedList<>(
+            Arrays.asList(teamUser1, teamUser2, teamUser3));
+        given(teamRepository.findByAccount(team1.getAccount())).willReturn(Optional.of(team1));
+        given(teamUserRepository.findByTeamAccount(team1.getAccount())).willReturn(teamUserList);
+        TeamDTO.Request request = new TeamDTO.Request();
+        request.setTeamAccount(team1.getAccount());
+        //when
+        List<TeamUserDTO.Response> responseList = teamService.findMembers(team1.getAccount());
+        //then
+        Assertions.assertThat(responseList.size()).isEqualTo(3);
+    }
+
+    @Test(expected = TeamNotFoundException.class)
+    @Transactional
+    public void findMenbers_실패_존재하지않는팀() {
+        //given
+        Team team1 = Team.builder().account("gabiaTeam1").name("cronTeam1").build();
+        given(teamRepository.findByAccount(team1.getAccount())).willReturn(Optional.empty());
+        //when
+        TeamDTO.Request request = new TeamDTO.Request();
+        request.setTeamAccount(team1.getAccount());
+        List<TeamUserDTO.Response> responseList = teamService.findMembers(team1.getAccount());
+        //then
+        Assertions.fail("예외테스트 실패");
+    }
+
+    @Test
+    @Transactional
+    public void addMember_성공() {
+        //given
+        Team team1 = Team.builder().account("gabiaTeam1").name("cronTeam1").build();
+        User user1 = User.builder().account("gabiaUser1").password("1").email("yhw@gabia.com")
+            .name("윤현우").role(UserRole.ROLE_USER).build();
+        TeamUser teamUser = TeamUser.builder().team(team1).user(user1).authority(AuthType.User)
+            .build();
+        given(userRepository.findByAccount(user1.getAccount())).willReturn(Optional.of(user1));
+        given(teamRepository.findByAccount(team1.getAccount())).willReturn(Optional.of(team1));
+        given(teamUserRepository
+            .findByTeamAccountAndUserAccount(team1.getAccount(), user1.getAccount()))
+            .willReturn(Optional.empty());
+        given(teamUserRepository.save(any())).willReturn(teamUser);
+        TeamUserDTO.Request request = new TeamUserDTO.Request();
+        request.setTeamAccount(team1.getAccount());
+        request.setUserAccount(user1.getAccount());
+        request.setAuthType(AuthType.User);
+        //when
+        TeamUserDTO.Response response = teamService.addMember(request);
+        //then
+        Assertions.assertThat(response.getTeamAccount()).isEqualTo(team1.getAccount());
+    }
+
+    @Test(expected = UserNotFoundException.class)
+    @Transactional
+    public void addMember_실패_존재않는사용자() {
+        //given
+        Team team1 = Team.builder().account("gabiaTeam1").name("cronTeam1").build();
+        User user1 = User.builder().account("gabiaUser1").password("1").email("yhw@gabia.com")
+            .name("윤현우").role(UserRole.ROLE_USER).build();
+        TeamUser teamUser = TeamUser.builder().team(team1).user(user1).authority(AuthType.User)
+            .build();
+        TeamUserDTO.Request request = new TeamUserDTO.Request();
+        //when
+        TeamUserDTO.Response response = teamService.addMember(request);
+        //then
+        Assertions.assertThat(response.getTeamAccount()).isEqualTo(team1.getAccount());
+    }
+
+    @Test(expected = TeamNotFoundException.class)
+    @Transactional
+    public void addMember_실패_존재하지않는팀() {
+        //given
+        Team team1 = Team.builder().account("gabiaTeam1").name("cronTeam1").build();
+        User user1 = User.builder().account("gabiaUser1").password("1").email("yhw@gabia.com")
+            .name("윤현우").role(UserRole.ROLE_USER).build();
+        TeamUser teamUser = TeamUser.builder().team(team1).user(user1).authority(AuthType.User)
+            .build();
+        given(userRepository.findByAccount(user1.getAccount())).willReturn(Optional.of(user1));
+        given(teamRepository.findByAccount(team1.getAccount())).willReturn(Optional.empty());
+        TeamUserDTO.Request request = new TeamUserDTO.Request();
+        request.setTeamAccount(team1.getAccount());
+        request.setUserAccount(user1.getAccount());
+        request.setAuthType(AuthType.User);
+        //when
+        TeamUserDTO.Response response = teamService.addMember(request);
+        //then
+        Assertions.assertThat(response.getTeamAccount()).isEqualTo(team1.getAccount());
+    }
+
+    @Test(expected = TeamUserExistException.class)
+    @Transactional
+    public void addMember_실패_이미팀원() {
+        //given
+        Team team1 = Team.builder().account("gabiaTeam1").name("cronTeam1").build();
+        User user1 = User.builder().account("gabiaUser1").password("1").email("yhw@gabia.com")
+            .name("윤현우").role(UserRole.ROLE_USER).build();
+        TeamUser teamUser = TeamUser.builder().team(team1).user(user1).authority(AuthType.User)
+            .build();
+        given(userRepository.findByAccount(user1.getAccount())).willReturn(Optional.of(user1));
+        given(teamRepository.findByAccount(team1.getAccount())).willReturn(Optional.of(team1));
+        given(teamUserRepository
+            .findByTeamAccountAndUserAccount(any(), any()))
+            .willReturn(Optional.of(teamUser));
+
+        TeamUserDTO.Request request = new TeamUserDTO.Request();
+        request.setTeamAccount(team1.getAccount());
+        request.setUserAccount(user1.getAccount());
+        request.setAuthType(AuthType.User);
+        //when
+        TeamUserDTO.Response response = teamService.addMember(request);
+        //then
+        Assertions.assertThat(response.getTeamAccount()).isEqualTo(team1.getAccount());
+    }
+
+    @Test
+    @Transactional
+    public void changeMemberAuthType_성공() {
+        //given
+        Team team1 = Team.builder().account("gabiaTeam1").name("cronTeam1").build();
+        User user1 = User.builder().account("gabiaUser1").password("1").email("yhw@gabia.com")
+            .name("윤현우").role(UserRole.ROLE_USER).build();
+        TeamUser teamUser = TeamUser.builder().team(team1).user(user1).authority(AuthType.User)
+            .build();
+        given(userRepository.findByAccount(user1.getAccount())).willReturn(Optional.of(user1));
+        given(teamRepository.findByAccount(team1.getAccount())).willReturn(Optional.of(team1));
+        given(teamUserRepository
+            .findByTeamAccountAndUserAccount(team1.getAccount(), user1.getAccount()))
+            .willReturn(Optional.of(teamUser));
+        TeamUserDTO.Request request = new TeamUserDTO.Request();
+        request.setTeamAccount(team1.getAccount());
+        request.setUserAccount(user1.getAccount());
+        request.setAuthType(AuthType.UserManager);
+        //when
+        TeamUserDTO.Response response = teamService.changeMemberAuthType(request);
+        //then
+        Assertions.assertThat(response.getAuthType()).isEqualTo(AuthType.UserManager);
+    }
+
+    @Test(expected = UserNotFoundException.class)
+    @Transactional
+    public void changeMemberAuthType_존재하지않는사용자() {
+        //given
+        Team team1 = Team.builder().account("gabiaTeam1").name("cronTeam1").build();
+        User user1 = User.builder().account("gabiaUser1").password("1").email("yhw@gabia.com")
+            .name("윤현우").role(UserRole.ROLE_USER).build();
+        TeamUser teamUser = TeamUser.builder().team(team1).user(user1).authority(AuthType.User)
+            .build();
+        TeamUserDTO.Request request = new TeamUserDTO.Request();
+
+        //when
+        TeamUserDTO.Response response = teamService.changeMemberAuthType(request);
+        //then
+        Assertions.assertThat(response.getAuthType()).isEqualTo(AuthType.UserManager);
+    }
+
+    @Test(expected = TeamNotFoundException.class)
+    @Transactional
+    public void changeMemberAuthType_존재하지않는팀() {
+        //given
+        Team team1 = Team.builder().account("gabiaTeam1").name("cronTeam1").build();
+        User user1 = User.builder().account("gabiaUser1").password("1").email("yhw@gabia.com")
+            .name("윤현우").role(UserRole.ROLE_USER).build();
+        TeamUser teamUser = TeamUser.builder().team(team1).user(user1).authority(AuthType.User)
+            .build();
+        given(userRepository.findByAccount(user1.getAccount())).willReturn(Optional.of(user1));
+        given(teamRepository.findByAccount(team1.getAccount())).willReturn(Optional.empty());
+        TeamUserDTO.Request request = new TeamUserDTO.Request();
+        request.setTeamAccount(team1.getAccount());
+        request.setUserAccount(user1.getAccount());
+        request.setAuthType(AuthType.UserManager);
+        //when
+        TeamUserDTO.Response response = teamService.changeMemberAuthType(request);
+        //then
+        Assertions.assertThat(response.getAuthType()).isEqualTo(AuthType.UserManager);
+    }
+
+    @Test(expected = NotTeamMemberException.class)
+    @Transactional
+    public void changeMemberAuthType_팀원이아님() {
+        //given
+        Team team1 = Team.builder().account("gabiaTeam1").name("cronTeam1").build();
+        User user1 = User.builder().account("gabiaUser1").password("1").email("yhw@gabia.com")
+            .name("윤현우").role(UserRole.ROLE_USER).build();
+        TeamUser teamUser = TeamUser.builder().team(team1).user(user1).authority(AuthType.User)
+            .build();
+        given(userRepository.findByAccount(user1.getAccount())).willReturn(Optional.of(user1));
+        given(teamRepository.findByAccount(team1.getAccount())).willReturn(Optional.of(team1));
+        given(teamUserRepository
+            .findByTeamAccountAndUserAccount(team1.getAccount(), user1.getAccount()))
+            .willReturn(Optional.empty());
+        TeamUserDTO.Request request = new TeamUserDTO.Request();
+        request.setTeamAccount(team1.getAccount());
+        request.setUserAccount(user1.getAccount());
+        request.setAuthType(AuthType.UserManager);
+        //when
+        TeamUserDTO.Response response = teamService.changeMemberAuthType(request);
+        //then
+        Assertions.assertThat(response.getAuthType()).isEqualTo(AuthType.UserManager);
+    }
+
+    @Test
+    @Transactional
+    public void deleteMember_성공() {
+        //given
+        Team team1 = Team.builder().account("gabiaTeam1").name("cronTeam1").build();
+        User user1 = User.builder().account("gabiaUser1").password("1").email("yhw@gabia.com")
+            .name("윤현우").role(UserRole.ROLE_USER).build();
+        TeamUser teamUser = TeamUser.builder().team(team1).user(user1).authority(AuthType.User)
+            .build();
+        given(userRepository.findByAccount(user1.getAccount())).willReturn(Optional.of(user1));
+        given(teamRepository.findByAccount(team1.getAccount())).willReturn(Optional.of(team1));
+        given(teamUserRepository
+            .findByTeamAccountAndUserAccount(team1.getAccount(), user1.getAccount()))
+            .willReturn(Optional.of(teamUser));
+        TeamUserDTO.Request request = new TeamUserDTO.Request();
+        request.setTeamAccount(team1.getAccount());
+        request.setUserAccount(user1.getAccount());
+        request.setAuthType(AuthType.UserManager);
+        //when
+        teamService.deleteMember(request);
+        //then
+
+    }
+
+    @Test(expected = UserNotFoundException.class)
+    @Transactional
+    public void deleteMember_존재하지않는사용자() {
+        //given
+        Team team1 = Team.builder().account("gabiaTeam1").name("cronTeam1").build();
+        User user1 = User.builder().account("gabiaUser1").password("1").email("yhw@gabia.com")
+            .name("윤현우").role(UserRole.ROLE_USER).build();
+        TeamUser teamUser = TeamUser.builder().team(team1).user(user1).authority(AuthType.User)
+            .build();
+        TeamUserDTO.Request request = new TeamUserDTO.Request();
+
+        //when
+        teamService.deleteMember(request);
+        //then
+
+    }
+
+    @Test(expected = TeamNotFoundException.class)
+    @Transactional
+    public void deleteMember_존재하지않는팀() {
+        //given
+        Team team1 = Team.builder().account("gabiaTeam1").name("cronTeam1").build();
+        User user1 = User.builder().account("gabiaUser1").password("1").email("yhw@gabia.com")
+            .name("윤현우").role(UserRole.ROLE_USER).build();
+        TeamUser teamUser = TeamUser.builder().team(team1).user(user1).authority(AuthType.User)
+            .build();
+        given(userRepository.findByAccount(user1.getAccount())).willReturn(Optional.of(user1));
+        given(teamRepository.findByAccount(team1.getAccount())).willReturn(Optional.empty());
+        TeamUserDTO.Request request = new TeamUserDTO.Request();
+        request.setTeamAccount(team1.getAccount());
+        request.setUserAccount(user1.getAccount());
+        request.setAuthType(AuthType.UserManager);
+        //when
+        teamService.deleteMember(request);
+        //then
+
+    }
+
+    @Test(expected = NotTeamMemberException.class)
+    @Transactional
+    public void deleteMember_팀원이아님() {
+        //given
+        Team team1 = Team.builder().account("gabiaTeam1").name("cronTeam1").build();
+        User user1 = User.builder().account("gabiaUser1").password("1").email("yhw@gabia.com")
+            .name("윤현우").role(UserRole.ROLE_USER).build();
+        TeamUser teamUser = TeamUser.builder().team(team1).user(user1).authority(AuthType.User)
+            .build();
+        given(userRepository.findByAccount(user1.getAccount())).willReturn(Optional.of(user1));
+        given(teamRepository.findByAccount(team1.getAccount())).willReturn(Optional.of(team1));
+        given(teamUserRepository
+            .findByTeamAccountAndUserAccount(team1.getAccount(), user1.getAccount()))
+            .willReturn(Optional.empty());
+        TeamUserDTO.Request request = new TeamUserDTO.Request();
+        request.setTeamAccount(team1.getAccount());
+        request.setUserAccount(user1.getAccount());
+        request.setAuthType(AuthType.UserManager);
+        //when
+        teamService.deleteMember(request);
+        //then
+
     }
 }
