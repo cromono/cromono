@@ -1,9 +1,10 @@
 package gabia.cronMonitoring.controller;
 
-import gabia.cronMonitoring.dto.request.UserInfoDTO;
+import gabia.cronMonitoring.dto.request.UserAuthDTO;
 import gabia.cronMonitoring.dto.response.AccessTokenDTO;
-import gabia.cronMonitoring.jwt.JwtFilter;
-import gabia.cronMonitoring.jwt.AuthService;
+import gabia.cronMonitoring.dto.response.UserInfoDTO;
+import gabia.cronMonitoring.util.jwt.JwtFilter;
+import gabia.cronMonitoring.service.AuthService;
 import gabia.cronMonitoring.service.UserService;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -27,9 +28,9 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/local/login")
-    public ResponseEntity<AccessTokenDTO> login(@Valid @RequestBody UserInfoDTO request) {
+    public ResponseEntity<AccessTokenDTO> login(@Valid @RequestBody UserAuthDTO request) {
 
-        AccessTokenDTO tokenDTO = authService.authorize(request);
+        AccessTokenDTO tokenDTO = authService.authenticate(request);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + tokenDTO.getToken());
@@ -38,14 +39,14 @@ public class AuthController {
     }
 
     @PostMapping("/local/logout")
-    public ResponseEntity<String> logout(@Valid @RequestBody UserInfoDTO request) {
-        authService.unauthorize(request.getAccount());
+    public ResponseEntity<String> logout(@Valid @RequestBody UserAuthDTO request) {
+        authService.unauthenticate(request.getAccount());
         return new ResponseEntity("Refresh Token Deleted Successfully!", HttpStatus.OK);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AccessTokenDTO> register(@Valid @RequestBody UserInfoDTO request) {
-        gabia.cronMonitoring.dto.response.UserInfoDTO userInfoDTO = userService.addUser(request);
+    public ResponseEntity<AccessTokenDTO> register(@Valid @RequestBody UserAuthDTO request) {
+        UserInfoDTO userInfoDTO = userService.addUser(request);
         return new ResponseEntity(userInfoDTO, HttpStatus.CREATED);
     }
 

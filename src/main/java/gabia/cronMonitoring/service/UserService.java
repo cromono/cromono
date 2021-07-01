@@ -1,6 +1,7 @@
 package gabia.cronMonitoring.service;
 
-import gabia.cronMonitoring.dto.request.UserInfoDTO;
+import gabia.cronMonitoring.dto.request.UserAuthDTO;
+import gabia.cronMonitoring.dto.response.UserInfoDTO;
 import gabia.cronMonitoring.entity.Enum.UserRole;
 import gabia.cronMonitoring.entity.User;
 import gabia.cronMonitoring.exception.user.ExistingInputException;
@@ -8,10 +9,16 @@ import gabia.cronMonitoring.exception.user.InputNotFoundException;
 import gabia.cronMonitoring.exception.user.NotValidEmailException;
 import gabia.cronMonitoring.exception.user.UserNotFoundException;
 import gabia.cronMonitoring.repository.UserRepository;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
@@ -28,7 +35,7 @@ public class UserService {
     private EmailValidator emailValidator = EmailValidator.getInstance();
 
     @Transactional
-    public gabia.cronMonitoring.dto.response.UserInfoDTO addUser(UserInfoDTO request) {
+    public UserInfoDTO addUser(UserAuthDTO request) {
         if (request.getAccount().isEmpty()) {
             throw new InputNotFoundException("ID를 입력하지 않았습니다.");
         }
@@ -59,24 +66,24 @@ public class UserService {
             .activated(true)
             .build();
 
-        return gabia.cronMonitoring.dto.response.UserInfoDTO.from(userRepository.save(newUser));
+        return UserInfoDTO.from(userRepository.save(newUser));
     }
 
-    public gabia.cronMonitoring.dto.response.UserInfoDTO getUser(UserInfoDTO request) {
+    public UserInfoDTO getUser(UserAuthDTO request) {
         User user = userRepository.findByAccount(request.getAccount())
             .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자입니다."));
-        return gabia.cronMonitoring.dto.response.UserInfoDTO.from(user);
+        return UserInfoDTO.from(user);
     }
 
-    public List<gabia.cronMonitoring.dto.response.UserInfoDTO> getUsers() {
-        List<gabia.cronMonitoring.dto.response.UserInfoDTO> userInfoDTO = userRepository.findAll().stream()
-            .map(user -> gabia.cronMonitoring.dto.response.UserInfoDTO.from(user))
+    public List<UserInfoDTO> getUsers() {
+        List<UserInfoDTO> userInfoDTO = userRepository.findAll().stream()
+            .map(user -> UserInfoDTO.from(user))
             .collect(Collectors.toList());
         return userInfoDTO;
     }
 
     @Transactional
-    public gabia.cronMonitoring.dto.response.UserInfoDTO updateUser(String userAccount, UserInfoDTO request) {
+    public UserInfoDTO updateUser(String userAccount, UserAuthDTO request) {
         User user = userRepository.findByAccount(userAccount)
             .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자입니다."));
         if (!userAccount.equals(request.getAccount())) {
@@ -107,14 +114,33 @@ public class UserService {
         }
         userRepository.save(user);
 
-        return gabia.cronMonitoring.dto.response.UserInfoDTO.from(user);
+        return UserInfoDTO.from(user);
     }
 
     @Transactional
-    public void deleteUser(UserInfoDTO request) {
+    public void deleteUser(UserAuthDTO request) {
         User user = userRepository.findByAccount(request.getAccount())
             .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자입니다."));
         userRepository.delete(user);
     }
 
+    @Override
+    @Transactional
+    public UserDetails loadUserByUsername(final String username) {
+        return userRepository.findByAccount(username)
+            .map(user -> createUser(username, user))
+            .orElseThrow(() -> new UsernameNotFoundException(username + " -> 데이터베이스에서 찾을 수 없습니다."));
+    }
+
+    private org.springframework.security.core.userdetails.User createUser(String username,
+        User user) {
+        if (!user.isActivated()) {
+            throw new RuntimeException(username + " -> 활성화되어 있지 않습니다.");
+        }
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        grantedAuthorities.add(new SimpleGrantedAuthority(user.getRole().toString()));
+        return new org.springframework.security.core.userdetails.User(user.getAccount(),
+            user.getPassword(),
+            grantedAuthorities);
+    }
 }

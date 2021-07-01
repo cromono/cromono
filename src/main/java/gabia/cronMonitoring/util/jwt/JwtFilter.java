@@ -1,4 +1,4 @@
-package gabia.cronMonitoring.jwt;
+package gabia.cronMonitoring.util.jwt;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import java.io.IOException;

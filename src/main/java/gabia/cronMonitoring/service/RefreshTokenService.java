@@ -1,4 +1,4 @@
-package gabia.cronMonitoring.jwt;
+package gabia.cronMonitoring.service;
 
 import gabia.cronMonitoring.entity.RefreshToken;
 import gabia.cronMonitoring.exception.auth.InvalidTokenException;

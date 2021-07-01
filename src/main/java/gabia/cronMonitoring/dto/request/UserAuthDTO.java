@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Data
-public class UserInfoDTO {
+public class UserAuthDTO {
 
     String account;
     String name;

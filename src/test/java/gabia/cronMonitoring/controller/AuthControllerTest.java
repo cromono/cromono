@@ -7,13 +7,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gabia.cronMonitoring.dto.request.UserInfoDTO;
+import gabia.cronMonitoring.dto.request.UserAuthDTO;
 import gabia.cronMonitoring.dto.response.AccessTokenDTO;
+import gabia.cronMonitoring.dto.response.UserInfoDTO;
 import gabia.cronMonitoring.entity.Enum.UserRole;
-import gabia.cronMonitoring.jwt.JwtAccessDeniedHandler;
-import gabia.cronMonitoring.jwt.JwtAuthenticationEntryPoint;
-import gabia.cronMonitoring.jwt.TokenProvider;
-import gabia.cronMonitoring.jwt.AuthService;
+import gabia.cronMonitoring.util.jwt.JwtAccessDeniedHandler;
+import gabia.cronMonitoring.util.jwt.JwtAuthenticationEntryPoint;
+import gabia.cronMonitoring.util.jwt.TokenProvider;
+import gabia.cronMonitoring.service.AuthService;
 import gabia.cronMonitoring.service.UserService;
 import java.time.Instant;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,7 @@ class AuthControllerTest {
     @Test
     void login() throws Exception {
         // Given
-        UserInfoDTO request = UserInfoDTO.builder()
+        UserAuthDTO request = UserAuthDTO.builder()
             .account("luke")
             .password("luke")
             .build();
@@ -60,7 +61,7 @@ class AuthControllerTest {
             .expiresAt(Instant.now())
             .build();
         // When
-        when(authService.authorize(request)).thenReturn(response);
+        when(authService.authenticate(request)).thenReturn(response);
         // Then
         mockMvc.perform(post("/auth/local/login")
             .contentType(MediaType.APPLICATION_JSON)
@@ -74,7 +75,7 @@ class AuthControllerTest {
     @WithMockUser(roles = "USER")
     void logout() throws Exception {
         // Given
-        UserInfoDTO request = UserInfoDTO.builder()
+        UserAuthDTO request = UserAuthDTO.builder()
             .account("luke")
             .password("luke")
             .build();
@@ -90,13 +91,13 @@ class AuthControllerTest {
     @Test
     void register() throws Exception {
         // Given
-        UserInfoDTO request = UserInfoDTO.builder()
+        UserAuthDTO request = UserAuthDTO.builder()
             .account("luke")
             .password("luke")
             .name("luke")
             .email("luke@gabia.com")
             .build();
-        gabia.cronMonitoring.dto.response.UserInfoDTO response = gabia.cronMonitoring.dto.response.UserInfoDTO
+        UserInfoDTO response = UserInfoDTO
             .builder()
             .account("luke")
             .name("luke")

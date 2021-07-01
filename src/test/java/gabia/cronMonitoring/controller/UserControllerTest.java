@@ -10,11 +10,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gabia.cronMonitoring.dto.request.UserInfoDTO;
+import gabia.cronMonitoring.dto.request.UserAuthDTO;
+import gabia.cronMonitoring.dto.response.UserInfoDTO;
 import gabia.cronMonitoring.entity.Enum.UserRole;
-import gabia.cronMonitoring.jwt.JwtAccessDeniedHandler;
-import gabia.cronMonitoring.jwt.JwtAuthenticationEntryPoint;
-import gabia.cronMonitoring.jwt.TokenProvider;
+import gabia.cronMonitoring.util.jwt.JwtAccessDeniedHandler;
+import gabia.cronMonitoring.util.jwt.JwtAuthenticationEntryPoint;
+import gabia.cronMonitoring.util.jwt.TokenProvider;
 import gabia.cronMonitoring.service.UserService;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,20 +52,20 @@ class UserControllerTest {
     @Test
     void 사용자_목록_GET() throws Exception {
         // Given
-        List<gabia.cronMonitoring.dto.response.UserInfoDTO> users = new ArrayList<>();
-        gabia.cronMonitoring.dto.response.UserInfoDTO userInfoDTO1 = new gabia.cronMonitoring.dto.response.UserInfoDTO();
+        List<UserInfoDTO> users = new ArrayList<>();
+        UserInfoDTO userInfoDTO1 = new UserInfoDTO();
         userInfoDTO1.setAccount("test1");
         userInfoDTO1.setEmail("test1");
         userInfoDTO1.setName("test1");
         userInfoDTO1.setRole(UserRole.ROLE_USER);
 
-        gabia.cronMonitoring.dto.response.UserInfoDTO userInfoDTO2 = new gabia.cronMonitoring.dto.response.UserInfoDTO();
+        UserInfoDTO userInfoDTO2 = new UserInfoDTO();
         userInfoDTO2.setAccount("test2");
         userInfoDTO2.setEmail("test2");
         userInfoDTO2.setName("test2");
         userInfoDTO2.setRole(UserRole.ROLE_USER);
 
-        gabia.cronMonitoring.dto.response.UserInfoDTO userInfoDTO3 = new gabia.cronMonitoring.dto.response.UserInfoDTO();
+        UserInfoDTO userInfoDTO3 = new UserInfoDTO();
         userInfoDTO3.setAccount("test3");
         userInfoDTO3.setEmail("test3");
         userInfoDTO3.setName("test3");
@@ -89,10 +90,10 @@ class UserControllerTest {
     @Test
     void 사용자_정보_GET() throws Exception {
         // Given
-        UserInfoDTO request = new UserInfoDTO();
+        UserAuthDTO request = new UserAuthDTO();
         request.setAccount("test1");
 
-        gabia.cronMonitoring.dto.response.UserInfoDTO userInfoDTO = new gabia.cronMonitoring.dto.response.UserInfoDTO();
+        UserInfoDTO userInfoDTO = new UserInfoDTO();
         userInfoDTO.setAccount("test1");
         userInfoDTO.setEmail("test1");
         userInfoDTO.setName("test1");
@@ -112,10 +113,10 @@ class UserControllerTest {
     @Test
     void 사용자_정보_PATCH() throws Exception {
         // Given
-        UserInfoDTO request = new UserInfoDTO();
+        UserAuthDTO request = new UserAuthDTO();
         request.setAccount("test2");
 
-        gabia.cronMonitoring.dto.response.UserInfoDTO userInfoDTO = new gabia.cronMonitoring.dto.response.UserInfoDTO();
+        UserInfoDTO userInfoDTO = new UserInfoDTO();
         userInfoDTO.setAccount("test2");
         userInfoDTO.setEmail("test1");
         userInfoDTO.setName("test1");

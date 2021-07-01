@@ -1,10 +1,9 @@
-package gabia.cronMonitoring.jwt;
+package gabia.cronMonitoring.service;
 
-import gabia.cronMonitoring.dto.request.UserInfoDTO;
+import gabia.cronMonitoring.dto.request.UserAuthDTO;
 import gabia.cronMonitoring.dto.response.AccessTokenDTO;
 import gabia.cronMonitoring.entity.RefreshToken;
-import gabia.cronMonitoring.jwt.TokenProvider;
-import gabia.cronMonitoring.jwt.RefreshTokenService;
+import gabia.cronMonitoring.util.jwt.TokenProvider;
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,7 +19,7 @@ public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final RefreshTokenService refreshTokenService;
 
-    public AccessTokenDTO authorize(UserInfoDTO request) {
+    public AccessTokenDTO authenticate(UserAuthDTO request) {
         UsernamePasswordAuthenticationToken authenticationToken =
             new UsernamePasswordAuthenticationToken(request.getAccount(), request.getPassword());
 
@@ -28,6 +27,7 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = tokenProvider.createToken(authentication);
+        refreshTokenService.deleteRefreshToken(request.getAccount());
         refreshTokenService.generateRefreshToken(request.getAccount());
 
         return AccessTokenDTO.builder()
@@ -36,7 +36,7 @@ public class AuthService {
             .build();
     }
 
-    public void unauthorize(String userAccount) {
+    public void unauthenticate(String userAccount) {
         refreshTokenService.deleteRefreshToken(userAccount);
         SecurityContextHolder.clearContext();
     }
@@ -44,6 +44,8 @@ public class AuthService {
     public AccessTokenDTO refreshAccessToken(String userAccount) {
         RefreshToken refreshToken = refreshTokenService.getRefreshTokenByUserAccount(userAccount);
         refreshTokenService.validateRefreshToken(refreshToken.getToken());
+        refreshTokenService.deleteRefreshToken(userAccount);
+        refreshTokenService.generateRefreshToken(userAccount);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String jwt = tokenProvider.createToken(authentication);

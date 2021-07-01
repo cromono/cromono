@@ -1,6 +1,7 @@
 package gabia.cronMonitoring.controller;
 
-import gabia.cronMonitoring.dto.request.UserInfoDTO;
+import gabia.cronMonitoring.dto.request.UserAuthDTO;
+import gabia.cronMonitoring.dto.response.UserInfoDTO;
 import gabia.cronMonitoring.service.UserService;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
@@ -25,28 +26,31 @@ public class UserController {
 
     @GetMapping
     @ResponseBody
-    public ResponseEntity<List<gabia.cronMonitoring.dto.response.UserInfoDTO>> getUsers() {
-        List<gabia.cronMonitoring.dto.response.UserInfoDTO> users = userService.getUsers();
+    public ResponseEntity<List<UserInfoDTO>> getUsers() {
+        List<UserInfoDTO> users = userService.getUsers();
         ResponseEntity responseEntity = new ResponseEntity(users, HttpStatus.OK);
         return responseEntity;
     }
 
     @GetMapping(value = "/{userId}")
     @ResponseBody
-    public ResponseEntity<gabia.cronMonitoring.dto.response.UserInfoDTO> getUser(@NotBlank @PathVariable(name = "userId") String userId) {
-        UserInfoDTO request = new UserInfoDTO();
+    public ResponseEntity<UserInfoDTO> getUser(
+        @NotBlank @PathVariable(name = "userId") String userId) {
+        UserAuthDTO request = new UserAuthDTO();
         request.setAccount(userId);
 
-        gabia.cronMonitoring.dto.response.UserInfoDTO userInfoDTO = userService.getUser(request);
+        UserInfoDTO userInfoDTO = userService.getUser(request);
         ResponseEntity responseEntity = new ResponseEntity(userInfoDTO, HttpStatus.OK);
         return responseEntity;
     }
 
     @PatchMapping(value = "/{userId}")
     @ResponseBody
-    public ResponseEntity<gabia.cronMonitoring.dto.response.UserInfoDTO> patchUser(@NotBlank @PathVariable(name = "userId") String userId,
-        @RequestBody UserInfoDTO request) {
-        gabia.cronMonitoring.dto.response.UserInfoDTO userInfoDTO = userService.updateUser(userId, request);
+    public ResponseEntity<UserInfoDTO> patchUser(
+        @NotBlank @PathVariable(name = "userId") String userId,
+        @RequestBody UserAuthDTO request) {
+        UserInfoDTO userInfoDTO = userService
+            .updateUser(userId, request);
         ResponseEntity responseEntity = new ResponseEntity(userInfoDTO, HttpStatus.OK);
         return responseEntity;
     }
@@ -54,7 +58,7 @@ public class UserController {
     @DeleteMapping(value = "/{userId}")
     @ResponseBody
     public ResponseEntity deleteUser(@NotBlank @PathVariable(name = "userId") String userId) {
-        UserInfoDTO request = new UserInfoDTO();
+        UserAuthDTO request = new UserAuthDTO();
         request.setAccount(userId);
         userService.deleteUser(request);
         ResponseEntity responseEntity = new ResponseEntity(HttpStatus.NO_CONTENT);
