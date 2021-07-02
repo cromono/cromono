@@ -68,7 +68,7 @@ class AuthControllerTest {
             .content(mapper.writeValueAsString(request)))
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$..*", response).exists());
+            .andExpect(jsonPath("$.token").value(response.getToken()));
     }
 
     @Test
@@ -112,7 +112,7 @@ class AuthControllerTest {
             .content(mapper.writeValueAsString(request)))
             .andDo(print())
             .andExpect(status().isCreated())
-            .andExpect(jsonPath("$..*", response).exists());
+            .andExpect(jsonPath("$").value(response));
     }
 
     @Test
@@ -120,16 +120,18 @@ class AuthControllerTest {
     void refreshToken() throws Exception {
         // Given
         String userAccount = "Luke";
+        String token = "test";
         AccessTokenDTO response = AccessTokenDTO.builder()
-            .token("test")
+            .token(token)
             .expiresAt(Instant.now())
             .build();
         // When
-        when(authService.refreshAccessToken(userAccount)).thenReturn(response);
+        when(authService.getCurrentUser()).thenReturn(UserInfoDTO.builder().account(userAccount).build());
+        when(authService.refreshAccessToken(userAccount, token)).thenReturn(response);
         // Then
-        mockMvc.perform(post("/auth/local/refresh-token/{userAccount}", userAccount))
+        mockMvc.perform(post("/auth/local/refresh-token/{oldToken}", token))
             .andDo(print())
             .andExpect(status().isCreated())
-            .andExpect(jsonPath("$..*", response).exists());
+            .andExpect(jsonPath("$.token").value(response.getToken()));
     }
 }

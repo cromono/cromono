@@ -50,9 +50,9 @@ public class AuthController {
         return new ResponseEntity(userInfoDTO, HttpStatus.CREATED);
     }
 
-    @PostMapping("/local/refresh-token/{userAccount}")
-    public ResponseEntity<AccessTokenDTO> refreshToken(@NotBlank @PathVariable(name = "userAccount") String userAccount) {
-        AccessTokenDTO accessTokenDTO = authService.refreshAccessToken(userAccount);
+    @PostMapping("/local/refresh-token/{oldToken}")
+    public ResponseEntity<AccessTokenDTO> refreshToken(@NotBlank @PathVariable(name = "oldToken") String jwt) {
+        AccessTokenDTO accessTokenDTO = authService.refreshAccessToken(authService.getCurrentUser().getAccount(), jwt);
         return new ResponseEntity(accessTokenDTO, HttpStatus.CREATED);
     }
 }

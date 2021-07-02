@@ -76,14 +76,15 @@ class UserControllerTest {
         users.add(userInfoDTO3);
 
         // When
-        String expectAllUsers = "$.[*]";
         when(userService.getUsers()).thenReturn(users);
 
         // Then
         mockMvc.perform(get("/users"))
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(jsonPath(expectAllUsers, users).exists())
+            .andExpect(jsonPath("$[0]").value(users.get(0)))
+            .andExpect(jsonPath("$[1]").value(users.get(1)))
+            .andExpect(jsonPath("$[2]").value(users.get(2)))
             .andExpect(jsonPath("$", hasSize(3)));
     }
 
@@ -100,14 +101,13 @@ class UserControllerTest {
         userInfoDTO.setRole(UserRole.ROLE_USER);
 
         // When
-        String expectByUserAccount = "$.account";
         when(userService.getUser(request)).thenReturn(userInfoDTO);
 
         // Then
         mockMvc.perform(get("/users/{userId}", "test1"))
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(jsonPath(expectByUserAccount, userInfoDTO).exists());
+            .andExpect(jsonPath("$").value(userInfoDTO));
     }
 
     @Test
@@ -123,7 +123,7 @@ class UserControllerTest {
         userInfoDTO.setRole(UserRole.ROLE_USER);
 
         // When
-        String expectByUserAccount = "$.account";
+        String expectByUserAccount = "$";
         when(userService.updateUser("test1", request)).thenReturn(userInfoDTO);
 
         // Then
@@ -132,7 +132,7 @@ class UserControllerTest {
             .content(mapper.writeValueAsString(request)))
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(jsonPath(expectByUserAccount, userInfoDTO).exists());
+            .andExpect(jsonPath(expectByUserAccount).value(userInfoDTO));
     }
 
     @Test

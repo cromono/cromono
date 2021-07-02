@@ -2,6 +2,7 @@ package gabia.cronMonitoring.service;
 
 import gabia.cronMonitoring.dto.request.UserAuthDTO;
 import gabia.cronMonitoring.dto.response.AccessTokenDTO;
+import gabia.cronMonitoring.dto.response.UserInfoDTO;
 import gabia.cronMonitoring.entity.RefreshToken;
 import gabia.cronMonitoring.util.jwt.TokenProvider;
 import java.time.Instant;
@@ -27,8 +28,7 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = tokenProvider.createToken(authentication);
-        refreshTokenService.deleteRefreshToken(request.getAccount());
-        refreshTokenService.generateRefreshToken(request.getAccount());
+        refreshTokenService.generateRefreshToken(request.getAccount(), jwt);
 
         return AccessTokenDTO.builder()
             .token(jwt)
@@ -36,16 +36,16 @@ public class AuthService {
             .build();
     }
 
-    public void unauthenticate(String userAccount) {
-        refreshTokenService.deleteRefreshToken(userAccount);
+    public void unauthenticate(String jwt) {
+        refreshTokenService.deleteRefreshToken(jwt);
         SecurityContextHolder.clearContext();
     }
 
-    public AccessTokenDTO refreshAccessToken(String userAccount) {
-        RefreshToken refreshToken = refreshTokenService.getRefreshTokenByUserAccount(userAccount);
+    public AccessTokenDTO refreshAccessToken(String userAccount, String accessToken) {
+        RefreshToken refreshToken = refreshTokenService.getRefreshToken(accessToken);
         refreshTokenService.validateRefreshToken(refreshToken.getToken());
-        refreshTokenService.deleteRefreshToken(userAccount);
-        refreshTokenService.generateRefreshToken(userAccount);
+        refreshTokenService.deleteRefreshToken(accessToken);
+        refreshTokenService.generateRefreshToken(userAccount, accessToken);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String jwt = tokenProvider.createToken(authentication);
@@ -54,5 +54,13 @@ public class AuthService {
             .token(jwt)
             .expiresAt(Instant.now().plusMillis(tokenProvider.getTokenValidityInMilliseconds()))
             .build();
+    }
+
+    public UserInfoDTO getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserInfoDTO user = UserInfoDTO.builder()
+            .account(authentication.getName())
+            .build();
+        return user;
     }
 }
