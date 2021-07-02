@@ -29,7 +29,7 @@ public class NoticeControllerExceptionHandler {
 
     @ExceptionHandler(AlreadyExistNoticeStatusException.class)
     public ResponseEntity<NoticeDTO.Response> existNoticeStatus(
-        AlreadyExistNoticeStatusException e){
+        AlreadyExistNoticeStatusException e) {
         return new ResponseEntity<>(NoticeDTO.Response.from(e.getNotice(), true), HttpStatus.OK);
     }
 }

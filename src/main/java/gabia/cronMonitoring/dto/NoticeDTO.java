@@ -4,7 +4,6 @@ import gabia.cronMonitoring.entity.Enum.NoticeType;
 import gabia.cronMonitoring.entity.Notice;
 import gabia.cronMonitoring.util.ValidUUID;
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.UUID;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;

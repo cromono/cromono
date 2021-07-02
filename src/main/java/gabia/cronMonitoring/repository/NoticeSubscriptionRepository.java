@@ -16,8 +16,6 @@ public interface NoticeSubscriptionRepository extends JpaRepository<NoticeSubscr
 
     Optional<NoticeSubscription> findByRcvUserAccountAndCronJobId(String account, UUID cronJobId);
 
-    List<NoticeSubscription> findByCronJobId(UUID cronJobId);
-
     @Query("select n.cronJob.id from NoticeSubscription n where n.rcvUser.account = :rcvUser")
     List<UUID> findCronJobIdByRcvUserAccount(@Param("rcvUser") String account);
 

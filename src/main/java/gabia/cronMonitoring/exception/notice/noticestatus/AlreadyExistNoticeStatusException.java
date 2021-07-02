@@ -11,6 +11,7 @@ public class AlreadyExistNoticeStatusException extends RuntimeException {
 
     private String message;
     private Notice notice;
+
     public AlreadyExistNoticeStatusException() {
         this.message = "Already exist notice status";
     }

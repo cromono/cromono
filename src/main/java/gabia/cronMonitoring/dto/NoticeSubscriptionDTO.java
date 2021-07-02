@@ -23,8 +23,6 @@ public class NoticeSubscriptionDTO {
         String createUserId;
         @ValidUUID
         UUID cronJobId;
-        //Todo: Not_type 추가 예정
-
     }
 
     @Data
@@ -33,8 +31,6 @@ public class NoticeSubscriptionDTO {
     public static class Response {
 
         UUID cronJobId;
-        //Todo: Not_type 추가 예정
-
         public static NoticeSubscriptionDTO.Response from(NoticeSubscription noticeSubscription) {
             return new NoticeSubscriptionDTO.Response(noticeSubscription.getCronJob().getId());
         }

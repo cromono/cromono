@@ -39,7 +39,8 @@ public class NoticeController {
         @NotEmpty @PathVariable(value = "userId") String userId,
         @RequestBody @Valid NoticeSubscriptionDTO.Request request) {
 
-        NoticeSubscriptionDTO.Response response = noticeService.addNoticeSubscription(userId, request);
+        NoticeSubscriptionDTO.Response response = noticeService
+            .addNoticeSubscription(userId, request);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

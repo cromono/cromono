@@ -73,8 +73,6 @@ public class NoticeService {
             .cronJob(cronJob)
             .build();
 
-        //Todo: Not_type 추가 예정
-
         NoticeSubscription savedNoticeSubscription = noticeSubscriptionRepository
             .save(noticeSubscription);
 
@@ -82,8 +80,6 @@ public class NoticeService {
 
         return response;
     }
-
-    //Todo: Not_type 결정시 Not_type만 수정하도록 Update 로직 구현
 
     @Transactional
     public void removeNoticeSubscription(String account, UUID cronJobId) {
@@ -94,7 +90,6 @@ public class NoticeService {
         noticeSubscriptionRepository.deleteByRcvUserAccountAndCronJobId(account, cronJobId);
     }
 
-    //Todo: Notice 기능 추가 예정
     public List<NoticeDTO.Response> findAllNotice(String account) {
 
         userRepository.findByAccount(account).orElseThrow(() -> new UserNotFoundException());

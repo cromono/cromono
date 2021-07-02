@@ -264,8 +264,7 @@ public class NoticeIntegrationTest {
             .cronJob(savedCronJob2)
             .build();
 
-        NoticeSubscription noticeSubscription1 = noticeSubscriptionRepository
-            .save(noticeSubscription);
+        noticeSubscriptionRepository.save(noticeSubscription);
         noticeSubscriptionRepository.save(noticeSubscription2);
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -322,14 +321,7 @@ public class NoticeIntegrationTest {
         cronJob.setCronName("test1");
         cronJob.setServer(cronServer);
 
-        CronJob cronJob2 = new CronJob();
-
-        cronJob2.setCronExpr("test1");
-        cronJob2.setCronName("test1");
-        cronJob2.setServer(cronServer);
-
         CronJob savedCronJob1 = cronJobRepository.save(cronJob);
-        CronJob savedCronJob2 = cronJobRepository.save(cronJob2);
 
         NoticeSubscription noticeSubscription = NoticeSubscription.builder()
             .createUser(user)
@@ -337,15 +329,7 @@ public class NoticeIntegrationTest {
             .cronJob(savedCronJob1)
             .build();
 
-        NoticeSubscription noticeSubscription2 = NoticeSubscription.builder()
-            .createUser(user)
-            .rcvUser(user)
-            .cronJob(savedCronJob2)
-            .build();
-
-        NoticeSubscription noticeSubscription1 = noticeSubscriptionRepository
-            .save(noticeSubscription);
-        noticeSubscriptionRepository.save(noticeSubscription2);
+        noticeSubscriptionRepository.save(noticeSubscription);
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         Notice notice = Notice.builder()
@@ -380,7 +364,7 @@ public class NoticeIntegrationTest {
         cronJob.setCronName("test1");
         cronJob.setServer(cronServer);
 
-        CronJob savedCronJob1 = cronJobRepository.save(cronJob);
+        cronJobRepository.save(cronJob);
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
@@ -404,24 +388,4 @@ public class NoticeIntegrationTest {
             .andExpect(jsonPath("$.noticeMessage").value("test"))
             .andExpect(status().isOk());
     }
-
-    @Test
-    public void Test() {
-        CronServer cronServer = new CronServer("0.0.0.0");
-
-        CronJob cronJob  = new CronJob();
-        cronJob.setCronName("test");
-        cronJob.setCronExpr("test");
-        cronJob.setServer(cronServer);
-
-        CronJob save = cronJobRepository.save(cronJob);
-
-        cronJob.setCronExpr("change test");
-
-        Optional<CronJob> byId = cronJobRepository.findById(save.getId());
-
-        System.out.println(byId.get().getCronExpr());
-
-    }
-
 }

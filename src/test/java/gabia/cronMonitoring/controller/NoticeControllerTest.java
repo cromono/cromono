@@ -355,13 +355,6 @@ public class NoticeControllerTest {
 
         //given
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        NoticeDTO.Response response = new NoticeDTO.Response();
-        response.setNoticeMessage("test");
-        response.setNoticeType(NoticeType.Start);
-        response.setCronJobId(UUID.fromString("123e4567-e89b-12d3-a456-556642440000"));
-        response.setIsRead(true);
-        response.setNotId(1L);
-        response.setNoticeCreateDateTime(timestamp);
 
         //when
         NoticeDTO.Request request = new NoticeDTO.Request();
