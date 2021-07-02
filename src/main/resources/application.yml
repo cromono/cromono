@@ -20,7 +20,6 @@ spring:
 #    url: ENC(grsR77SEhN7kmgtfZg7KbctEBHpLc/jA4pLSIrBXErbDc66kd0glUpfwR/4j9SK+91evde+5yCycfYe4wlGJq7tFw2vUm80TjNV+qinr1wP5uJqdx77In475nhw/qy2x)
     username: ENC(vlCqS3V8pcLgDf9i7j4f2Q==)
     password: ENC(zKcrcC7yhJI4oX1N3yIU6ekob3kkHw+T)
-
   jpa:
     properties:
       hibernate:
@@ -40,7 +39,6 @@ jasypt:
       suffix: )
     pool-size: 1
 
-
 server:
   port: 8080
 ---
@@ -54,7 +52,6 @@ spring:
     url: jdbc:h2:mem:test_db;DB_CLOSE_DELAY=-1
     username: test
     password: 1234
-
   h2:
     console:
       path: /h2-console
@@ -71,12 +68,16 @@ spring:
 
 server:
   port: 8081
+
 ---
 #공통환경
 spring:
   config:
     activate:
       on-profile: "common"
+  jasypt:
+    password: "cron_monitoring"
+    algorithm: "PBEWithMD5AndDES"
 jwt:
   header: Authorization
   secret: 3zWsvEmwL96CJccvPMWhcIMvmK9vKX07dq6J2mRhlMvT5MMVSdl3QR9Hca859z8Wi9EZGWR3rZKj4rIumwHaQQ
