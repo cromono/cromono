@@ -106,10 +106,12 @@ public class TeamCronJobIntegrationTest {
         mvc.perform(
             get("/cron-read-auths/teams/{teamId}/crons/", "Lucas"))
             .andDo(print())
-            .andExpect(jsonPath("$[0].teamAccount", savedTeamCronJob.getTeam().getId()).exists())
-            .andExpect(jsonPath("$[1].teamAccount", savedTeamCronJob2.getTeam().getId()).exists())
-            .andExpect(jsonPath("$[0].cronJobId", savedTeamCronJob.getCronJob().getId()).exists())
-            .andExpect(jsonPath("$[1].cronJobId", savedTeamCronJob2.getCronJob().getId()).exists())
+            .andExpect(jsonPath("$[0].teamAccount").value(savedTeamCronJob.getTeam().getAccount()))
+            .andExpect(jsonPath("$[1].teamAccount").value(savedTeamCronJob2.getTeam().getAccount()))
+            .andExpect(
+                jsonPath("$[0].cronJobId").value(savedTeamCronJob.getCronJob().getId().toString()))
+            .andExpect(
+                jsonPath("$[1].cronJobId").value(savedTeamCronJob2.getCronJob().getId().toString()))
             .andExpect(status().isOk());
     }
 
@@ -144,8 +146,8 @@ public class TeamCronJobIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
             .andDo(print())
-            .andExpect(jsonPath("$.teamAccount", team.getId()).exists())
-            .andExpect(jsonPath("$.cronJobId", cronJob.getId()).exists())
+            .andExpect(jsonPath("$.teamAccount").value(team.getAccount()))
+            .andExpect(jsonPath("$.cronJobId").value(cronJob.getId().toString()))
             .andExpect(status().isOk());
     }
 

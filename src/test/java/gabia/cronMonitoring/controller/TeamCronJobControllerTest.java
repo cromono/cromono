@@ -78,10 +78,10 @@ public class TeamCronJobControllerTest {
         //then
         mvc.perform(get("/cron-read-auths/teams/{teamId}/crons/", "test"))
             .andDo(print())
-            .andExpect(jsonPath("$[0].teamAccount", "test").exists())
-            .andExpect(jsonPath("$[1].teamAccount", "test").exists())
-            .andExpect(jsonPath("$[0].cronJobId", testResponse.getCronJobId()).exists())
-            .andExpect(jsonPath("$[1].cronJobId", testResponse2.getCronJobId()).exists())
+            .andExpect(jsonPath("$[0].teamAccount").value("test"))
+            .andExpect(jsonPath("$[1].teamAccount").value("test"))
+            .andExpect(jsonPath("$[0].cronJobId").value(testResponse.getCronJobId().toString()))
+            .andExpect(jsonPath("$[1].cronJobId").value(testResponse2.getCronJobId().toString()))
             .andExpect(status().isOk());
     }
 
@@ -108,8 +108,8 @@ public class TeamCronJobControllerTest {
             .content(requestJson)
             .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
-            .andExpect(jsonPath("$.teamAccount", "test").exists())
-            .andExpect(jsonPath("$.cronJobId", testResponse.getCronJobId()).exists())
+            .andExpect(jsonPath("$.teamAccount").value("test"))
+            .andExpect(jsonPath("$.cronJobId").value(testResponse.getCronJobId().toString()))
             .andExpect(status().isOk());
     }
 
@@ -136,7 +136,7 @@ public class TeamCronJobControllerTest {
             .content(requestJson)
             .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
-            .andExpect(jsonPath("$.errorMsg", "Do not find Cron Job").exists())
+            .andExpect(jsonPath("$.errorMsg").value("Do not find Cron Job"))
             .andExpect(status().isNotFound());
     }
 
@@ -163,7 +163,7 @@ public class TeamCronJobControllerTest {
             .content(requestJson)
             .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
-            .andExpect(jsonPath("$.errorMsg", "Do not find Team").exists())
+            .andExpect(jsonPath("$.errorMsg").value("Do not find Team"))
             .andExpect(status().isNotFound());
     }
 
@@ -190,7 +190,7 @@ public class TeamCronJobControllerTest {
             .content(requestJson)
             .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
-            .andExpect(jsonPath("$.errorMsg", "Already exist team cron job").exists())
+            .andExpect(jsonPath("$.errorMsg").value("Already exist team cron job "))
             .andExpect(status().isConflict());
     }
 

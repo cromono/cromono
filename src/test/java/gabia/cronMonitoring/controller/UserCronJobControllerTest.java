@@ -79,10 +79,10 @@ public class UserCronJobControllerTest {
         //then
         mvc.perform(get("/cron-read-auths/users/{userId}/crons/", "test"))
             .andDo(print())
-            .andExpect(jsonPath("$[0].userAccount", "test").exists())
-            .andExpect(jsonPath("$[1].userAccount", "test").exists())
-            .andExpect(jsonPath("$[0].cronJobId", testResponse.getCronJobId()).exists())
-            .andExpect(jsonPath("$[1].cronJobId", testResponse2.getCronJobId()).exists())
+            .andExpect(jsonPath("$[0].userAccount").value("test"))
+            .andExpect(jsonPath("$[1].userAccount").value("test"))
+            .andExpect(jsonPath("$[0].cronJobId").value(testResponse.getCronJobId().toString()))
+            .andExpect(jsonPath("$[1].cronJobId").value(testResponse2.getCronJobId().toString()))
             .andExpect(status().isOk());
     }
 
@@ -110,8 +110,8 @@ public class UserCronJobControllerTest {
             .content(requestJson)
             .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
-            .andExpect(jsonPath("$.userAccount", "test").exists())
-            .andExpect(jsonPath("$.cronJobId", testResponse.getCronJobId()).exists())
+            .andExpect(jsonPath("$.userAccount").value("test"))
+            .andExpect(jsonPath("$.cronJobId").value(testResponse.getCronJobId().toString()))
             .andExpect(status().isOk());
     }
 
@@ -138,7 +138,7 @@ public class UserCronJobControllerTest {
             .content(requestJson)
             .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
-            .andExpect(jsonPath("$.errorMsg", "Do not find Cron Job").exists())
+            .andExpect(jsonPath("$.errorMsg").value("Do not find Cron Job"))
             .andExpect(status().isNotFound());
     }
 
@@ -165,7 +165,7 @@ public class UserCronJobControllerTest {
             .content(requestJson)
             .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
-            .andExpect(jsonPath("$.errorMsg", "Do not find User").exists())
+            .andExpect(jsonPath("$.errorMsg").value("Do not find User"))
             .andExpect(status().isNotFound());
     }
 
@@ -192,7 +192,7 @@ public class UserCronJobControllerTest {
             .content(requestJson)
             .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
-            .andExpect(jsonPath("$.errorMsg", "Already exist user cron job").exists())
+            .andExpect(jsonPath("$.errorMsg").value("Already exist user cron job "))
             .andExpect(status().isConflict());
     }
 
