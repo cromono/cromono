@@ -5,7 +5,7 @@ info:
 servers:
   - url: 'http://localhost:8081'
     description: '로컬 테스트 환경'
-  - url: 'http://211.115.73.153:8080'
+  - url: 'http://139.150.64.58:80'
     description: '배포 환경'
   - url: 'http://182.162.142.151:8086'
     description: 'InfluxDB'
