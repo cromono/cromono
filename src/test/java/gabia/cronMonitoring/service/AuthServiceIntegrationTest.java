@@ -113,6 +113,10 @@ class AuthServiceIntegrationTest {
         String name = "test";
         String email = "test@gabia.com";
         String password = "test";
+        String anotherAccount = "testtest";
+        String anotherName = "testtest";
+        String anotherEmail = "testtest@gabia.com";
+        String anotherPassword = "testtest";
         UserAuthDTO request = UserAuthDTO.builder()
             .account(account)
             .name(name)
@@ -120,13 +124,23 @@ class AuthServiceIntegrationTest {
             .password(password)
             .role(UserRole.ROLE_USER)
             .build();
+        UserAuthDTO anotherRequest = UserAuthDTO.builder()
+            .account(anotherAccount)
+            .name(anotherName)
+            .email(anotherEmail)
+            .password(anotherPassword)
+            .role(UserRole.ROLE_USER)
+            .build();
         userService.addUser(request);
+        userService.addUser(anotherRequest);
         // When
         AccessTokenDTO response = authService.authenticate(request);
+        AccessTokenDTO anotherResponse = authService.authenticate(anotherRequest);
         // Then
-        assertThrows(InvalidTokenException.class, () -> authService.reissueAccessToken(response.getToken(),
+        assertThrows(InvalidTokenException.class, () -> authService.reissueAccessToken(anotherResponse.getToken(),
             response.getRefreshToken()));
         authService.deleteRefreshToken(account);
+        authService.deleteRefreshToken("testtest");
     }
 
     @Test
