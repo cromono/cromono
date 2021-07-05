@@ -45,10 +45,10 @@ public class AuthService {
         RefreshToken refreshToken = refreshTokenService.getRefreshToken(accessToken);
         refreshTokenService.validateRefreshToken(refreshToken.getToken());
         refreshTokenService.deleteRefreshToken(accessToken);
-        refreshTokenService.generateRefreshToken(userAccount, accessToken);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String jwt = tokenProvider.createToken(authentication);
+        refreshTokenService.generateRefreshToken(userAccount, jwt);
 
         return AccessTokenDTO.builder()
             .token(jwt)
