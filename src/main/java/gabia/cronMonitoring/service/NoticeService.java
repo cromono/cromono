@@ -109,11 +109,10 @@ public class NoticeService {
 
         NoticeDTO.Response result = NoticeDTO.Response.from(notice, false);
 
-        Optional<NoticeStatus> status = noticeStatusRepository.findByRcvUserId(account);
-
-        if (status.isPresent()) {
-            result.setIsRead(true);
-        }
+        noticeStatusRepository.findByRcvUserId(account)
+            .ifPresent(present -> {
+                result.setIsRead(true);
+            });
 
         return result;
     }
