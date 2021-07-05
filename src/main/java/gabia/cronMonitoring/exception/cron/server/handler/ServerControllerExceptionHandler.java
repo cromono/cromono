@@ -14,7 +14,7 @@ public class ServerControllerExceptionHandler {
 
     @ExceptionHandler(AlreadyRegisteredServerException.class)
     public ResponseEntity handle(AlreadyRegisteredServerException e) {
-        return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(CronServerNotFoundException.class)

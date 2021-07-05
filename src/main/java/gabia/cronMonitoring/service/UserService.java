@@ -45,11 +45,11 @@ public class UserService implements UserDetailsService {
         if (request.getEmail().isEmpty()) {
             throw new InputNotFoundException("메일 주소를 입력하지 않았습니다.");
         }
-        if (!emailValidator.isValid(request.getEmail())) {
-            throw new NotValidEmailException("유효한 메일주소가 아닙니다.");
-        }
         if (request.getPassword().isEmpty()) {
             throw new InputNotFoundException("패스워드를 입력하지 않았습니다.");
+        }
+        if (!emailValidator.isValid(request.getEmail())) {
+            throw new NotValidEmailException("유효한 메일주소가 아닙니다.");
         }
         userRepository.findByAccount(request.getAccount()).ifPresent(none -> {
             throw new ExistingInputException("이미 등록된 ID입니다.");

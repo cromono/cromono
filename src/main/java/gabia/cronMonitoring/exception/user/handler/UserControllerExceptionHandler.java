@@ -19,7 +19,7 @@ public class UserControllerExceptionHandler {
 
     @ExceptionHandler(ExistingInputException.class)
     public ResponseEntity handle(ExistingInputException e) {
-        return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(InputNotFoundException.class)

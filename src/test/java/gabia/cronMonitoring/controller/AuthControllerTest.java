@@ -11,6 +11,9 @@ import gabia.cronMonitoring.dto.request.UserAuthDTO;
 import gabia.cronMonitoring.dto.response.AccessTokenDTO;
 import gabia.cronMonitoring.dto.response.UserInfoDTO;
 import gabia.cronMonitoring.entity.Enum.UserRole;
+import gabia.cronMonitoring.exception.auth.InvalidTokenException;
+import gabia.cronMonitoring.exception.user.InputNotFoundException;
+import gabia.cronMonitoring.exception.user.NotValidEmailException;
 import gabia.cronMonitoring.service.AuthService;
 import gabia.cronMonitoring.service.UserService;
 import gabia.cronMonitoring.util.jwt.JwtAccessDeniedHandler;
@@ -22,10 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 @WebMvcTest(AuthController.class)
 class AuthControllerTest {
@@ -71,6 +72,7 @@ class AuthControllerTest {
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.token").value(response.getToken()));
+        authService.deleteRefreshToken(response.getToken());
     }
 
     @Test
@@ -108,7 +110,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void register() throws Exception {
+    void register_성공() throws Exception {
         // Given
         UserAuthDTO request = UserAuthDTO.builder()
             .account("test")
@@ -135,8 +137,41 @@ class AuthControllerTest {
     }
 
     @Test
+    void 내용_미기입시_register_실패() throws Exception {
+        // Given
+        UserAuthDTO request = UserAuthDTO.builder().build();
+        // When
+        when(userService.addUser(request)).thenThrow(InputNotFoundException.class);
+        // Then
+        mockMvc.perform(post("/auth/register")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(mapper.writeValueAsString(request)))
+            .andDo(print())
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void 유효하지_않은_이메일_기입시_register_실패() throws Exception {
+        // Given
+        UserAuthDTO request = UserAuthDTO.builder()
+            .account("test")
+            .name("test")
+            .email("test")
+            .role(UserRole.ROLE_USER)
+            .build();
+        // When
+        when(userService.addUser(request)).thenThrow(NotValidEmailException.class);
+        // Then
+        mockMvc.perform(post("/auth/register")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(mapper.writeValueAsString(request)))
+            .andDo(print())
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
     @WithMockUser(roles = "USER")
-    void refreshToken() throws Exception {
+    void refreshToken_성공() throws Exception {
         // Given
         String userAccount = "test";
         String token = "test";
@@ -153,5 +188,26 @@ class AuthControllerTest {
             .andDo(print())
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.token").value(response.getToken()));
+        authService.deleteRefreshToken(response.getToken());
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    void refreshToken_실패() throws Exception {
+        // Given
+        String userAccount = "test";
+        String token = "test";
+        AccessTokenDTO response = AccessTokenDTO.builder()
+            .token(token)
+            .expiresAt(Instant.now())
+            .build();
+        // When
+        when(authService.getCurrentUser())
+            .thenReturn(UserInfoDTO.builder().account(userAccount).build());
+        when(authService.refreshAccessToken(userAccount, token)).thenThrow(InvalidTokenException.class);
+        // Then
+        mockMvc.perform(post("/auth/local/refresh-token/{oldToken}", token))
+            .andDo(print())
+            .andExpect(status().isUnauthorized());
     }
 }
