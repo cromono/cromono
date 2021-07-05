@@ -26,6 +26,10 @@ spring:
       hibernate:
         format_sql: true
 
+#  redis:
+#    host: 10.7.27.9
+#    port: 6379
+
 logging:
   level:
     org.hibernate.SQL: debug
@@ -70,6 +74,10 @@ spring:
         format_sql: true
     database-platform: H2
 
+#  redis:
+#    host: localhost
+#    port: 6379
+
 server:
   port: 8081
 ---
@@ -79,8 +87,7 @@ spring:
     activate:
       on-profile: "common"
   redis:
-#    host: 10.7.27.9
-    host: localhost
+    host: 10.7.27.9
     port: 6379
 jwt:
   header: Authorization

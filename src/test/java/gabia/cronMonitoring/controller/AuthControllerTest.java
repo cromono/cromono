@@ -25,6 +25,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 @WebMvcTest(AuthController.class)
 class AuthControllerTest {
@@ -54,8 +55,8 @@ class AuthControllerTest {
     void login_성공() throws Exception {
         // Given
         UserAuthDTO request = UserAuthDTO.builder()
-            .account("luke")
-            .password("luke")
+            .account("test")
+            .password("test")
             .build();
         AccessTokenDTO response = AccessTokenDTO.builder()
             .token("test")
@@ -76,11 +77,11 @@ class AuthControllerTest {
     void login_실패() throws Exception {
         // Given
         UserAuthDTO request = UserAuthDTO.builder()
-            .account("luke")
-            .password("luke")
+            .account("test")
+            .password("test")
             .build();
         // When
-        when(authService.authenticate(request)).thenThrow(BadCredentialsException.class);
+        when(authService.authenticate(request)).thenReturn(null);
         // Then
         mockMvc.perform(post("/auth/local/login")
             .contentType(MediaType.APPLICATION_JSON)
@@ -94,8 +95,8 @@ class AuthControllerTest {
     void logout() throws Exception {
         // Given
         UserAuthDTO request = UserAuthDTO.builder()
-            .account("luke")
-            .password("luke")
+            .account("test")
+            .password("test")
             .build();
         // When
         // Then
@@ -110,16 +111,16 @@ class AuthControllerTest {
     void register() throws Exception {
         // Given
         UserAuthDTO request = UserAuthDTO.builder()
-            .account("luke")
-            .password("luke")
-            .name("luke")
-            .email("luke@gabia.com")
+            .account("test")
+            .password("test")
+            .name("test")
+            .email("test@gabia.com")
             .build();
         UserInfoDTO response = UserInfoDTO
             .builder()
-            .account("luke")
-            .name("luke")
-            .email("luke@gabia.com")
+            .account("test")
+            .name("test")
+            .email("test@gabia.com")
             .role(UserRole.ROLE_USER)
             .build();
         // When
@@ -137,7 +138,7 @@ class AuthControllerTest {
     @WithMockUser(roles = "USER")
     void refreshToken() throws Exception {
         // Given
-        String userAccount = "Luke";
+        String userAccount = "test";
         String token = "test";
         AccessTokenDTO response = AccessTokenDTO.builder()
             .token(token)
