@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gabia.cronMonitoring.dto.request.RefreshTokenDTO;
 import gabia.cronMonitoring.dto.request.UserAuthDTO;
 import gabia.cronMonitoring.dto.response.AccessTokenDTO;
 import gabia.cronMonitoring.dto.response.UserInfoDTO;
@@ -61,7 +62,7 @@ class AuthControllerTest {
             .build();
         AccessTokenDTO response = AccessTokenDTO.builder()
             .token("test")
-            .expiresAt(Instant.now())
+            .accessTokenExpiresAt(Instant.now())
             .build();
         // When
         when(authService.authenticate(request)).thenReturn(response);
@@ -175,20 +176,25 @@ class AuthControllerTest {
         // Given
         String userAccount = "test";
         String token = "test";
+        RefreshTokenDTO request = RefreshTokenDTO.builder()
+            .refreshToken(token)
+            .build();
         AccessTokenDTO response = AccessTokenDTO.builder()
             .token(token)
-            .expiresAt(Instant.now())
+            .accessTokenExpiresAt(Instant.now())
             .build();
         // When
         when(authService.getCurrentUser())
             .thenReturn(UserInfoDTO.builder().account(userAccount).build());
-        when(authService.refreshAccessToken(userAccount, token)).thenReturn(response);
+        when(authService.reissueAccessToken(userAccount, token)).thenReturn(response);
         // Then
-        mockMvc.perform(post("/auth/local/refresh-token/{oldToken}", token))
+        mockMvc.perform(post("/auth/local/reissue", token)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(mapper.writeValueAsString(request)))
             .andDo(print())
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.token").value(response.getToken()));
-        authService.deleteRefreshToken(response.getToken());
+        authService.deleteRefreshToken(userAccount);
     }
 
     @Test
@@ -197,16 +203,21 @@ class AuthControllerTest {
         // Given
         String userAccount = "test";
         String token = "test";
+        RefreshTokenDTO request = RefreshTokenDTO.builder()
+            .refreshToken(token)
+            .build();
         AccessTokenDTO response = AccessTokenDTO.builder()
             .token(token)
-            .expiresAt(Instant.now())
+            .accessTokenExpiresAt(Instant.now())
             .build();
         // When
         when(authService.getCurrentUser())
             .thenReturn(UserInfoDTO.builder().account(userAccount).build());
-        when(authService.refreshAccessToken(userAccount, token)).thenThrow(InvalidTokenException.class);
+        when(authService.reissueAccessToken(userAccount, token)).thenThrow(InvalidTokenException.class);
         // Then
-        mockMvc.perform(post("/auth/local/refresh-token/{oldToken}", token))
+        mockMvc.perform(post("/auth/local/reissue", token)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(mapper.writeValueAsString(request)))
             .andDo(print())
             .andExpect(status().isUnauthorized());
     }

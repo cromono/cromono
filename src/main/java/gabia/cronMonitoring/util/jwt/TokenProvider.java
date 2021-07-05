@@ -1,5 +1,6 @@
 package gabia.cronMonitoring.util.jwt;
 
+import gabia.cronMonitoring.dto.response.AccessTokenDTO;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -56,21 +57,31 @@ public class TokenProvider implements InitializingBean {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String createToken(Authentication authentication) {
+    public AccessTokenDTO createToken(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream()
             .map(GrantedAuthority::getAuthority)
             .collect(Collectors.joining(","));
 
         long now = (new Date()).getTime();
-        Date validity = new Date(now + this.tokenValidityInMilliseconds);
 
-        return Jwts.builder()
+        String accessToken = Jwts.builder()
             .setSubject(authentication.getName())
             .setIssuedAt(Date.from(Instant.now()))
             .claim(AUTHORITIES_KEY, authorities)
             .signWith(key, SignatureAlgorithm.HS512)
-            .setExpiration(validity)
+            .setExpiration(new Date(now + this.tokenValidityInMilliseconds))
             .compact();
+
+        String refreshToken = Jwts.builder()
+            .signWith(key, SignatureAlgorithm.HS512)
+            .setExpiration(new Date(now + this.refreshTokenValidityInMilliseconds))
+            .compact();
+
+        return AccessTokenDTO.builder()
+            .token(accessToken)
+            .refreshToken(refreshToken)
+            .accessTokenExpiresAt((new Date(now + this.tokenValidityInMilliseconds)).toInstant())
+            .build();
     }
 
     public Authentication getAuthentication(String token) {

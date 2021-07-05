@@ -4,8 +4,8 @@ import gabia.cronMonitoring.dto.request.UserAuthDTO;
 import gabia.cronMonitoring.dto.response.AccessTokenDTO;
 import gabia.cronMonitoring.dto.response.UserInfoDTO;
 import gabia.cronMonitoring.entity.RefreshToken;
+import gabia.cronMonitoring.exception.auth.InvalidTokenException;
 import gabia.cronMonitoring.util.jwt.TokenProvider;
-import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final RefreshTokenService refreshTokenService;
@@ -25,38 +26,48 @@ public class AuthService {
         UsernamePasswordAuthenticationToken authenticationToken =
             new UsernamePasswordAuthenticationToken(request.getAccount(), request.getPassword());
 
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        Authentication authentication = authenticationManagerBuilder.getObject()
+            .authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String jwt = tokenProvider.createToken(authentication);
-        refreshTokenService.generateRefreshToken(request.getAccount(), jwt);
+        AccessTokenDTO tokenDto = tokenProvider.createToken(authentication);
+        refreshTokenService.saveRefreshToken(RefreshToken.builder()
+            .id(request.getAccount())
+            .token(tokenDto.getRefreshToken())
+            .build());
 
-        return AccessTokenDTO.builder()
-            .token(jwt)
-            .expiresAt(Instant.now().plusMillis(tokenProvider.getTokenValidityInMilliseconds()))
-            .build();
+        return tokenDto;
     }
 
-    public void unauthenticate(String jwt) {
-        refreshTokenService.deleteRefreshToken(jwt);
+    public void unauthenticate(String userAccount) {
+        refreshTokenService.deleteRefreshToken(userAccount);
         SecurityContext context = SecurityContextHolder.getContext();
         context.setAuthentication(null);
         SecurityContextHolder.clearContext();
     }
 
-    public AccessTokenDTO refreshAccessToken(String userAccount, String accessToken) {
-        RefreshToken refreshToken = refreshTokenService.getRefreshToken(accessToken);
-        refreshTokenService.validateRefreshToken(refreshToken.getToken());
-        refreshTokenService.deleteRefreshToken(accessToken);
+    public AccessTokenDTO reissueAccessToken(String accessToken, String refreshToken) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String jwt = tokenProvider.createToken(authentication);
-        refreshTokenService.generateRefreshToken(userAccount, jwt);
+        if (!tokenProvider.validateToken(refreshToken)) {
+            throw new InvalidTokenException("유효하지 않은 Refresh Token입니다.");
+        }
 
-        return AccessTokenDTO.builder()
-            .token(jwt)
-            .expiresAt(Instant.now().plusMillis(tokenProvider.getTokenValidityInMilliseconds()))
-            .build();
+        Authentication authentication = tokenProvider.getAuthentication(accessToken);
+
+        RefreshToken savedRefreshToken = refreshTokenService
+            .getRefreshToken(authentication.getName());
+
+        if (!refreshToken.equals(savedRefreshToken.getToken())) {
+            throw new InvalidTokenException("Refresh Token의 유저 정보가 일치하지 않습니다.");
+        }
+
+        AccessTokenDTO resultTokenDto = tokenProvider.createToken(authentication);
+
+        savedRefreshToken.setToken(resultTokenDto.getRefreshToken());
+
+        refreshTokenService.saveRefreshToken(savedRefreshToken);
+
+        return resultTokenDto;
     }
 
     public UserInfoDTO getCurrentUser() {
@@ -67,7 +78,7 @@ public class AuthService {
         return user;
     }
 
-    public void deleteRefreshToken(String id) {
-        refreshTokenService.deleteRefreshToken(id);
+    public void deleteRefreshToken(String userAccount) {
+        refreshTokenService.deleteRefreshToken(userAccount);
     }
 }

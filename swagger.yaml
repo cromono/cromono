@@ -26,7 +26,7 @@ paths:
       tags:
         - authentication
       requestBody:
-        $ref: '#/components/schemas/User'
+        $ref: '#/components/requestBodies/PostUsers'
       responses:
         '200':
           description: '로그인 성공'
@@ -43,20 +43,20 @@ paths:
       tags:
         - authentication
       requestBody:
-        $ref: '#/components/schemas/User'
+        $ref: '#/components/requestBodies/PostUsers'
       responses:
         '200':
           description: '로그아웃 성공'
         '400':
           description: 'Bad request'
-  /auth/local/refresh-token/{userAccount}:
+  /auth/local/reissue:
     post:
       summary: '사용자 Access token 재발급'
-      operationId: refreshToken
+      operationId: reissueToken
       tags:
         - authentication
-      parameters:
-        - $ref: '#/components/parameters/userIdPath'
+      requestBody:
+        $ref: '#/components/requestBodies/PostReissue'
       responses:
         '201':
           description: '재발급 성공'
@@ -73,7 +73,7 @@ paths:
       tags:
         - authentication
       requestBody:
-        $ref: '#/components/schemas/User'
+        $ref: '#/components/requestBodies/PostUsers'
       responses:
         '201':
           description: '정상적으로  등록됨'
@@ -1069,6 +1069,18 @@ components:
       schema:
         type: integer
   requestBodies:
+    PostReissue:
+      description: '엑세스 토큰 재발급'
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - refreshToken
+            properties:
+              refreshToken:
+                type: string
     PostCronServers:
       description: '크론 서버 등록'
       required: true

@@ -4,9 +4,7 @@ import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,5 +13,6 @@ import lombok.Setter;
 public class AccessTokenDTO {
 
     private String token;
-    private Instant expiresAt;
+    private String refreshToken;
+    private Instant accessTokenExpiresAt;
 }

@@ -1,16 +1,11 @@
 package gabia.cronMonitoring.service;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import gabia.cronMonitoring.entity.RefreshToken;
-import gabia.cronMonitoring.exception.auth.InvalidTokenException;
 import gabia.cronMonitoring.repository.RefreshTokenRepository;
-import java.time.Instant;
 import java.util.Optional;
-import java.util.UUID;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,78 +25,46 @@ class RefreshTokenServiceTest {
     RefreshTokenRepository refreshTokenRepository;
 
     @Test
-    void 사용자_아이디로_RefreshToken_생성() throws Exception {
+    void 객체로_RefreshToken_저장() throws Exception {
         // Given
         String userAccount = "test";
-        String jwt = "test";
-        RefreshToken token = RefreshToken.builder()
-            .id(jwt)
-            .token(UUID.randomUUID().toString())
-            .createdDate(Instant.now())
-            .userAccount(userAccount)
+        String token = "test";
+        RefreshToken refreshToken = RefreshToken.builder()
+            .id(userAccount)
+            .token(token)
             .build();
         // When
-        when(refreshTokenRepository.save(any())).thenReturn(token);
-        RefreshToken refreshToken = refreshTokenService.generateRefreshToken(userAccount, jwt);
+        when(refreshTokenRepository.save(any())).thenReturn(refreshToken);
+        RefreshToken savedToken = refreshTokenService.saveRefreshToken(refreshToken);
         // Then
-        Assertions.assertThat(refreshToken).isEqualTo(token);
+        Assertions.assertThat(savedToken).isEqualTo(refreshToken);
     }
 
     @Test
-    void RefreshToken_유효성_검증_성공() throws Exception {
-        // Given
-        String token = "test";
-        // When
-        when(refreshTokenRepository.findByToken(token)).thenReturn(
-            Optional.ofNullable(RefreshToken
-                .builder()
-                .id("test")
-                .token(UUID.randomUUID().toString())
-                .createdDate(Instant.now())
-                .build()));
-        // Then
-        assertDoesNotThrow(() -> refreshTokenService.validateRefreshToken(token));
-    }
-
-    @Test
-    void RefreshToken_유효성_검증_실패() throws Exception {
-        // Given
-        String token = "test";
-        // When
-        when(refreshTokenRepository.findByToken(token)).thenReturn(Optional.empty());
-        // Then
-        assertThrows(InvalidTokenException.class,
-            () -> refreshTokenService.validateRefreshToken(token));
-    }
-
-    @Test
-    void 엑세스_토큰으로_RefreshToken_조회() throws Exception {
+    void 사용자_ID로_RefreshToken_조회() throws Exception {
         // Given
         String userAccount = "test";
-        String jwt = "test";
-        RefreshToken token = RefreshToken.builder()
-            .id(jwt)
-            .token(UUID.randomUUID().toString())
-            .createdDate(Instant.now())
-            .userAccount(userAccount)
+        String token = "test";
+        RefreshToken refreshToken = RefreshToken.builder()
+            .id(userAccount)
+            .token(token)
             .build();
         // When
-        when(refreshTokenRepository.findById(jwt)).thenReturn(Optional.ofNullable(token));
-        RefreshToken refreshToken = refreshTokenService
-            .getRefreshToken(jwt);
+        when(refreshTokenRepository.findById(userAccount)).thenReturn(Optional.ofNullable(refreshToken));
+        RefreshToken savedToken = refreshTokenService
+            .getRefreshToken(userAccount);
         // Then
-        Assertions.assertThat(refreshToken).isEqualTo(token);
+        Assertions.assertThat(refreshToken).isEqualTo(savedToken);
     }
 
     @Test
-    void 엑세스_토큰과_사용자_아이디로_RefreshToken_삭제() throws Exception {
+    void 사용자_ID로_RefreshToken_삭제() throws Exception {
         // Given
-        String id = "test";
-        String jwt = "test";
+        String userAccount = "test";
         // When
-        refreshTokenService.deleteRefreshToken(jwt);
-        when(refreshTokenRepository.findByIdAndUserAccount(jwt, id)).thenReturn(Optional.empty());
+        refreshTokenService.deleteRefreshToken(userAccount);
+        when(refreshTokenRepository.findById(userAccount)).thenReturn(Optional.empty());
         // Then
-        Assertions.assertThat(refreshTokenRepository.findByIdAndUserAccount(jwt, id)).isEmpty();
+        Assertions.assertThat(refreshTokenRepository.findById(userAccount)).isEmpty();
     }
 }

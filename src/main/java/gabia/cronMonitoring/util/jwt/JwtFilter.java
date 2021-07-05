@@ -1,13 +1,11 @@
 package gabia.cronMonitoring.util.jwt;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -36,22 +34,13 @@ public class JwtFilter extends GenericFilterBean {
         String jwt = resolveToken(httpServletRequest);
         String requestURI = httpServletRequest.getRequestURI();
 
-        try {
-            if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-                Authentication authentication = tokenProvider.getAuthentication(jwt);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                logger.debug("Security Context에 '{}' 인증 정보를 저장했습니다, uri: {}",
-                    authentication.getName(), requestURI);
-            } else {
-                logger.debug("유효한 JWT 토큰이 없습니다, uri: {}", requestURI);
-            }
-        } catch (ExpiredJwtException e) {
-            //TODO: refresh access token
+        if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
             Authentication authentication = tokenProvider.getAuthentication(jwt);
-            String userAccount = authentication.getName();
-            HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
-            httpServletResponse.sendRedirect("/auth/local/refresh-token/" + userAccount);
-            servletResponse = httpServletResponse;
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            logger.debug("Security Context에 '{}' 인증 정보를 저장했습니다, uri: {}",
+                authentication.getName(), requestURI);
+        } else {
+            logger.debug("유효한 JWT 토큰이 없습니다, uri: {}", requestURI);
         }
 
         filterChain.doFilter(servletRequest, servletResponse);
