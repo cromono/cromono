@@ -11,17 +11,18 @@ import gabia.cronMonitoring.dto.request.UserAuthDTO;
 import gabia.cronMonitoring.dto.response.AccessTokenDTO;
 import gabia.cronMonitoring.dto.response.UserInfoDTO;
 import gabia.cronMonitoring.entity.Enum.UserRole;
+import gabia.cronMonitoring.service.AuthService;
+import gabia.cronMonitoring.service.UserService;
 import gabia.cronMonitoring.util.jwt.JwtAccessDeniedHandler;
 import gabia.cronMonitoring.util.jwt.JwtAuthenticationEntryPoint;
 import gabia.cronMonitoring.util.jwt.TokenProvider;
-import gabia.cronMonitoring.service.AuthService;
-import gabia.cronMonitoring.service.UserService;
 import java.time.Instant;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -50,7 +51,7 @@ class AuthControllerTest {
     ObjectMapper mapper;
 
     @Test
-    void login() throws Exception {
+    void login_성공() throws Exception {
         // Given
         UserAuthDTO request = UserAuthDTO.builder()
             .account("luke")
@@ -69,6 +70,23 @@ class AuthControllerTest {
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.token").value(response.getToken()));
+    }
+
+    @Test
+    void login_실패() throws Exception {
+        // Given
+        UserAuthDTO request = UserAuthDTO.builder()
+            .account("luke")
+            .password("luke")
+            .build();
+        // When
+        when(authService.authenticate(request)).thenThrow(BadCredentialsException.class);
+        // Then
+        mockMvc.perform(post("/auth/local/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(mapper.writeValueAsString(request)))
+            .andDo(print())
+            .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -126,7 +144,8 @@ class AuthControllerTest {
             .expiresAt(Instant.now())
             .build();
         // When
-        when(authService.getCurrentUser()).thenReturn(UserInfoDTO.builder().account(userAccount).build());
+        when(authService.getCurrentUser())
+            .thenReturn(UserInfoDTO.builder().account(userAccount).build());
         when(authService.refreshAccessToken(userAccount, token)).thenReturn(response);
         // Then
         mockMvc.perform(post("/auth/local/refresh-token/{oldToken}", token))

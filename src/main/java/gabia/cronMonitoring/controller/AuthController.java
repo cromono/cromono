@@ -3,9 +3,10 @@ package gabia.cronMonitoring.controller;
 import gabia.cronMonitoring.dto.request.UserAuthDTO;
 import gabia.cronMonitoring.dto.response.AccessTokenDTO;
 import gabia.cronMonitoring.dto.response.UserInfoDTO;
-import gabia.cronMonitoring.util.jwt.JwtFilter;
+import gabia.cronMonitoring.exception.auth.InvalidTokenException;
 import gabia.cronMonitoring.service.AuthService;
 import gabia.cronMonitoring.service.UserService;
+import gabia.cronMonitoring.util.jwt.JwtFilter;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,9 @@ public class AuthController {
     public ResponseEntity<AccessTokenDTO> login(@Valid @RequestBody UserAuthDTO request) {
 
         AccessTokenDTO tokenDTO = authService.authenticate(request);
+        if (tokenDTO == null) {
+            throw new InvalidTokenException("엑세스 토큰이 발급되지 않았습니다.");
+        }
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + tokenDTO.getToken());
@@ -51,8 +55,10 @@ public class AuthController {
     }
 
     @PostMapping("/local/refresh-token/{oldToken}")
-    public ResponseEntity<AccessTokenDTO> refreshToken(@NotBlank @PathVariable(name = "oldToken") String jwt) {
-        AccessTokenDTO accessTokenDTO = authService.refreshAccessToken(authService.getCurrentUser().getAccount(), jwt);
+    public ResponseEntity<AccessTokenDTO> refreshToken(
+        @NotBlank @PathVariable(name = "oldToken") String jwt) {
+        AccessTokenDTO accessTokenDTO = authService
+            .refreshAccessToken(authService.getCurrentUser().getAccount(), jwt);
         return new ResponseEntity(accessTokenDTO, HttpStatus.CREATED);
     }
 }
