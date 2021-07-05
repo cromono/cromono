@@ -39,4 +39,4 @@ out/
 .vscode/
 
 # test Application.yml
-/src/test/resources/
+src/test/resources/
