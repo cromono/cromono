@@ -2,7 +2,6 @@ HELP.md
 .gradle
 build
 build/
-src/test/resources
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
@@ -38,3 +37,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# test Application.yml
+/src/test/resources/
