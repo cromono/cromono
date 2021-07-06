@@ -56,12 +56,12 @@ public class CronServerIntegrationTest {
         cronServerController.postCronServers(new CronServerDTO("1.1.1.1"));
         cronServerController.postCronServers(new CronServerDTO("1.1.1.2"));
         // When
-        String expectAllServerIp = "$.[*]";
         // Then
         mockMvc.perform(get("/cron-servers"))
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(jsonPath(expectAllServerIp, servers).exists())
+            .andExpect(jsonPath("$[0].serverIp").value(servers.get(0).getServerIp()))
+            .andExpect(jsonPath("$[1].serverIp").value(servers.get(1).getServerIp()))
             .andExpect(jsonPath("$", hasSize(2)));
     }
 
@@ -78,7 +78,7 @@ public class CronServerIntegrationTest {
             .content(request))
             .andDo(print())
             .andExpect(status().isCreated())
-            .andExpect(jsonPath(expectByServerIp, "1.1.1.1").exists());
+            .andExpect(jsonPath(expectByServerIp).value("1.1.1.1"));
     }
 
     @Test
@@ -96,7 +96,7 @@ public class CronServerIntegrationTest {
             .content(request))
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(jsonPath(expectByServerIp, "1.1.1.2").exists());
+            .andExpect(jsonPath(expectByServerIp).value("1.1.1.2"));
     }
 
     @Test

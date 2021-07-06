@@ -3,9 +3,86 @@ info:
   version: 1.0.0
   title: cron-monitor
 servers:
-  - url: 'http://localhost:3000'
-    description: '로컬'
+  - url: 'http://localhost:8081'
+    description: '로컬 테스트 환경'
+  - url: 'http://139.150.64.58:80'
+    description: '배포 환경'
+  - url: 'http://182.162.142.151:8086'
+    description: 'InfluxDB'
+  - url: 'http://139.150.64.58:3306'
+    description: 'MySQL DB'
+  - url: 'http://10.7.27.9:9092'
+    description: '카프카 로컬 접속'
+  - url: 'http://182.162.142.151:9093'
+    description: '카프카 운영환경 접속'
+  - url: 'http://localhost:6379'
+    description: '레디스 리프레시 토큰 DB'
+
 paths:
+  /auth/local/login:
+    post:
+      summary: '사용자 로그인'
+      operationId: login
+      tags:
+        - authentication
+      requestBody:
+        $ref: '#/components/requestBodies/PostUsers'
+      responses:
+        '200':
+          description: '로그인 성공'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessToken'
+        '400':
+          description: 'Bad request'
+  /auth/local/logout:
+    post:
+      summary: '사용자 로그아웃'
+      operationId: logout
+      tags:
+        - authentication
+      requestBody:
+        $ref: '#/components/requestBodies/PostUsers'
+      responses:
+        '200':
+          description: '로그아웃 성공'
+        '400':
+          description: 'Bad request'
+  /auth/local/reissue:
+    post:
+      summary: '사용자 Access token 재발급'
+      operationId: reissueToken
+      tags:
+        - authentication
+      requestBody:
+        $ref: '#/components/requestBodies/PostReissue'
+      responses:
+        '201':
+          description: '재발급 성공'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessToken'
+        '400':
+          description: 'Bad request'
+  /auth/register:
+    post:
+      summary: '사용자 회원가입'
+      operationId: register
+      tags:
+        - authentication
+      requestBody:
+        $ref: '#/components/requestBodies/PostUsers'
+      responses:
+        '201':
+          description: '정상적으로  등록됨'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessToken'
+        '400':
+          description: 'Bad request'
   /cron-servers:
     get:
       summary: '크론 서버 목록 조회'
@@ -791,16 +868,6 @@ paths:
         - $ref: '#/components/parameters/notIdPath'
       requestBody:
         $ref: '#/components/requestBodies/PostNotificationsNotId'
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - url
-              properties:
-                url:
-                  type: string
       responses:
         '201':
           description: '정상적으로 변경됨'
@@ -852,6 +919,12 @@ paths:
           description: 'Bad request'
 components:
   schemas:
+    AccessToken:
+      description: '액세스 토큰'
+      type: object
+      properties:
+        token:
+          type: string
     CronLog:
       description: '로그 내역'
       type: object
@@ -996,6 +1069,18 @@ components:
       schema:
         type: integer
   requestBodies:
+    PostReissue:
+      description: '엑세스 토큰 재발급'
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - refreshToken
+            properties:
+              refreshToken:
+                type: string
     PostCronServers:
       description: '크론 서버 등록'
       required: true

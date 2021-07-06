@@ -20,10 +20,16 @@ spring:
 #    url: ENC(grsR77SEhN7kmgtfZg7KbctEBHpLc/jA4pLSIrBXErbDc66kd0glUpfwR/4j9SK+91evde+5yCycfYe4wlGJq7tFw2vUm80TjNV+qinr1wP5uJqdx77In475nhw/qy2x)
     username: ENC(vlCqS3V8pcLgDf9i7j4f2Q==)
     password: ENC(zKcrcC7yhJI4oX1N3yIU6ekob3kkHw+T)
+
   jpa:
     properties:
       hibernate:
         format_sql: true
+
+#  redis:
+#    host: 10.7.27.9
+#    port: 6379
+
 logging:
   level:
     org.hibernate.SQL: debug
@@ -39,6 +45,7 @@ jasypt:
       suffix: )
     pool-size: 1
 
+
 server:
   port: 8080
 ---
@@ -52,6 +59,7 @@ spring:
     url: jdbc:h2:mem:test_db;DB_CLOSE_DELAY=-1
     username: test
     password: 1234
+
   h2:
     console:
       path: /h2-console
@@ -66,19 +74,27 @@ spring:
         format_sql: true
     database-platform: H2
 
+#  redis:
+#    host: localhost
+#    port: 6379
+
 server:
   port: 8081
-
 ---
 #공통환경
 spring:
   config:
     activate:
       on-profile: "common"
+  redis:
+    host: 10.7.27.9
+    port: 6379
   jasypt:
     password: "cron_monitoring"
     algorithm: "PBEWithMD5AndDES"
 jwt:
   header: Authorization
   secret: 3zWsvEmwL96CJccvPMWhcIMvmK9vKX07dq6J2mRhlMvT5MMVSdl3QR9Hca859z8Wi9EZGWR3rZKj4rIumwHaQQ
-  token-validity-in-seconds: 86400
+  secretRefresh: v-lqiD-sUYSbKirV8DXYxNxX-BidflOsPKhFucu9jk1_qY0vKERn4hbDDaNVviavjliM6TEI92HPADbvAKeIbg
+  token-validity-in-seconds: 3600 #1시간
+  refresh-token-validity-in-seconds: 1209600 #2주
