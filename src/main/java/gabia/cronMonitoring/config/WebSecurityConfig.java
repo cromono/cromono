@@ -1,9 +1,9 @@
 package gabia.cronMonitoring.config;
 
-import gabia.cronMonitoring.jwt.JwtAccessDeniedHandler;
-import gabia.cronMonitoring.jwt.JwtAuthenticationEntryPoint;
-import gabia.cronMonitoring.jwt.JwtSecurityConfig;
-import gabia.cronMonitoring.jwt.TokenProvider;
+import gabia.cronMonitoring.util.jwt.JwtAccessDeniedHandler;
+import gabia.cronMonitoring.util.jwt.JwtAuthenticationEntryPoint;
+import gabia.cronMonitoring.util.jwt.JwtSecurityConfig;
+import gabia.cronMonitoring.util.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -66,8 +66,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests()
             .antMatchers("/").permitAll()
             .antMatchers("/hello").permitAll()
-            .antMatchers("/register").permitAll()
-            .antMatchers("/login").permitAll()
+            .antMatchers("/auth/register").anonymous()
+            .antMatchers("/auth/local/login").anonymous()
 
             .anyRequest().authenticated()
 

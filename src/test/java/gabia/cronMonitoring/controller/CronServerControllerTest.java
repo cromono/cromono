@@ -3,6 +3,7 @@ package gabia.cronMonitoring.controller;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -17,6 +18,7 @@ import gabia.cronMonitoring.dto.CronServerDTO;
 import gabia.cronMonitoring.service.CronServerService;
 import java.util.ArrayList;
 import java.util.List;
+import org.json.JSONArray;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,14 +57,14 @@ public class CronServerControllerTest {
         List<CronServerDTO> servers = new ArrayList<>();
         servers.add(new CronServerDTO("1.1.1.1"));
         servers.add(new CronServerDTO("1.1.1.2"));
-        given(cronServerService.getCronServers()).willReturn(servers);
         // When
-        String expectAllServerIp = "$.[*]";
+        when(cronServerService.getCronServers()).thenReturn(servers);
         // Then
         mockMvc.perform(get("/cron-servers"))
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(jsonPath(expectAllServerIp, servers).exists())
+            .andExpect(jsonPath("$[0].serverIp").value(servers.get(0).getServerIp()))
+            .andExpect(jsonPath("$[1].serverIp").value(servers.get(1).getServerIp()))
             .andExpect(jsonPath("$", hasSize(2)));
     }
 
@@ -80,7 +82,7 @@ public class CronServerControllerTest {
             .content(request))
             .andDo(print())
             .andExpect(status().isCreated())
-            .andExpect(jsonPath(expectByServerIp, "1.1.1.1").exists());
+            .andExpect(jsonPath(expectByServerIp).value("1.1.1.1"));
     }
 
     @Test
@@ -89,7 +91,7 @@ public class CronServerControllerTest {
         CronServerDTO oldCronServerDto = new CronServerDTO("1.1.1.1");
         CronServerDTO newCronServerDto = new CronServerDTO("1.1.1.2");
         String request = mapper.writeValueAsString(newCronServerDto);
-        given(cronServerService.updateCronServer(any(), any())).willReturn(oldCronServerDto);
+        given(cronServerService.updateCronServer(any(), any())).willReturn(newCronServerDto);
         // When
         String expectByServerIp = "$.serverIp";
         // Then
@@ -98,7 +100,7 @@ public class CronServerControllerTest {
             .content(request))
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(jsonPath(expectByServerIp, "1.1.1.2").exists());
+            .andExpect(jsonPath(expectByServerIp).value("1.1.1.2"));
     }
 
     @Test
