@@ -1,9 +1,11 @@
 package gabia.cronMonitoring.service;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import gabia.cronMonitoring.entity.RefreshToken;
+import gabia.cronMonitoring.exception.auth.InvalidTokenException;
 import gabia.cronMonitoring.repository.RefreshTokenRepository;
 import java.util.Optional;
 import org.assertj.core.api.Assertions;
@@ -68,10 +70,9 @@ class RefreshTokenServiceTest {
             .build();
         // When
         when(refreshTokenRepository.findById(userAccount)).thenReturn(Optional.empty());
-        RefreshToken savedToken = refreshTokenService
-            .getRefreshToken(userAccount);
         // Then
-        Assertions.assertThat(refreshToken).isEqualTo(savedToken);
+        assertThrows(InvalidTokenException.class, () -> refreshTokenService
+            .getRefreshToken(userAccount));
     }
 
     @Test
