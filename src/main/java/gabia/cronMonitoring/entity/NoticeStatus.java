@@ -1,13 +1,8 @@
 package gabia.cronMonitoring.entity;
 
-import gabia.cronMonitoring.entity.Enum.NoticeType;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,46 +10,34 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
-@Table(name = "notice")
+@Table(name = "notice_status")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Notice {
+public class NoticeStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "not_id")
+    @Column(name = "id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cron_job_id")
-    private CronJob cronJob;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "notice_type")
-    @NotNull
-    private NoticeType noticeType;
+    @JoinColumn(name = "not_id")
+    private Notice notice;
 
     @NotNull
-    @Column(name = "notice_message")
-    private String noticeMessage;
+    @Column(name = "rcv_user_id")
+    String rcvUserId;
 
-    @Column(name = "notice_create_date_time")
     @NotNull
-    private Timestamp noticeCreateDateTime;
-
-
+    @Column(name = "read_date")
+    private Timestamp readDate;
 }
