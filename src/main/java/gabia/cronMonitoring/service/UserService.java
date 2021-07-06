@@ -23,7 +23,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
+/**
+* 사용자에 대한 서비스를 처리하는 클래스입니다.
+* @author : 김기정(Luke)
+**/
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor

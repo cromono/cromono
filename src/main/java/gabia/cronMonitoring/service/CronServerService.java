@@ -14,6 +14,10 @@ import org.apache.commons.validator.routines.InetAddressValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+* 크론 서버와 관련된 서비스를 처리하는 클래스입니다.
+* @author : 김기정(Luke)
+**/
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor

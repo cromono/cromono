@@ -15,6 +15,10 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+/**
+* 인증과 관련된 서비스를 처리하는 클래스입니다.
+* @author : 김기정(Luke)
+**/
 @Service
 @RequiredArgsConstructor
 public class AuthService {

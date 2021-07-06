@@ -7,7 +7,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
+/**
+* Refresh Token에 대한 서비스를 처리하는 클래스입니다.
+* @author : 김기정(Luke)
+**/
 @RequiredArgsConstructor
 @Transactional
 @Service

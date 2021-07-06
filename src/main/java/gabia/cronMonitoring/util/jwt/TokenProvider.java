@@ -27,6 +27,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
+/**
+* 토큰 발급 및 정보 추출, 유효성 검증을 담당하는 클래스입니다.
+* @author : 김기정(Luke)
+**/
 @Component
 @Getter
 public class TokenProvider implements InitializingBean {

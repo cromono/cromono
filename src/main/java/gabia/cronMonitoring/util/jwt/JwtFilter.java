@@ -13,6 +13,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
+/**
+* 스프링 시큐리티의 인증 과정에서 쓰이는 필터를 JWT에 맞게 커스텀한 클래스입니다.
+* @author : 김기정(Luke)
+**/
 public class JwtFilter extends GenericFilterBean {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
