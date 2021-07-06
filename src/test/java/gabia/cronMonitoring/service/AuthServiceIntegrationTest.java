@@ -134,8 +134,9 @@ class AuthServiceIntegrationTest {
         userService.addUser(request);
         userService.addUser(anotherRequest);
         // When
-        AccessTokenDTO response = authService.authenticate(request);
         AccessTokenDTO anotherResponse = authService.authenticate(anotherRequest);
+        authService.unauthenticate(anotherAccount);
+        AccessTokenDTO response = authService.authenticate(request);
         // Then
         assertThrows(InvalidTokenException.class, () -> authService.reissueAccessToken(anotherResponse.getToken(),
             response.getRefreshToken()));
