@@ -69,6 +69,7 @@ public class TokenProvider implements InitializingBean {
 
         long now = (new Date()).getTime();
 
+        // 사용자 ID, 발급일, claim 및 만료일을 포함한 엑세스 토큰 생성
         String accessToken = Jwts.builder()
             .setSubject(authentication.getName())
             .setIssuedAt(Date.from(Instant.now()))
@@ -77,6 +78,7 @@ public class TokenProvider implements InitializingBean {
             .setExpiration(new Date(now + this.tokenValidityInMilliseconds))
             .compact();
 
+        // 만료일 등을 포함한 리프레시 토큰 생성
         String refreshToken = Jwts.builder()
             .signWith(key, SignatureAlgorithm.HS512)
             .setExpiration(new Date(now + this.refreshTokenValidityInMilliseconds))
