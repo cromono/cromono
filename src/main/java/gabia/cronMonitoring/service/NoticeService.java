@@ -20,8 +20,9 @@ import gabia.cronMonitoring.repository.NoticeSubscriptionRepository;
 import gabia.cronMonitoring.repository.UserRepository;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -97,24 +98,17 @@ public class NoticeService {
         List<UUID> cronJobIdList = noticeSubscriptionRepository
             .findCronJobIdByRcvUserAccount(account);
 
+        //Notice Status를 Map으로 생성
+        Map<String, NoticeStatus> stringNoticeStatusMap = noticeStatusRepository.findAll()
+            .stream()
+            .collect(Collectors.toMap(NoticeStatus::getRcvUserId, Function.identity()));
+
         List<NoticeDTO.Response> responses = noticeRepository.findByCronJobIdIn(cronJobIdList)
             .stream()
-            .map(dto -> makeNoticeDTO(dto, account))
+            .map(dto -> NoticeDTO.Response.from(dto, stringNoticeStatusMap.containsKey(account)))
             .collect(Collectors.toList());
 
         return responses;
-    }
-
-    private NoticeDTO.Response makeNoticeDTO(Notice notice, String account) {
-
-        NoticeDTO.Response result = NoticeDTO.Response.from(notice, false);
-
-        noticeStatusRepository.findByRcvUserId(account)
-            .ifPresent(present -> {
-                result.setIsRead(true);
-            });
-
-        return result;
     }
 
     @Transactional
