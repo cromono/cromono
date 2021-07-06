@@ -57,6 +57,11 @@ public class TokenProvider implements InitializingBean {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
+    /**
+     * JWT 형식의 엑세스 및 리프레시 토큰 생성
+     * @param authentication 인증 정보
+     * @return 엑세스 토큰 DTO
+     */
     public AccessTokenDTO createToken(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream()
             .map(GrantedAuthority::getAuthority)
@@ -84,6 +89,11 @@ public class TokenProvider implements InitializingBean {
             .build();
     }
 
+    /**
+     * 엑세스 토큰의 인증 정보 추출
+     * @param token 엑세스 토큰
+     * @return org.springframework.security.core.authentication.UsernamePasswordAuthenticationToken 인증 정보
+     */
     public Authentication getAuthentication(String token) {
         Claims claims = Jwts
             .parserBuilder()
@@ -92,6 +102,7 @@ public class TokenProvider implements InitializingBean {
             .parseClaimsJws(token)
             .getBody();
 
+        // 인가 정보 목록 추출
         Collection<? extends GrantedAuthority> authorities =
             Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
                 .map(SimpleGrantedAuthority::new)
@@ -102,6 +113,11 @@ public class TokenProvider implements InitializingBean {
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 
+    /**
+     * JWT 토큰 유효성 검증
+     * @param token JWT 토큰
+     * @return 유효성 여부(true=유효, false=잘못됨)
+     */
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);

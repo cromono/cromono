@@ -21,7 +21,6 @@ public class JwtFilter extends GenericFilterBean {
 
     private TokenProvider tokenProvider;
 
-
     public JwtFilter(TokenProvider tokenProvider) {
         this.tokenProvider = tokenProvider;
     }
@@ -30,10 +29,13 @@ public class JwtFilter extends GenericFilterBean {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
         FilterChain filterChain)
         throws IOException, ServletException {
+        
+        // 요청 서블릿에서 헤더 추출 후 엑세스 토큰의 인증 및 인가 정보 필터링
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         String jwt = resolveToken(httpServletRequest);
         String requestURI = httpServletRequest.getRequestURI();
 
+        // JWT 검증 및 필터링
         if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
             Authentication authentication = tokenProvider.getAuthentication(jwt);
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -46,6 +48,11 @@ public class JwtFilter extends GenericFilterBean {
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
+    /**
+     * 서블릿에서 토큰 추출
+     * @param request 요청 서블릿
+     * @return 엑세스 토큰 문자열
+     */
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
