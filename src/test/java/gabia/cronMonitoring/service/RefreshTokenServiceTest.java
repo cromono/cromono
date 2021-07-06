@@ -41,7 +41,7 @@ class RefreshTokenServiceTest {
     }
 
     @Test
-    void 사용자_ID로_RefreshToken_조회() throws Exception {
+    void 사용자_ID로_RefreshToken_조회_성공() throws Exception {
         // Given
         String userAccount = "test";
         String token = "test";
@@ -51,6 +51,23 @@ class RefreshTokenServiceTest {
             .build();
         // When
         when(refreshTokenRepository.findById(userAccount)).thenReturn(Optional.ofNullable(refreshToken));
+        RefreshToken savedToken = refreshTokenService
+            .getRefreshToken(userAccount);
+        // Then
+        Assertions.assertThat(refreshToken).isEqualTo(savedToken);
+    }
+
+    @Test
+    void 사용자_ID로_RefreshToken_조회_실패() throws Exception {
+        // Given
+        String userAccount = "test";
+        String token = "test";
+        RefreshToken refreshToken = RefreshToken.builder()
+            .id(userAccount)
+            .token(token)
+            .build();
+        // When
+        when(refreshTokenRepository.findById(userAccount)).thenReturn(Optional.empty());
         RefreshToken savedToken = refreshTokenService
             .getRefreshToken(userAccount);
         // Then
