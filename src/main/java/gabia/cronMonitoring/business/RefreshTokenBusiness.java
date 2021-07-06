@@ -1,4 +1,4 @@
-package gabia.cronMonitoring.service;
+package gabia.cronMonitoring.business;
 
 import gabia.cronMonitoring.entity.RefreshToken;
 import gabia.cronMonitoring.exception.auth.InvalidTokenException;
@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class RefreshTokenService {
+public class RefreshTokenBusiness {
 
     private final RefreshTokenRepository refreshTokenRepository;
 

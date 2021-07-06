@@ -1,5 +1,6 @@
 package gabia.cronMonitoring.service;
 
+import gabia.cronMonitoring.business.RefreshTokenBusiness;
 import gabia.cronMonitoring.dto.request.UserAuthDTO;
 import gabia.cronMonitoring.dto.response.AccessTokenDTO;
 import gabia.cronMonitoring.dto.response.UserInfoDTO;
@@ -20,7 +21,7 @@ public class AuthService {
 
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final RefreshTokenService refreshTokenService;
+    private final RefreshTokenBusiness refreshTokenBusiness;
 
     public AccessTokenDTO authenticate(UserAuthDTO request) {
         UsernamePasswordAuthenticationToken authenticationToken =
@@ -31,7 +32,7 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         AccessTokenDTO tokenDto = tokenProvider.createToken(authentication);
-        refreshTokenService.saveRefreshToken(RefreshToken.builder()
+        refreshTokenBusiness.saveRefreshToken(RefreshToken.builder()
             .id(request.getAccount())
             .token(tokenDto.getRefreshToken())
             .build());
@@ -40,7 +41,7 @@ public class AuthService {
     }
 
     public void unauthenticate(String userAccount) {
-        refreshTokenService.deleteRefreshToken(userAccount);
+        refreshTokenBusiness.deleteRefreshToken(userAccount);
         SecurityContext context = SecurityContextHolder.getContext();
         context.setAuthentication(null);
         SecurityContextHolder.clearContext();
@@ -54,7 +55,7 @@ public class AuthService {
 
         Authentication authentication = tokenProvider.getAuthentication(accessToken);
 
-        RefreshToken savedRefreshToken = refreshTokenService
+        RefreshToken savedRefreshToken = refreshTokenBusiness
             .getRefreshToken(authentication.getName());
 
         if (!refreshToken.equals(savedRefreshToken.getToken())) {
@@ -65,7 +66,7 @@ public class AuthService {
 
         savedRefreshToken.setToken(resultTokenDto.getRefreshToken());
 
-        refreshTokenService.saveRefreshToken(savedRefreshToken);
+        refreshTokenBusiness.saveRefreshToken(savedRefreshToken);
 
         return resultTokenDto;
     }
@@ -79,6 +80,6 @@ public class AuthService {
     }
 
     public void deleteRefreshToken(String userAccount) {
-        refreshTokenService.deleteRefreshToken(userAccount);
+        refreshTokenBusiness.deleteRefreshToken(userAccount);
     }
 }

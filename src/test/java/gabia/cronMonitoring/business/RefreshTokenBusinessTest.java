@@ -1,4 +1,4 @@
-package gabia.cronMonitoring.service;
+package gabia.cronMonitoring.business;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -18,10 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @ExtendWith(MockitoExtension.class)
 @Transactional
-class RefreshTokenServiceTest {
+class RefreshTokenBusinessTest {
 
     @InjectMocks
-    RefreshTokenService refreshTokenService;
+    RefreshTokenBusiness refreshTokenBusiness;
 
     @Mock
     RefreshTokenRepository refreshTokenRepository;
@@ -37,7 +37,7 @@ class RefreshTokenServiceTest {
             .build();
         // When
         when(refreshTokenRepository.save(any())).thenReturn(refreshToken);
-        RefreshToken savedToken = refreshTokenService.saveRefreshToken(refreshToken);
+        RefreshToken savedToken = refreshTokenBusiness.saveRefreshToken(refreshToken);
         // Then
         Assertions.assertThat(savedToken).isEqualTo(refreshToken);
     }
@@ -53,7 +53,7 @@ class RefreshTokenServiceTest {
             .build();
         // When
         when(refreshTokenRepository.findById(userAccount)).thenReturn(Optional.ofNullable(refreshToken));
-        RefreshToken savedToken = refreshTokenService
+        RefreshToken savedToken = refreshTokenBusiness
             .getRefreshToken(userAccount);
         // Then
         Assertions.assertThat(refreshToken).isEqualTo(savedToken);
@@ -71,7 +71,7 @@ class RefreshTokenServiceTest {
         // When
         when(refreshTokenRepository.findById(userAccount)).thenReturn(Optional.empty());
         // Then
-        assertThrows(InvalidTokenException.class, () -> refreshTokenService
+        assertThrows(InvalidTokenException.class, () -> refreshTokenBusiness
             .getRefreshToken(userAccount));
     }
 
@@ -80,7 +80,7 @@ class RefreshTokenServiceTest {
         // Given
         String userAccount = "test";
         // When
-        refreshTokenService.deleteRefreshToken(userAccount);
+        refreshTokenBusiness.deleteRefreshToken(userAccount);
         when(refreshTokenRepository.findById(userAccount)).thenReturn(Optional.empty());
         // Then
         Assertions.assertThat(refreshTokenRepository.findById(userAccount)).isEmpty();

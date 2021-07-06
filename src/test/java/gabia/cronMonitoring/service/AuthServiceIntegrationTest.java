@@ -3,6 +3,7 @@ package gabia.cronMonitoring.service;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import gabia.cronMonitoring.business.RefreshTokenBusiness;
 import gabia.cronMonitoring.dto.request.UserAuthDTO;
 import gabia.cronMonitoring.dto.response.AccessTokenDTO;
 import gabia.cronMonitoring.dto.response.UserInfoDTO;
@@ -33,7 +34,7 @@ class AuthServiceIntegrationTest {
     TokenProvider tokenProvider;
 
     @Autowired
-    RefreshTokenService refreshTokenService;
+    RefreshTokenBusiness refreshTokenBusiness;
 
     @Autowired
     RefreshTokenRepository refreshTokenRepository;
