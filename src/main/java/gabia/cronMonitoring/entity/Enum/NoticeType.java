@@ -2,5 +2,5 @@ package gabia.cronMonitoring.entity.Enum;
 
 public enum NoticeType {
 
-    Start, End
+    Start, End, NoStart, NoEnd
 }

@@ -1,6 +1,7 @@
 package gabia.cronMonitoring.entity;
 
 import gabia.cronMonitoring.entity.Enum.NoticeType;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Date;
 import javax.persistence.Column;
@@ -16,14 +17,21 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
 @Table(name = "notice")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Notice {
 
     @Id
@@ -32,30 +40,21 @@ public class Notice {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rcv_user_id", referencedColumnName = "user_id")
-    private User receiveUser;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "create_user_id", referencedColumnName = "user_id")
-    private User createUser;
-
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    private NoticeType noticeType;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cron_job_id")
     private CronJob cronJob;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "notice_type")
     @NotNull
+    private NoticeType noticeType;
+
+    @NotNull
+    @Column(name = "notice_message")
     private String noticeMessage;
 
+    @Column(name = "notice_create_date_time")
     @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date noticeCreateDatetime;
+    private Timestamp noticeCreateDateTime;
 
-    @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date noticeReadDatetime;
 
 }

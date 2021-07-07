@@ -6,6 +6,7 @@ import gabia.cronMonitoring.entity.CronJob;
 import gabia.cronMonitoring.entity.User;
 import gabia.cronMonitoring.entity.UserCronJob;
 import gabia.cronMonitoring.exception.cron.process.CronJobNotFoundException;
+import gabia.cronMonitoring.exception.cron.team.TeamNotFoundException;
 import gabia.cronMonitoring.exception.cron.user.UserNotFoundException;
 import gabia.cronMonitoring.exception.teamcronjob.AlreadyExistTeamCronJobException;
 import gabia.cronMonitoring.exception.usercronjob.AlreadyExistUserCronJobException;
@@ -27,8 +28,15 @@ public class UserCronJobService {
     private final UserCronJobRepository userCronJobRepository;
     private final UserRepository userRepository;
 
+    /**
+     * User Cron Job 조회
+     *
+     * @param account 해당 유저의 account
+     * @return List<UserCronJobDTO.Response></UserCronJobDTO.Response>
+     */
     public List<Response> findAllUserCronJob(String account) {
 
+        // 해당 하는 User의 User Cron Job List 조회
         List<UserCronJobDTO.Response> responses = userCronJobRepository.findByUserAccount(account)
             .stream()
             .map(dto -> UserCronJobDTO.Response.from(dto))
@@ -38,25 +46,37 @@ public class UserCronJobService {
 
     }
 
+    /**
+     * User Cron Job 추가
+     *
+     * @param account 해당 유저의 account
+     * @param request UserCronJobDTO.Request
+     * @return UserCronJobDTO.Response
+     * @throws CronJobNotFoundException
+     * @throws UserNotFoundException
+     * @throws AlreadyExistUserCronJobException
+     */
     @Transactional
     public UserCronJobDTO.Response addUserCronJob(String account, UserCronJobDTO.Request request) {
 
+        // Cron Job과 User 존재 유무 확인
         CronJob cronJob = cronJobRepository.findById(request.getCronJobId())
             .orElseThrow(() -> new CronJobNotFoundException());
 
         User user = userRepository.findByAccount(account)
             .orElseThrow(() -> new UserNotFoundException());
 
-        UserCronJob userCronJob = UserCronJob.builder()
-            .user(user)
-            .cronJob(cronJob)
-            .build();
-
+        // 이미 존재하는 User Cron Job인 경우 Exception 발생
         userCronJobRepository.findByUserAccountAndCronJobId(account, request.getCronJobId())
             .ifPresent(present -> {
                 throw new AlreadyExistUserCronJobException();
             });
 
+        // User Cron Job 생성
+        UserCronJob userCronJob = UserCronJob.builder()
+            .user(user)
+            .cronJob(cronJob)
+            .build();
         UserCronJob savedUserCronJob = userCronJobRepository.save(userCronJob);
 
         Response response = Response.from(savedUserCronJob);
@@ -64,14 +84,22 @@ public class UserCronJobService {
         return response;
     }
 
+    /**
+     * User Cron Job 삭제
+     *
+     * @param account   해당 유저의 account
+     * @param cronJobId 삭제할 User Cron Job의 Id
+     * @throws CronJobNotFoundException
+     * @throws UserNotFoundException
+     */
     @Transactional
     public void removeUserCronJob(String account, UUID cronJobId) {
-        CronJob cronJob = cronJobRepository.findById(cronJobId)
-            .orElseThrow(() -> new CronJobNotFoundException());
 
-        User user = userRepository.findByAccount(account)
-            .orElseThrow(() -> new UserNotFoundException());
+        // Cron Job, User 존재 유무 확인
+        cronJobRepository.findById(cronJobId).orElseThrow(() -> new CronJobNotFoundException());
+        userRepository.findByAccount(account).orElseThrow(() -> new UserNotFoundException());
 
+        // User Cron Job 삭제
         userCronJobRepository.deleteByCronJobIdAndUserAccount(cronJobId, account);
     }
 }

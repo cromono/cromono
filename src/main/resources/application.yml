@@ -25,6 +25,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
 logging:
   level:
     org.hibernate.SQL: debug
@@ -77,7 +78,20 @@ spring:
   config:
     activate:
       on-profile: "common"
+  redis:
+    host: 10.7.27.9
+    port: 6379
+  jasypt:
+    password: "cron_monitoring"
+    algorithm: "PBEWithMD5AndDES"
 jwt:
   header: Authorization
   secret: 3zWsvEmwL96CJccvPMWhcIMvmK9vKX07dq6J2mRhlMvT5MMVSdl3QR9Hca859z8Wi9EZGWR3rZKj4rIumwHaQQ
-  token-validity-in-seconds: 86400
+  secretRefresh: v-lqiD-sUYSbKirV8DXYxNxX-BidflOsPKhFucu9jk1_qY0vKERn4hbDDaNVviavjliM6TEI92HPADbvAKeIbg
+  token-validity-in-seconds: 3600 #1시간
+  refresh-token-validity-in-seconds: 1209600 #2주
+influx:
+  server: http://10.7.27.9:8086/
+  token: W90KOru9HsUcsbJ-7NDZvl-ECE5OdsKe3F8LsuNlY5pNQr9mtrE887RnARrNP1Jr6MgE3BACeXptTOkp6E5ibQ==
+  org: Gabia
+  bucket: Cron
