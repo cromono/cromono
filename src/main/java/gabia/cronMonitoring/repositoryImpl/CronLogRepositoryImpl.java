@@ -5,25 +5,34 @@ import com.influxdb.client.InfluxDBClientFactory;
 import com.influxdb.client.QueryApi;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
-import gabia.cronMonitoring.repository.CronLogRepository;
 import gabia.cronMonitoring.entity.CronLog;
-import java.util.ArrayList;
+import gabia.cronMonitoring.repository.CronLogRepository;
 import java.util.LinkedList;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class CronLogRepositoryImpl implements CronLogRepository {
 
-//        private static final String server = "http://182.162.142.151:8086/"; // 공인 IP
-    private static final String server = "http://10.7.27.9:8086/"; // 사설 IP
-    private static final char[] token =
-        "W90KOru9HsUcsbJ-7NDZvl-ECE5OdsKe3F8LsuNlY5pNQr9mtrE887RnARrNP1Jr6MgE3BACeXptTOkp6E5ibQ=="
-            .toCharArray();
-    private static final String org = "Gabia";
-    private static final String bucket = "Cron";
+    private final String server;
+
+    private final char[] token;
+
+    private final String org;
+
+    private final String bucket;
 
     private InfluxDBClient influxDBClient;
+
+    public CronLogRepositoryImpl(@Value("${influx.server}") String server,
+        @Value("${influx.token}") char[] token, @Value("${influx.org}") String org,
+        @Value("${influx.bucket}") String bucket) {
+        this.server = server;
+        this.token = token;
+        this.org = org;
+        this.bucket = bucket;
+    }
 
     @Override
     public List<CronLog> findByTag(String cronProcess) {

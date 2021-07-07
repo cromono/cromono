@@ -19,7 +19,9 @@ test-jdk11:
     - 'gradle test jacocoTestReport' # jacoco must be configured to create an xml report
   artifacts:
     paths:
+      - build/jacoco/jacoco.html
       - build/jacoco/jacoco.xml
+  coverage: '/    - Line Coverage: ([0-9.]+)%/'
   tags:
     - cronmonitor
 
