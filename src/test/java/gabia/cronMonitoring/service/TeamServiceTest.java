@@ -6,7 +6,6 @@ import static org.mockito.BDDMockito.given;
 import gabia.cronMonitoring.dto.TeamDTO;
 import gabia.cronMonitoring.dto.TeamDTO.Request;
 import gabia.cronMonitoring.dto.TeamUserDTO;
-import gabia.cronMonitoring.dto.UserDTO;
 import gabia.cronMonitoring.entity.Enum.AuthType;
 import gabia.cronMonitoring.entity.Enum.UserRole;
 import gabia.cronMonitoring.entity.Team;

@@ -85,6 +85,31 @@ public class CronServerServiceTest {
         assertEquals("수정 전후로 가져온 엔티티가 동일해야 한다.", serverBeforeUpdate, serverAfterUpdate);
     }
 
+    @Test(expected = NotValidIPException.class)
+    public void 유효하지_않은_기존_서버_수정시_예외() throws Exception {
+        // Given
+        String ip = "invalidip";
+        CronServer mock = new CronServer(ip);
+        given(cronServerRepository.findByIp(ip)).willReturn(Optional.of(mock));
+        // When
+        cronServerService.updateCronServer(ip, "1.1.1.2");
+        // Then
+        Assert.fail("예외가 발생해야 한다.");
+    }
+
+    @Test(expected = NotValidIPException.class)
+    public void 유효하지_않은_새_서버로_수정시_예외() throws Exception {
+        // Given
+        String oldIp = "1.1.1.1";
+        String newIp = "invalidip";
+        CronServer mock = new CronServer(oldIp);
+        given(cronServerRepository.findByIp(oldIp)).willReturn(Optional.of(mock));
+        // When
+        cronServerService.updateCronServer(oldIp, newIp);
+        // Then
+        Assert.fail("예외가 발생해야 한다.");
+    }
+
     @Test(expected = NotExistingServerException.class)
     public void 미등록_서버_수정시_예외() throws Exception {
         // Given
@@ -123,6 +148,16 @@ public class CronServerServiceTest {
         given(cronServerRepository.findByIp(ip)).willReturn(Optional.empty());
         // Then
         assertThat(cronServerRepository.findByIp(ip)).isEmpty();
+    }
+
+    @Test(expected = NotValidIPException.class)
+    public void 유효하지_않은_서버_삭제시_예외() throws Exception {
+        // Given
+        String ip = "invalidip";
+        // When
+        cronServerService.deleteCronServer(ip);
+        // Then
+        Assert.fail("예외가 발생해야 한다.");
     }
 
     @Test(expected = NotExistingServerException.class)
