@@ -103,7 +103,6 @@ public class CronServerServiceTest {
         String oldIp = "1.1.1.1";
         String newIp = "invalidip";
         CronServer mock = new CronServer(oldIp);
-        given(cronServerRepository.findByIp(oldIp)).willReturn(Optional.of(mock));
         // When
         cronServerService.updateCronServer(oldIp, newIp);
         // Then
