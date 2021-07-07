@@ -89,8 +89,6 @@ public class CronServerServiceTest {
     public void 유효하지_않은_기존_서버_수정시_예외() throws Exception {
         // Given
         String ip = "invalidip";
-        CronServer mock = new CronServer(ip);
-        given(cronServerRepository.findByIp(ip)).willReturn(Optional.of(mock));
         // When
         cronServerService.updateCronServer(ip, "1.1.1.2");
         // Then
