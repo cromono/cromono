@@ -21,6 +21,7 @@ import lombok.Setter;
 public class CronServer implements Serializable {
 
     @Id
+    @Column(name = "cron_server_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

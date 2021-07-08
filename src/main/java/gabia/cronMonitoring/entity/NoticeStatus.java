@@ -26,11 +26,11 @@ public class NoticeStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "notice_status_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "not_id")
+    @JoinColumn(name = "notice_id")
     private Notice notice;
 
     @NotNull
