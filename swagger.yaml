@@ -14,7 +14,7 @@ servers:
   - url: 'http://139.150.64.58:3306'
     description: 'MySQL DB 로컬 접속'
   - url: 'http://10.7.27.11:3306'
-      description: 'MySQL DB 로컬 접속'
+    description: 'MySQL DB 로컬 접속'
   - url: 'http://10.7.27.9:9092'
     description: '카프카 gcloud 접속'
   - url: 'http://182.162.142.151:9093'
@@ -864,14 +864,15 @@ paths:
           description: '정상적으로 삭제됨'
         '400':
           description: 'Bad request'
-  /notifications/{notId}:
+  /notifications/users/{userId}/crons/{cronJobId}/webhooks:
     post:
       summary: '웹훅 추가'
       operationId: changeTeam
       tags:
         - webhook
       parameters:
-        - $ref: '#/components/parameters/notIdPath'
+        - $ref: '#/components/parameters/userIdPath'
+        - $ref: '#/components/parameters/cronJobIdPath'
       requestBody:
         $ref: '#/components/requestBodies/PostNotificationsNotId'
       responses:
@@ -885,7 +886,8 @@ paths:
       tags:
         - webhook
       parameters:
-        - $ref: '#/components/parameters/notIdPath'
+        - $ref: '#/components/parameters/userIdPath'
+        - $ref: '#/components/parameters/cronJobIdPath'
       requestBody:
         $ref: '#/components/requestBodies/PatchNotificationsNotId'
       responses:
@@ -899,7 +901,8 @@ paths:
       tags:
         - webhook
       parameters:
-        - $ref: '#/components/parameters/notIdPath'
+        - $ref: '#/components/parameters/userIdPath'
+        - $ref: '#/components/parameters/cronJobIdPath'
       responses:
         '200':
           description: '정상적으로 조회됨'
@@ -917,7 +920,8 @@ paths:
       tags:
         - webhook
       parameters:
-        - $ref: '#/components/parameters/notIdPath'
+        - $ref: '#/components/parameters/userIdPath'
+        - $ref: '#/components/parameters/cronJobIdPath'
       responses:
         '204':
           description: '정상적으로 삭제됨'
@@ -1067,13 +1071,6 @@ components:
       required: true
       schema:
         type: string
-    notIdPath:
-      name: notId
-      in: path
-      description: '알림의 id'
-      required: true
-      schema:
-        type: integer
   requestBodies:
     PostReissue:
       description: '엑세스 토큰 재발급'
