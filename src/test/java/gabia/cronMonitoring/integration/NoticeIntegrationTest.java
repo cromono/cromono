@@ -41,7 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(properties = "spring.profiles.active:common")
+@SpringBootTest(properties = "spring.profiles.active:dev")
 @Transactional
 public class NoticeIntegrationTest {
 
@@ -291,8 +291,8 @@ public class NoticeIntegrationTest {
         mvc.perform(
             get("/notifications/users/{userId}/notice/", user.getAccount()))
             .andDo(print())
-            .andExpect(jsonPath("$[0].notId").value(savedNotice.getId().toString()))
-            .andExpect(jsonPath("$[1].notId").value(savedNotice2.getId().toString()))
+            .andExpect(jsonPath("$[0].noticeId").value(savedNotice.getId().toString()))
+            .andExpect(jsonPath("$[1].noticeId").value(savedNotice2.getId().toString()))
             .andExpect(jsonPath("$[0].cronJobId").value(cronJob.getId().toString()))
             .andExpect(jsonPath("$[1].cronJobId").value(cronJob.getId().toString()))
             .andExpect(status().isOk());

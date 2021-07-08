@@ -1,5 +1,6 @@
 package gabia.cronMonitoring.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -22,6 +23,7 @@ import lombok.NoArgsConstructor;
 public class NoticeSubscription {
 
     @Id
+    @Column(name = "notice_subscription_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

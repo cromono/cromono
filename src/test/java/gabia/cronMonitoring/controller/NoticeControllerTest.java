@@ -218,7 +218,7 @@ public class NoticeControllerTest {
         testResponse.setIsRead(false);
         testResponse.setNoticeType(NoticeType.Start);
         testResponse.setNoticeCreateDateTime(timestamp);
-        testResponse.setNotId(1L);
+        testResponse.setNoticeId(1L);
         testResponse.setCronJobId(UUID.fromString("123e4567-e89b-12d3-a456-556642440000"));
         testResponse.setNoticeMessage("test message");
 
@@ -226,7 +226,7 @@ public class NoticeControllerTest {
         testResponse2.setIsRead(true);
         testResponse2.setNoticeType(NoticeType.End);
         testResponse2.setNoticeCreateDateTime(timestamp);
-        testResponse2.setNotId(2L);
+        testResponse2.setNoticeId(2L);
         testResponse2.setCronJobId(UUID.fromString("123e4567-e89b-12d3-a456-556642440001"));
         testResponse2.setNoticeMessage("test message2");
 
@@ -269,7 +269,7 @@ public class NoticeControllerTest {
         response.setIsRead(true);
         response.setNoticeType(NoticeType.Start);
         response.setNoticeCreateDateTime(timestamp);
-        response.setNotId(1L);
+        response.setNoticeId(1L);
         response.setCronJobId(UUID.fromString("123e4567-e89b-12d3-a456-556642440000"));
         response.setNoticeMessage("test message");
 
@@ -324,7 +324,7 @@ public class NoticeControllerTest {
         response.setNoticeType(NoticeType.Start);
         response.setCronJobId(uuid);
         response.setIsRead(true);
-        response.setNotId(1L);
+        response.setNoticeId(1L);
         response.setNoticeCreateDateTime(timestamp);
 
         //when
