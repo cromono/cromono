@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,9 +62,10 @@ public class WebhookSubscriptionService {
                 new NoticeSubscriptionNotFoundException("해당 사용자와 크론 잡에 대한 알림 구독 정보가 존재하지 않습니다."));
         webhookSubscriptionRepository
             .findByEndpointAndUrlAndNoticeSubscriptionId(request.getEndPoint(),
-                request.getUrl(), noticeSubscription.getId()).ifPresent(none -> {
-            throw new ExistingWebhookException("이미 등록된 웹훅입니다.");
-        });
+                request.getUrl(), noticeSubscription.getId())
+            .ifPresent(none -> {
+                throw new ExistingWebhookException("이미 등록된 웹훅입니다.");
+            });
         WebhookSubscription newWebhook = WebhookSubscription.builder()
             .noticeSubscription(noticeSubscription)
             .endpoint(request.getEndPoint())
@@ -82,11 +81,11 @@ public class WebhookSubscriptionService {
      * 웹훅 갱신
      * @param userAccount 사용자 ID
      * @param cronJobId 크론잡 ID
-     * @param id 웹훅 ID
+     * @param webhookId 웹훅 ID
      * @param request 웹훅 DTO
      * @return 갱신된 웹훅의 정보 DTO
      */
-    public WebhookInfoDTO updateWebhook(String userAccount, UUID cronJobId, Long id,
+    public WebhookInfoDTO updateWebhook(String userAccount, UUID cronJobId, Long webhookId,
         WebhookDTO request) {
 
         NoticeSubscription noticeSubscription = noticeSubscriptionRepository
@@ -95,9 +94,11 @@ public class WebhookSubscriptionService {
         webhookSubscriptionRepository
             .findByEndpointAndUrlAndNoticeSubscriptionId(request.getEndPoint(),
                 request.getUrl(), noticeSubscription.getId())
-            .orElseThrow(() -> new ExistingWebhookException("이미 등록된 웹훅입니다."));
+            .ifPresent(none -> {
+                throw new ExistingWebhookException("이미 등록된 웹훅입니다.");
+            });
         WebhookSubscription savedWebhook = webhookSubscriptionRepository
-            .findById(id)
+            .findById(webhookId)
             .orElseThrow(() -> new WebhookNotFoundException("등록되지 않은 웹훅입니다."));
         savedWebhook.setEndpoint(request.getEndPoint());
         savedWebhook.setUrl(request.getUrl());
@@ -108,11 +109,11 @@ public class WebhookSubscriptionService {
 
     /**
      * 웹훅 삭제
-     * @param id 삭제할 웹훅의 ID
+     * @param webhookId 삭제할 웹훅의 ID
      */
-    public void deleteWebhook(Long id) {
+    public void deleteWebhook(Long webhookId) {
         WebhookSubscription savedWebhook = webhookSubscriptionRepository
-            .findById(id)
+            .findById(webhookId)
             .orElseThrow(() -> new WebhookNotFoundException("등록되지 않은 웹훅입니다."));
         webhookSubscriptionRepository.delete(savedWebhook);
     }
