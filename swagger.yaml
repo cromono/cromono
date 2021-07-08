@@ -14,7 +14,7 @@ servers:
   - url: 'http://139.150.64.58:3306'
     description: 'MySQL DB 로컬 접속'
   - url: 'http://10.7.27.11:3306'
-    description: 'MySQL DB 로컬 접속'
+    description: 'MySQL DB gcloud 접속'
   - url: 'http://10.7.27.9:9092'
     description: '카프카 gcloud 접속'
   - url: 'http://182.162.142.151:9093'
@@ -886,8 +886,7 @@ paths:
       tags:
         - webhook
       parameters:
-        - $ref: '#/components/parameters/userIdPath'
-        - $ref: '#/components/parameters/cronJobIdPath'
+        - $ref: '#/components/parameters/notIdPath'
       requestBody:
         $ref: '#/components/requestBodies/PatchNotificationsNotId'
       responses:

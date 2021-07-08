@@ -25,6 +25,7 @@ import lombok.NoArgsConstructor;
 public class CronProcess {
 
     @Id
+    @Column(name = "cron_process_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

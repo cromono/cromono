@@ -36,7 +36,7 @@ public class NoticeDTO {
     @NoArgsConstructor
     public static class Response {
 
-        Long notId;
+        Long noticeId;
         UUID cronJobId;
         NoticeType noticeType;
         String noticeMessage;
