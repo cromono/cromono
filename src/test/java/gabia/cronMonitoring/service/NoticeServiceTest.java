@@ -606,7 +606,7 @@ class NoticeServiceTest {
         //then
         Assertions.assertThat(response.getCronJobId()).isEqualTo(cronJob.getId());
         Assertions.assertThat(response.getNoticeMessage()).isEqualTo(notice.getNoticeMessage());
-        Assertions.assertThat(response.getNotId()).isEqualTo(notice.getId());
+        Assertions.assertThat(response.getNoticeId()).isEqualTo(notice.getId());
         Assertions.assertThat(response.getNoticeCreateDateTime())
             .isEqualTo(notice.getNoticeCreateDateTime());
         Assertions.assertThat(response.getNoticeType()).isEqualTo(notice.getNoticeType());
@@ -807,7 +807,7 @@ class NoticeServiceTest {
         //then
         Assertions.assertThat(response.getCronJobId()).isEqualTo(cronJob.getId());
         Assertions.assertThat(response.getNoticeMessage()).isEqualTo(notice.getNoticeMessage());
-        Assertions.assertThat(response.getNotId()).isEqualTo(notice.getId());
+        Assertions.assertThat(response.getNoticeId()).isEqualTo(notice.getId());
         Assertions.assertThat(response.getNoticeType()).isEqualTo(notice.getNoticeType());
 
     }

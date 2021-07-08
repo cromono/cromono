@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 public class TeamCronJob {
 
     @Id
-    @Column(name = "id")
+    @Column(name = "team_cron_job_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

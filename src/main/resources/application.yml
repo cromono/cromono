@@ -20,11 +20,12 @@ spring:
     url: ENC(grsR77SEhN7kmgtfZg7KbctEBHpLc/jA4pLSIrBXErbDc66kd0glUpfwR/4j9SK+91evde+5yCycfYe4wlGJq7tFw2vUm80TjNV+qinr1wP5uJqdx77In475nhw/qy2x)
     username: ENC(vlCqS3V8pcLgDf9i7j4f2Q==)
     password: ENC(zKcrcC7yhJI4oX1N3yIU6ekob3kkHw+T)
-
   jpa:
     properties:
       hibernate:
         format_sql: true
+    hibernate:
+#      ddl-auto: create-drop
 
 logging:
   level:
@@ -55,7 +56,6 @@ spring:
     url: jdbc:h2:mem:test_db;DB_CLOSE_DELAY=-1
     username: test
     password: 1234
-
   h2:
     console:
       path: /h2-console

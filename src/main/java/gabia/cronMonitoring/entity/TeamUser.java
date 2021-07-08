@@ -29,6 +29,7 @@ import lombok.Setter;
 public class TeamUser {
 
     @Id
+    @Column(name = "team_user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

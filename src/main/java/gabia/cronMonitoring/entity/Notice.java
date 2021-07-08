@@ -36,7 +36,7 @@ public class Notice {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "not_id")
+    @Column(name = "notice_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -44,15 +44,15 @@ public class Notice {
     private CronJob cronJob;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "notice_type")
+    @Column(name = "type")
     @NotNull
     private NoticeType noticeType;
 
     @NotNull
-    @Column(name = "notice_message")
+    @Column(name = "message")
     private String noticeMessage;
 
-    @Column(name = "notice_create_date_time")
+    @Column(name = "create_date_time")
     @NotNull
     private Timestamp noticeCreateDateTime;
 
