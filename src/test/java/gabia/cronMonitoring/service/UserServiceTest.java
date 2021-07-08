@@ -340,6 +340,39 @@ public class UserServiceTest {
     }
 
     @Test
+    public void 빈_request로_사용자_정보_수정() throws Exception {
+        // Given
+        String account = "test";
+        String oldName = "";
+        String newName = "";
+        String email = "";
+        String password = "";
+        User user = User.builder()
+            .account(account)
+            .name(oldName)
+            .email(email)
+            .password(password)
+            .role(UserRole.ROLE_USER)
+            .build();
+
+        UserAuthDTO request = UserAuthDTO.builder()
+            .account(account)
+            .name(newName)
+            .email(email)
+            .password(password)
+            .role(UserRole.ROLE_ROOT)
+            .build();
+        // When
+        when(userRepository.findByAccount(account)).thenReturn(Optional.of(user));
+        UserInfoDTO userInfoDTO = userService
+            .updateUser("test", request);
+        when(userRepository.findByAccount(userInfoDTO.getAccount())).thenReturn(Optional.of(user));
+        // Then
+        Assertions.assertThat(userRepository.findByAccount(account).get().getName())
+            .isEqualTo(newName);
+    }
+
+    @Test
     public void 미등록_ID_수정시_예외() throws Exception {
         // Given
         String account = "test";

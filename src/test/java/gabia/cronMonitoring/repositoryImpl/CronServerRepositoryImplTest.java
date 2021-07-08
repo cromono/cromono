@@ -35,6 +35,18 @@ public class CronServerRepositoryImplTest {
     }
 
     @Test
+    public void update() {
+        // Given
+        CronServer cronServer = new CronServer("1:1:1:1");
+        // When
+        CronServer savedServer = cronServerRepository.save(cronServer);
+        savedServer.setIp("1:1:1:2");
+        CronServer updatedServer = cronServerRepository.save(savedServer);
+        // Then
+        assertThat(savedServer).isEqualTo(updatedServer);
+    }
+
+    @Test
     public void findByIp() {
         // Given
         CronServer cronServer = new CronServer("1:1:1:1");
