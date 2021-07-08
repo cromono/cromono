@@ -12,7 +12,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Data
-public class WebhookDTO {
+public class WebhookInfoDTO {
+
+    @NotBlank
+    Long id;
 
     @NotBlank
     WebhookEndpoint endPoint;
@@ -20,11 +23,12 @@ public class WebhookDTO {
     @NotBlank
     String url;
 
-    public static WebhookDTO from(WebhookSubscription webhookSubscription) {
-        WebhookDTO webhookDTO = WebhookDTO.builder()
+    public static WebhookInfoDTO from(WebhookSubscription webhookSubscription) {
+        WebhookInfoDTO webhookInfoDTO = WebhookInfoDTO.builder()
+            .id(webhookSubscription.getId())
             .endPoint(webhookSubscription.getEndpoint())
             .url(webhookSubscription.getUrl())
             .build();
-        return webhookDTO;
+        return webhookInfoDTO;
     }
 }

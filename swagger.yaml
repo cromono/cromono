@@ -880,20 +880,6 @@ paths:
           description: '정상적으로 변경됨'
         '400':
           description: 'Bad request'
-    patch:
-      summary: '웹훅 수정'
-      operationId: changeTeam
-      tags:
-        - webhook
-      parameters:
-        - $ref: '#/components/parameters/notIdPath'
-      requestBody:
-        $ref: '#/components/requestBodies/PatchNotificationsNotId'
-      responses:
-        '201':
-          description: '정상적으로 변경됨'
-        '400':
-          description: 'Bad request'
     get:
       summary: '웹훅 리스트 조회'
       operationId: getWebhooks
@@ -913,6 +899,23 @@ paths:
                   $ref: '#/components/schemas/Webhook'
         '400':
           description: 'Bad request'
+  /notifications/users/{userId}/crons/{cronJobId}/webhooks/{webhookId}:
+    patch:
+      summary: '웹훅 수정'
+      operationId: changeTeam
+      tags:
+        - webhook
+      parameters:
+        - $ref: '#/components/parameters/userIdPath'
+        - $ref: '#/components/parameters/cronJobIdPath'
+        - $ref: '#/components/parameters/webhookIdPath'
+      requestBody:
+        $ref: '#/components/requestBodies/PatchNotificationsNotId'
+      responses:
+        '201':
+          description: '정상적으로 변경됨'
+        '400':
+          description: 'Bad request'
     delete:
       summary: '웹훅 삭제'
       operationId: deleteTeam
@@ -921,6 +924,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/userIdPath'
         - $ref: '#/components/parameters/cronJobIdPath'
+        - $ref: '#/components/parameters/webhookIdPath'
       responses:
         '204':
           description: '정상적으로 삭제됨'
@@ -1067,6 +1071,13 @@ components:
       name: teamId
       in: path
       description: '팀의 id'
+      required: true
+      schema:
+        type: string
+    webhookIdPath:
+      name: webhookId
+      in: path
+      description: '웹훅의 id'
       required: true
       schema:
         type: string

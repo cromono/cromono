@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Data
-public class WebhookSubscriptionDTO {
+public class WebhookDTO {
 
     @NotBlank
     WebhookEndpoint endPoint;
