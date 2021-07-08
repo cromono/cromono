@@ -51,6 +51,9 @@ build:
   artifacts:
     paths:
       - build/libs/*.jar
+  only:
+    - develop
+    - master
   tags:
     - cronmonitor
 
