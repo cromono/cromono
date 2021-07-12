@@ -42,7 +42,7 @@ public class CronServerController {
     @PatchMapping("/cron-servers/{serverIp}")
     @ResponseBody
     public ResponseEntity<CronServerDTO> patchCronServer(
-        @NotBlank @PathVariable(name = "serverIp") String serverIp,
+        @Valid @PathVariable(name = "serverIp") String serverIp,
         @RequestBody CronServerDTO cronServerDTO) {
         CronServerDTO cronServer = cronServerService
             .updateCronServer(serverIp, cronServerDTO.getServerIp());
@@ -52,7 +52,7 @@ public class CronServerController {
 
     @DeleteMapping(value = "/cron-servers/{serverIp}")
     @ResponseBody
-    public ResponseEntity deleteCronServer(@NotBlank @PathVariable(name = "serverIp") String serverIp) {
+    public ResponseEntity deleteCronServer(@Valid @PathVariable(name = "serverIp") String serverIp) {
         cronServerService.deleteCronServer(serverIp);
         ResponseEntity responseEntity = new ResponseEntity(HttpStatus.NO_CONTENT);
         return responseEntity;
