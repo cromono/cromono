@@ -14,7 +14,7 @@ servers:
   - url: 'http://139.150.64.58:3306'
     description: 'MySQL DB 로컬 접속'
   - url: 'http://10.7.27.11:3306'
-      description: 'MySQL DB 로컬 접속'
+    description: 'MySQL DB gcloud 접속'
   - url: 'http://10.7.27.9:9092'
     description: '카프카 gcloud 접속'
   - url: 'http://182.162.142.151:9093'
@@ -864,30 +864,17 @@ paths:
           description: '정상적으로 삭제됨'
         '400':
           description: 'Bad request'
-  /notifications/{notId}:
+  /notifications/users/{userId}/crons/{cronJobId}/webhooks:
     post:
       summary: '웹훅 추가'
       operationId: changeTeam
       tags:
         - webhook
       parameters:
-        - $ref: '#/components/parameters/notIdPath'
+        - $ref: '#/components/parameters/userIdPath'
+        - $ref: '#/components/parameters/cronJobIdPath'
       requestBody:
         $ref: '#/components/requestBodies/PostNotificationsNotId'
-      responses:
-        '201':
-          description: '정상적으로 변경됨'
-        '400':
-          description: 'Bad request'
-    patch:
-      summary: '웹훅 수정'
-      operationId: changeTeam
-      tags:
-        - webhook
-      parameters:
-        - $ref: '#/components/parameters/notIdPath'
-      requestBody:
-        $ref: '#/components/requestBodies/PatchNotificationsNotId'
       responses:
         '201':
           description: '정상적으로 변경됨'
@@ -899,7 +886,8 @@ paths:
       tags:
         - webhook
       parameters:
-        - $ref: '#/components/parameters/notIdPath'
+        - $ref: '#/components/parameters/userIdPath'
+        - $ref: '#/components/parameters/cronJobIdPath'
       responses:
         '200':
           description: '정상적으로 조회됨'
@@ -912,12 +900,44 @@ paths:
         '400':
           description: 'Bad request'
     delete:
-      summary: '웹훅 삭제'
-      operationId: deleteTeam
+      summary: '알림에 대한 웹훅 일괄 삭제'
+      operationId: deleteWebhooks
       tags:
         - webhook
       parameters:
-        - $ref: '#/components/parameters/notIdPath'
+        - $ref: '#/components/parameters/userIdPath'
+        - $ref: '#/components/parameters/cronJobIdPath'
+      responses:
+        '204':
+          description: '정상적으로 삭제됨'
+        '400':
+          description: 'Bad request'
+  /notifications/users/{userId}/crons/{cronJobId}/webhooks/{webhookId}:
+    patch:
+      summary: '웹훅 수정'
+      operationId: changeTeam
+      tags:
+        - webhook
+      parameters:
+        - $ref: '#/components/parameters/userIdPath'
+        - $ref: '#/components/parameters/cronJobIdPath'
+        - $ref: '#/components/parameters/webhookIdPath'
+      requestBody:
+        $ref: '#/components/requestBodies/PatchNotificationsNotId'
+      responses:
+        '201':
+          description: '정상적으로 변경됨'
+        '400':
+          description: 'Bad request'
+    delete:
+      summary: '웹훅 개별 삭제'
+      operationId: deleteWebhookById
+      tags:
+        - webhook
+      parameters:
+        - $ref: '#/components/parameters/userIdPath'
+        - $ref: '#/components/parameters/cronJobIdPath'
+        - $ref: '#/components/parameters/webhookIdPath'
       responses:
         '204':
           description: '정상적으로 삭제됨'
@@ -1067,13 +1087,13 @@ components:
       required: true
       schema:
         type: string
-    notIdPath:
-      name: notId
+    webhookIdPath:
+      name: webhookId
       in: path
-      description: '알림의 id'
+      description: '웹훅의 id'
       required: true
       schema:
-        type: integer
+        type: string
   requestBodies:
     PostReissue:
       description: '엑세스 토큰 재발급'

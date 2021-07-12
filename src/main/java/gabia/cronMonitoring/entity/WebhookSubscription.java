@@ -22,6 +22,8 @@ import lombok.NonNull;
 import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "webhook_subscription")
 @NoArgsConstructor
 @AllArgsConstructor
