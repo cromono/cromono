@@ -3,6 +3,7 @@ package gabia.cronMonitoring.controller;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -15,10 +16,13 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gabia.cronMonitoring.dto.CronServerDTO;
+import gabia.cronMonitoring.exception.cron.server.AlreadyRegisteredServerException;
+import gabia.cronMonitoring.exception.cron.server.NotExistingServerException;
+import gabia.cronMonitoring.exception.cron.server.NotValidIPException;
 import gabia.cronMonitoring.service.CronServerService;
 import java.util.ArrayList;
 import java.util.List;
-import org.json.JSONArray;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,7 +56,7 @@ public class CronServerControllerTest {
     ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    public void 서버_목록_GET() throws Exception {
+    public void 서버_목록_GET_성공() throws Exception {
         // Given
         List<CronServerDTO> servers = new ArrayList<>();
         servers.add(new CronServerDTO("1.1.1.1"));
@@ -69,7 +73,7 @@ public class CronServerControllerTest {
     }
 
     @Test
-    public void 서버_등록_POST() throws Exception {
+    public void 서버_등록_POST_성공() throws Exception {
         // Given
         CronServerDTO cronServerDTO = new CronServerDTO("1.1.1.1");
         String request = mapper.writeValueAsString(cronServerDTO);
@@ -86,16 +90,52 @@ public class CronServerControllerTest {
     }
 
     @Test
-    public void 서버_수정_PATCH() throws Exception {
+    public void 유효하지_않은_IP로_서버_등록시_POST_예외() throws Exception {
         // Given
-        CronServerDTO oldCronServerDto = new CronServerDTO("1.1.1.1");
+        CronServerDTO cronServerDTO = new CronServerDTO("notvalidip");
+        String request = mapper.writeValueAsString(cronServerDTO);
+        // When
+        given(cronServerService.addCronServer("notvalidip"))
+            .willThrow(new NotValidIPException("유효한 IP주소가 아닙니다."));
+        // Then
+        Assertions.assertThatThrownBy(() ->
+            mockMvc.perform(post("/cron-servers")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(request))
+                .andDo(print())
+                .andExpect(status().isBadRequest()))
+            .hasCause(new NotValidIPException("유효한 IP주소가 아닙니다."));
+    }
+
+    @Test
+    public void 이미_등록된_IP로_서버_등록시_POST_예외() throws Exception {
+        // Given
+        CronServerDTO cronServerDTO = new CronServerDTO("1.1.1.1");
+        String request = mapper.writeValueAsString(cronServerDTO);
+        // When
+        given(cronServerService.addCronServer("1.1.1.1"))
+            .willThrow(new AlreadyRegisteredServerException("이미 등록된 서버입니다."));
+        // Then
+        Assertions.assertThatThrownBy(() ->
+            mockMvc.perform(post("/cron-servers")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(request))
+                .andDo(print())
+                .andExpect(status().isBadRequest()))
+            .hasCause(new AlreadyRegisteredServerException("이미 등록된 서버입니다."));
+    }
+
+    @Test
+    public void 서버_수정_PATCH_성공() throws Exception {
+        // Given
+        String oldCronServer = "1.1.1.1";
         CronServerDTO newCronServerDto = new CronServerDTO("1.1.1.2");
         String request = mapper.writeValueAsString(newCronServerDto);
         given(cronServerService.updateCronServer(any(), any())).willReturn(newCronServerDto);
         // When
         String expectByServerIp = "$.serverIp";
         // Then
-        mockMvc.perform(patch("/cron-servers/{serverIp}}", "1.1.1.1")
+        mockMvc.perform(patch("/cron-servers/{serverIp}}", oldCronServer)
             .contentType(MediaType.APPLICATION_JSON)
             .content(request))
             .andDo(print())
@@ -104,16 +144,80 @@ public class CronServerControllerTest {
     }
 
     @Test
-    public void 서버_삭제_DELETE() throws Exception {
+    public void 유효하지_않은_IP로_서버_수정시_PATCH_예외() throws Exception {
         // Given
-        CronServerDTO cronServerDTO = new CronServerDTO("1.1.1.1");
+        CronServerDTO cronServerDTO = new CronServerDTO("notvalidip");
         String request = mapper.writeValueAsString(cronServerDTO);
         // When
+        given(cronServerService.updateCronServer(any(), any()))
+            .willThrow(new NotValidIPException("입력된 새 주소가 유효한 IP주소가 아닙니다."));
         // Then
-        mockMvc.perform(delete("/cron-servers/{serverIp}", "1.1.1.1")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(request))
+        Assertions.assertThatThrownBy(() ->
+            mockMvc.perform(patch("/cron-servers/{serverIp}}", "1.1.1.1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(request))
+                .andDo(print())
+                .andExpect(status().isBadRequest()))
+            .hasCause(new NotValidIPException("입력된 새 주소가 유효한 IP주소가 아닙니다."));
+    }
+
+    @Test
+    public void 미등록_서버_수정시_PATCH_예외() throws Exception {
+        // Given
+        CronServerDTO cronServerDTO = new CronServerDTO("notvalidip");
+        String request = mapper.writeValueAsString(cronServerDTO);
+        // When
+        given(cronServerService.updateCronServer(any(), any()))
+            .willThrow(new NotExistingServerException("존재하지 않는 서버입니다."));
+        // Then
+        Assertions.assertThatThrownBy(() ->
+            mockMvc.perform(patch("/cron-servers/{serverIp}}", "1.1.1.1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(request))
+                .andDo(print())
+                .andExpect(status().isBadRequest()))
+            .hasCause(new NotExistingServerException("존재하지 않는 서버입니다."));
+    }
+
+    @Test
+    public void 이미_등록된_IP로_서버_수정시_PATCH_예외() throws Exception {
+        // Given
+        CronServerDTO cronServerDTO = new CronServerDTO("notvalidip");
+        String request = mapper.writeValueAsString(cronServerDTO);
+        // When
+        given(cronServerService.updateCronServer(any(), any()))
+            .willThrow(new AlreadyRegisteredServerException("이미 등록된 서버입니다."));
+        // Then
+        Assertions.assertThatThrownBy(() ->
+            mockMvc.perform(patch("/cron-servers/{serverIp}}", "1.1.1.1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(request))
+                .andDo(print())
+                .andExpect(status().isBadRequest()))
+            .hasCause(new AlreadyRegisteredServerException("이미 등록된 서버입니다."));
+    }
+
+    @Test
+    public void 서버_삭제_DELETE_성공() throws Exception {
+        // Given
+        // When
+        // Then
+        mockMvc.perform(delete("/cron-servers/{serverIp}", "1.1.1.1"))
             .andDo(print())
             .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void 미등록_서버_삭제시_DELETE_예외() throws Exception {
+        // Given
+        // When
+        doThrow(new NotExistingServerException("존재하지 않는 서버입니다.")).when(cronServerService).deleteCronServer(any());
+        // Then
+        Assertions.assertThatThrownBy(() ->
+            mockMvc.perform(delete("/cron-servers/{serverIp}", "1.1.1.1"))
+                .andDo(print())
+                .andExpect(status().isNotFound()))
+            .hasCause(new NotExistingServerException("존재하지 않는 서버입니다."));
+
     }
 }
