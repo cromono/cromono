@@ -64,7 +64,7 @@ public class CronServerService {
             throw new NotValidIPException("유효한 IP주소가 아닙니다.");
         }
         this.cronServerRepository.findByIp(ip).ifPresent(none -> {
-            throw new AlreadyRegisteredServerException(".");
+            throw new AlreadyRegisteredServerException("이미 등록된 서버입니다.");
         });
 
         // 객체 저장
