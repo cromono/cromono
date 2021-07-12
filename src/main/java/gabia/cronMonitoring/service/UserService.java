@@ -135,6 +135,9 @@ public class UserService implements UserDetailsService {
             user.setName(request.getName());
         }
         if (!request.getEmail().isEmpty()) {
+            if (!emailValidator.isValid(request.getEmail())) {
+                throw new NotValidEmailException("유효한 메일주소가 아닙니다.");
+            }
             user.setEmail(request.getEmail());
         }
         if (!request.getPassword().isEmpty()) {

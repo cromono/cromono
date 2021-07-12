@@ -340,7 +340,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void 빈_request로_사용자_정보_수정() throws Exception {
+    public void 빈_request로_사용자_정보_수정시_정보_미반영() throws Exception {
         // Given
         String account = "test";
         String oldName = "";
@@ -446,6 +446,34 @@ public class UserServiceTest {
         when(userRepository.findByEmail(newEmail)).thenReturn(Optional.of(user));
         // Then
         assertThrows(ExistingInputException.class, () -> userService.updateUser(account, request));
+    }
+
+    @Test
+    public void 유효하지_않은_메일로_수정시_예외() throws Exception {
+        // Given
+        String account = "test";
+        String name = "test";
+        String oldEmail = "test@gabia.com";
+        String newEmail = "test1";
+        String password = "test";
+        User user = User.builder()
+            .account(account)
+            .name(name)
+            .email(oldEmail)
+            .password(password)
+            .role(UserRole.ROLE_USER)
+            .build();
+
+        UserAuthDTO request = new UserAuthDTO();
+        request.setAccount(account);
+        request.setName(name);
+        request.setEmail(newEmail);
+        request.setPassword(password);
+        // When
+        when(userRepository.findByAccount(account)).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(newEmail)).thenReturn(Optional.empty());
+        // Then
+        assertThrows(NotValidEmailException.class, () -> userService.updateUser(account, request));
     }
 
     @Test
