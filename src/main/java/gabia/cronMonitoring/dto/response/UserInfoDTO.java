@@ -19,11 +19,12 @@ public class UserInfoDTO {
     UserRole role;
 
     public static UserInfoDTO from(User user) {
-        UserInfoDTO userInfoDTO = new UserInfoDTO();
-        userInfoDTO.setAccount(user.getAccount());
-        userInfoDTO.setName(user.getName());
-        userInfoDTO.setEmail(user.getEmail());
-        userInfoDTO.setRole(user.getRole());
+        UserInfoDTO userInfoDTO = UserInfoDTO.builder()
+            .account(user.getAccount())
+            .name(user.getName())
+            .email(user.getEmail())
+            .role(user.getRole())
+            .build();
         return userInfoDTO;
     }
 }

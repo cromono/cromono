@@ -152,7 +152,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void 유효하지_않은_이메일_기입시_register_실패() throws Exception {
+    void 유효하지_않은_이메일_기입시_register_예외() throws Exception {
         // Given
         UserAuthDTO request = UserAuthDTO.builder()
             .account("test")
@@ -199,7 +199,7 @@ class AuthControllerTest {
 
     @Test
     @WithMockUser(roles = "USER")
-    void refreshToken_실패() throws Exception {
+    void refreshToken_예외() throws Exception {
         // Given
         String userAccount = "test";
         String token = "test";
