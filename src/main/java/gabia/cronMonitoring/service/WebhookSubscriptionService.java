@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
-* 웹훅과 관련된 서비스를 처리하는 클래스입니다. 
+* 웹훅과 관련된 서비스를 처리하는 클래스입니다.
 * @author : 김기정(Luke)
 **/
 @Service
@@ -108,13 +108,25 @@ public class WebhookSubscriptionService {
     }
 
     /**
-     * 웹훅 삭제
+     * 웹훅 개별 삭제
      * @param webhookId 삭제할 웹훅의 ID
      */
-    public void deleteWebhook(Long webhookId) {
+    public void deleteWebhookById(Long webhookId) {
         WebhookSubscription savedWebhook = webhookSubscriptionRepository
             .findById(webhookId)
             .orElseThrow(() -> new WebhookNotFoundException("등록되지 않은 웹훅입니다."));
         webhookSubscriptionRepository.delete(savedWebhook);
+    }
+
+    /**
+     * 알림에 대한 웹훅 일괄 삭제
+     * @param userAccount 사용자 ID
+     * @param cronJobId 크론잡 ID
+     */
+    public void deleteWebhooks(String userAccount, UUID cronJobId) {
+        NoticeSubscription noticeSubscription = noticeSubscriptionRepository
+            .findByRcvUserAccountAndCronJobId(userAccount, cronJobId).orElseThrow(() ->
+                new NoticeSubscriptionNotFoundException("해당 사용자와 크론 잡에 대한 알림 구독 정보가 존재하지 않습니다."));
+        webhookSubscriptionRepository.deleteByNoticeSubscriptionId(noticeSubscription.getId());
     }
 }

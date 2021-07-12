@@ -42,7 +42,7 @@ public class WebhookController {
         @RequestBody @Valid WebhookDTO request) {
         WebhookInfoDTO webhookInfoDTO = webhookSubscriptionService.addWebhook(userId, cronJobId, request);
 
-        ResponseEntity responseEntity = new ResponseEntity(webhookInfoDTO, HttpStatus.OK);
+        ResponseEntity responseEntity = new ResponseEntity(webhookInfoDTO, HttpStatus.CREATED);
         return responseEntity;
     }
 
@@ -63,9 +63,18 @@ public class WebhookController {
     public ResponseEntity deleteWebhook(
         @NotEmpty @PathVariable(value = "userId") String userId,
         @ValidUUID @PathVariable(value = "cronJobId") UUID cronJobId,
-        @ValidUUID @PathVariable(value = "webhookId") Long webhookId,
-        @RequestBody @Valid WebhookDTO request) {
-        webhookSubscriptionService.deleteWebhook(webhookId);
+        @ValidUUID @PathVariable(value = "webhookId") Long webhookId) {
+        webhookSubscriptionService.deleteWebhookById(webhookId);
+
+        ResponseEntity responseEntity = new ResponseEntity(HttpStatus.NO_CONTENT);
+        return responseEntity;
+    }
+
+    @DeleteMapping(value = "/notifications/users/{userId}/crons/{cronJobId}/webhooks")
+    public ResponseEntity deleteWebhooks(
+        @NotEmpty @PathVariable(value = "userId") String userId,
+        @ValidUUID @PathVariable(value = "cronJobId") UUID cronJobId) {
+        webhookSubscriptionService.deleteWebhooks(userId, cronJobId);
 
         ResponseEntity responseEntity = new ResponseEntity(HttpStatus.NO_CONTENT);
         return responseEntity;

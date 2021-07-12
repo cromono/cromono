@@ -899,6 +899,19 @@ paths:
                   $ref: '#/components/schemas/Webhook'
         '400':
           description: 'Bad request'
+    delete:
+      summary: '알림에 대한 웹훅 일괄 삭제'
+      operationId: deleteWebhooks
+      tags:
+        - webhook
+      parameters:
+        - $ref: '#/components/parameters/userIdPath'
+        - $ref: '#/components/parameters/cronJobIdPath'
+      responses:
+        '204':
+          description: '정상적으로 삭제됨'
+        '400':
+          description: 'Bad request'
   /notifications/users/{userId}/crons/{cronJobId}/webhooks/{webhookId}:
     patch:
       summary: '웹훅 수정'
@@ -917,8 +930,8 @@ paths:
         '400':
           description: 'Bad request'
     delete:
-      summary: '웹훅 삭제'
-      operationId: deleteTeam
+      summary: '웹훅 개별 삭제'
+      operationId: deleteWebhookById
       tags:
         - webhook
       parameters:

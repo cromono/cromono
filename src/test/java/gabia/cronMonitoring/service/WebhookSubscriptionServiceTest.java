@@ -313,7 +313,8 @@ class WebhookSubscriptionServiceTest {
 
         // Then
         assertThrows(NoticeSubscriptionNotFoundException.class,
-            () -> webhookSubscriptionService.updateWebhook(userAccount, cronJobId, webhookId, request));
+            () -> webhookSubscriptionService
+                .updateWebhook(userAccount, cronJobId, webhookId, request));
     }
 
     @Test
@@ -417,7 +418,7 @@ class WebhookSubscriptionServiceTest {
     }
 
     @Test
-    public void 웹훅_삭제_성공() throws Exception {
+    public void 웹훅_개별_삭제_성공() throws Exception {
         // Given
         Long webhookId = 1L;
 
@@ -457,7 +458,7 @@ class WebhookSubscriptionServiceTest {
             .findById(webhookId)).thenReturn(Optional.of(webhookSubscription));
 
         // Then
-        assertDoesNotThrow(() -> webhookSubscriptionService.deleteWebhook(webhookId));
+        assertDoesNotThrow(() -> webhookSubscriptionService.deleteWebhookById(webhookId));
     }
 
     @Test
@@ -469,6 +470,72 @@ class WebhookSubscriptionServiceTest {
         when(webhookSubscriptionRepository
             .findById(webhookId)).thenThrow(WebhookNotFoundException.class);
         // Then
-        assertThrows(WebhookNotFoundException.class, () -> webhookSubscriptionService.deleteWebhook(webhookId));
+        assertThrows(WebhookNotFoundException.class,
+            () -> webhookSubscriptionService.deleteWebhookById(webhookId));
+    }
+
+    @Test
+    public void 웹훅_일괄_삭제_성공() throws Exception {
+        // Given
+        User user = User.builder()
+            .account("test")
+            .email("test@gmail.com")
+            .name("test")
+            .password("test")
+            .role(UserRole.ROLE_USER)
+            .activated(true)
+            .build();
+
+        CronServer cronServer = new CronServer("0.0.0.0");
+
+        CronJob cronJob = new CronJob();
+        cronJob.setId(UUID.randomUUID());
+        cronJob.setCronExpr("test1");
+        cronJob.setCronName("test1");
+        cronJob.setServer(cronServer);
+
+        NoticeSubscription noticeSubscription = NoticeSubscription.builder()
+            .id(1L)
+            .createUser(user)
+            .rcvUser(user)
+            .cronJob(cronJob)
+            .build();
+
+        // When
+        when(noticeSubscriptionRepository
+            .findByRcvUserAccountAndCronJobId(user.getAccount(), cronJob.getId())).thenReturn(
+            Optional.of(noticeSubscription));
+        // Then
+        assertDoesNotThrow(
+            () -> webhookSubscriptionService.deleteWebhooks(user.getAccount(), cronJob.getId()));
+    }
+
+    @Test
+    public void 존재하지_않는_알림에_대한_웹훅_일괄_삭제시_예외() throws Exception {
+        // Given
+        User user = User.builder()
+            .account("test")
+            .email("test@gmail.com")
+            .name("test")
+            .password("test")
+            .role(UserRole.ROLE_USER)
+            .activated(true)
+            .build();
+
+        CronServer cronServer = new CronServer("0.0.0.0");
+
+        CronJob cronJob = new CronJob();
+        cronJob.setId(UUID.randomUUID());
+        cronJob.setCronExpr("test1");
+        cronJob.setCronName("test1");
+        cronJob.setServer(cronServer);
+
+        // When
+        when(noticeSubscriptionRepository
+            .findByRcvUserAccountAndCronJobId(user.getAccount(), cronJob.getId())).thenThrow(
+            NoticeSubscriptionNotFoundException.class);
+        // Then
+        assertThrows(NoticeSubscriptionNotFoundException.class,
+            () -> webhookSubscriptionService.deleteWebhooks(user.getAccount(), cronJob.getId()));
     }
 }

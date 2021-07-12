@@ -50,7 +50,7 @@ class UserControllerTest {
     ObjectMapper mapper;
 
     @Test
-    void 사용자_목록_GET() throws Exception {
+    public void 사용자_목록_GET() throws Exception {
         // Given
         List<UserInfoDTO> users = new ArrayList<>();
         UserInfoDTO userInfoDTO1 = new UserInfoDTO();
@@ -89,7 +89,7 @@ class UserControllerTest {
     }
 
     @Test
-    void 사용자_정보_GET() throws Exception {
+    public void 사용자_정보_GET() throws Exception {
         // Given
         UserAuthDTO request = new UserAuthDTO();
         request.setAccount("test1");
@@ -111,7 +111,7 @@ class UserControllerTest {
     }
 
     @Test
-    void 사용자_정보_PATCH() throws Exception {
+    public void 사용자_정보_PATCH() throws Exception {
         // Given
         UserAuthDTO request = new UserAuthDTO();
         request.setAccount("test2");
@@ -136,7 +136,7 @@ class UserControllerTest {
     }
 
     @Test
-    void 사용자_DELETE() throws Exception {
+    public void 사용자_DELETE() throws Exception {
         // Given
         // When
         // Then

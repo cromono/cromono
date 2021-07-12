@@ -11,4 +11,8 @@ public interface WebhookSubscriptionRepository extends JpaRepository<WebhookSubs
     List<WebhookSubscription> findAllByNoticeSubscriptionId(long noticeSubscriptionId);
 
     Optional<WebhookSubscription> findByEndpointAndUrlAndNoticeSubscriptionId(WebhookEndpoint endpoint, String url, long noticeSubscriptionId);
+
+    void deleteById(Long id);
+
+    void deleteByNoticeSubscriptionId(Long noticeSubscriptionId);
 }

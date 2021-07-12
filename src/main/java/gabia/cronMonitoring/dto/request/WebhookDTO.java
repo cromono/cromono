@@ -1,7 +1,7 @@
 package gabia.cronMonitoring.dto.request;
 
 import gabia.cronMonitoring.entity.Enum.WebhookEndpoint;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 @Data
 public class WebhookDTO {
 
-    @NotBlank
+    @NotNull
     WebhookEndpoint endPoint;
 
-    @NotBlank
+    @NotNull
     String url;
 }
