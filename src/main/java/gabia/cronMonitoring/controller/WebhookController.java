@@ -50,7 +50,7 @@ public class WebhookController {
     public ResponseEntity<WebhookInfoDTO> updateWebhook(
         @NotEmpty @PathVariable(value = "userId") String userId,
         @ValidUUID @PathVariable(value = "cronJobId") UUID cronJobId,
-        @ValidUUID @PathVariable(value = "webhookId") Long webhookId,
+        @Valid @PathVariable(value = "webhookId") Long webhookId,
         @RequestBody @Valid WebhookDTO request) {
         WebhookInfoDTO webhookInfoDTO = webhookSubscriptionService
             .updateWebhook(userId, cronJobId, webhookId, request);
@@ -63,7 +63,7 @@ public class WebhookController {
     public ResponseEntity deleteWebhook(
         @NotEmpty @PathVariable(value = "userId") String userId,
         @ValidUUID @PathVariable(value = "cronJobId") UUID cronJobId,
-        @ValidUUID @PathVariable(value = "webhookId") Long webhookId) {
+        @Valid @PathVariable(value = "webhookId") Long webhookId) {
         webhookSubscriptionService.deleteWebhookById(webhookId);
 
         ResponseEntity responseEntity = new ResponseEntity(HttpStatus.NO_CONTENT);
