@@ -147,16 +147,6 @@ public class CronServerServiceTest {
         assertThat(cronServerRepository.findByIp(ip)).isEmpty();
     }
 
-    @Test(expected = NotValidIPException.class)
-    public void 유효하지_않은_서버_삭제시_예외() throws Exception {
-        // Given
-        String ip = "invalidip";
-        // When
-        cronServerService.deleteCronServer(ip);
-        // Then
-        Assert.fail("예외가 발생해야 한다.");
-    }
-
     @Test(expected = NotExistingServerException.class)
     public void 미등록_서버_삭제시_예외() throws Exception {
         // Given
