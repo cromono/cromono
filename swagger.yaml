@@ -865,6 +865,16 @@ paths:
       responses:
         '200':
           description: '정상적으로 조회됨'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+            Access-Control-Aloow-Methods:
+              schema:
+                type: string
+            Access-Control-Allow_Headers:
+              schema:
+                type: string
           content:
             application/json:
               schema:
