@@ -485,12 +485,9 @@ paths:
               schema:
                 type: object
                 properties:
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        description: '권한이 추가된 사용자 id'
+                  id:
+                    type: string
+                    description: '권한이 추가된 사용자 id'
         '400':
           description: 'Bad request'
     get:
@@ -580,7 +577,14 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Team'
+                  type: object
+                  properties:
+                    teamAccount:
+                      type: string
+                    name:
+                      type: string
+
+
         '400':
           description: 'Bad request'
     post:
@@ -598,12 +602,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        description: '생성된 팀 id'
+                    teamAccount:
+                      type: string
+                    name:
+                      type: string
         '400':
           description: 'Bad request'
   /teams/{teamId}:
@@ -624,12 +626,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        description: '이름이 변경된 팀의 id'
+                  teamAccount:
+                    type: string
+                  name:
+                    type: string
         '400':
           description: 'Bad request'
     get:
@@ -645,7 +645,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Team'
+                type: object
+                properties:
+                  teamAccount:
+                    type: string
+                  name:
+                    type: string
         '400':
           description: 'Bad request'
     delete:
@@ -1389,15 +1394,15 @@ components:
           schema:
             type: object
             required:
-              - teamId
-              - teamName
-              - uid
+              - teamAccount
+              - name
+              - userAccount
             properties:
-              teamId:
+              teamAccount:
                 type: string
-              teamName:
+              name:
                 type: string
-              uid:
+              userAccount:
                 type: string
     PatchTeam:
       description: '팀명 수정'
@@ -1407,7 +1412,11 @@ components:
           schema:
             type: object
             properties:
-              teamName:
+              teamAccount:
+                type: string
+              name:
+                type: string
+              userAccount:
                 type: string
     PostTeamUsers:
       description: '팀원 추가'
