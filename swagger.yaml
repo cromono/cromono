@@ -308,6 +308,32 @@ paths:
                   $ref: '#/components/schemas/CronProcess'
         '404':
           description: 'Not found'
+    post:
+      summary: '크론 프로세스 추가'
+      operationId: addCronProcess
+      tags:
+        - cron-processes
+      parameters:
+        - $ref: '#/components/parameters/serverIpPath'
+        - $ref: '#/components/parameters/cronJobIdPath'
+      requestBody:
+        $ref: '#/components/requestBodies/PostCronProcess'
+      responses:
+        '200':
+          description: '크론 프로세스 정상 추가'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cronJobId:
+                    type: string
+                  pid:
+                    type: string
+                  startTime:
+                    type: string
+                  endTime:
+                    type: string
   /cron-servers/{serverIp}/cron-jobs/{cronJobId}/processes/{pid}:
     get:
       summary: '크론 프로세스 조회'
@@ -321,6 +347,48 @@ paths:
       responses:
         '200':
           description: '프로세스 조회 성공'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cronJobId:
+                    type: string
+                  pid:
+                    type: string
+                  startTime:
+                    type: string
+                  endTime:
+                    type: string
+        '404':
+          description: 'Not found'
+    patch:
+      summary: '크론 프로세스 수정'
+      operationId: changeCronProcess
+      tags:
+        - cron-processes
+      parameters:
+        - $ref: '#/components/parameters/serverIpPath'
+        - $ref: '#/components/parameters/cronJobIdPath'
+        - $ref: '#/components/parameters/pidPath'
+      requestBody:
+        $ref: '#/components/requestBodies/PatchCronProcess'
+      responses:
+        '200':
+          description: '프로세스 수정 성공'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cronJobId:
+                    type: string
+                  pid:
+                    type: string
+                  startTime:
+                    type: string
+                  endTime:
+                    type: string
         '404':
           description: 'Not found'
   /cron-servers/{serverIp}/cron-jobs/{cronJobId}/processes/{pid}/logs:
@@ -454,12 +522,9 @@ paths:
               schema:
                 type: object
                 properties:
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        description: '권한이 추가된 사용자 id'
+                  id:
+                    type: string
+                    description: '권한이 추가된 사용자 id'
         '400':
           description: 'Bad request'
     get:
@@ -549,7 +614,14 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Team'
+                  type: object
+                  properties:
+                    teamAccount:
+                      type: string
+                    name:
+                      type: string
+
+
         '400':
           description: 'Bad request'
     post:
@@ -567,12 +639,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        description: '생성된 팀 id'
+                    teamAccount:
+                      type: string
+                    name:
+                      type: string
         '400':
           description: 'Bad request'
   /teams/{teamId}:
@@ -593,12 +663,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        description: '이름이 변경된 팀의 id'
+                  teamAccount:
+                    type: string
+                  name:
+                    type: string
         '400':
           description: 'Bad request'
     get:
@@ -614,7 +682,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Team'
+                type: object
+                properties:
+                  teamAccount:
+                    type: string
+                  name:
+                    type: string
         '400':
           description: 'Bad request'
     delete:
@@ -685,30 +758,14 @@ paths:
           description: '정상적으로 삭제됨'
         '400':
           description: 'Bad request'
-  /cron-read-auths:
+  /cron-read-auths/users/{userId}/crons:
     get:
-      summary: '사용자의 크론 조회 권한 목록 조회'
-      operationId: getTeamMemberList
-      tags:
-        - cron-read-auths
-      responses:
-        '200':
-          description: '정상적으로 조회됨'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CronReadAuths'
-        '400':
-          description: 'Bad request'
-  /cron-read-auths/users/{userId}/crons/{cronJobId}:
-    get:
-      summary: '사용자의 크론 조회 권한에 대한 정보를 상세 조회한다'
-      operationId: getUserCronReadAuth
+      summary: '유저 크론잡 리스트 조회'
+      operationId: getUserCronJob
       tags:
         - cron-read-auths/users
       parameters:
         - $ref: '#/components/parameters/userIdPath'
-        - $ref: '#/components/parameters/cronJobIdPath'
       responses:
         '200':
           description: '정상적으로 조회됨'
@@ -717,17 +774,18 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TeamUser'
+                  $ref: '#/components/schemas/UserCronJob'
         '400':
           description: 'Bad request'
     post:
-      summary: '사용자의 크론 조회 권한을 추가한다'
-      operationId: addUserCronReadAuth
+      summary: '유저 크론잡을 추가'
+      operationId: addUserCronJob
       tags:
         - cron-read-auths/users
       parameters:
         - $ref: '#/components/parameters/userIdPath'
-        - $ref: '#/components/parameters/cronJobIdPath'
+      requestBody:
+        $ref: '#/components/requestBodies/PostCronReadAuthsUsersCrons'
       responses:
         '201':
           description: '정상적으로 추가됨'
@@ -736,16 +794,15 @@ paths:
               schema:
                 type: object
                 properties:
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        description: '크론 job id'
+                  cronJobId:
+                    type: string
+                  userAccount:
+                    type: string
         '400':
           description: 'Bad request'
+  /cron-read-auths/users/{userId}/crons/{cronJobId}:
     delete:
-      summary: '사용자의 크론 조회 권한을 삭제한다'
+      summary: '유저 크론잡을 삭제'
       operationId: deleteUserCronReadAuth
       tags:
         - cron-read-auths/users
@@ -757,69 +814,14 @@ paths:
           description: '정상적으로 삭제됨'
         '400':
           description: 'Bad request'
-    patch:
-      summary: '사용자의 크론 조회 권한을 수정한다'
-      operationId: addUserCronReadAuth
-      tags:
-        - cron-read-auths/users
-      parameters:
-        - $ref: '#/components/parameters/userIdPath'
-        - $ref: '#/components/parameters/cronJobIdPath'
-      responses:
-        '201':
-          description: '정상적으로 추가됨'
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        description: '크론 job id'
-        '400':
-          description: 'Bad request'
-  /cron-read-auths/teams/{teamId}/crons/{cronJobId}:
-    post:
-      summary: '팀 크론 조회 권한 추가'
-      operationId: addTeamCronReadAuth
-      tags:
-        - cron-read-auths/teams
-      parameters:
-        - $ref: '#/components/parameters/teamIdPath'
-        - $ref: '#/components/parameters/cronJobIdPath'
-      requestBody:
-        $ref: '#/components/requestBodies/PostCronReadAuthsTeamsCrons'
-      responses:
-        '201':
-          description: '정상적으로 변경됨'
-        '400':
-          description: 'Bad request'
-    patch:
-      summary: '팀 크론 조회 권한 수정'
-      operationId: updateTeamCronReadAuth
-      tags:
-        - cron-read-auths/teams
-      parameters:
-        - $ref: '#/components/parameters/teamIdPath'
-        - $ref: '#/components/parameters/cronJobIdPath'
-      requestBody:
-        $ref: '#/components/requestBodies/PatchCronReadAuthsTeamsCrons'
-      responses:
-        '201':
-          description: '정상적으로 변경됨'
-        '400':
-          description: 'Bad request'
+  /cron-read-auths/teams/{teamId}/crons:
     get:
-      summary: '팀 크론 조회 권한 조회'
-      operationId: getTeamCronReadAuth
+      summary: '팀 크론잡 리스트 조회'
+      operationId: getTeamCronJob
       tags:
         - cron-read-auths/teams
       parameters:
         - $ref: '#/components/parameters/teamIdPath'
-        - $ref: '#/components/parameters/cronJobIdPath'
       responses:
         '200':
           description: '정상적으로 조회됨'
@@ -828,11 +830,35 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TeamUser'
+                  $ref: '#/components/schemas/TeamCronJob'
         '400':
           description: 'Bad request'
+    post:
+      summary: '팀 크론잡을 추가'
+      operationId: addTeamCronJob
+      tags:
+        - cron-read-auths/teams
+      parameters:
+        - $ref: '#/components/parameters/teamIdPath'
+      requestBody:
+        $ref: '#/components/requestBodies/PostCronReadAuthsTeamsCrons'
+      responses:
+        '201':
+          description: '정상적으로 추가됨'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cronJobId:
+                    type: string
+                  teamAccount:
+                    type: string
+        '400':
+          description: 'Bad request'
+  /cron-read-auths/teams/{teamId}/crons/{cronJobId}:
     delete:
-      summary: '팀 크론 조회 권한 삭제'
+      summary: '팀의 크론 조회 권한을 삭제한다'
       operationId: deleteTeamCronReadAuth
       tags:
         - cron-read-auths/teams
@@ -840,57 +866,68 @@ paths:
         - $ref: '#/components/parameters/teamIdPath'
         - $ref: '#/components/parameters/cronJobIdPath'
       responses:
-        '200':
+        '204':
           description: '정상적으로 삭제됨'
         '400':
           description: 'Bad request'
-  /notifications/users/{userId}/crons/{cronJobId}:
+  /notifications/users/{userId}:
     post:
-      summary: '알림 추가'
-      operationId: changeTeam
+      summary: '알림 구독 추가'
+      operationId: addNoticeSubscription
       tags:
         - notifications
       parameters:
         - $ref: '#/components/parameters/userIdPath'
-        - $ref: '#/components/parameters/cronJobIdPath'
       requestBody:
         $ref: '#/components/requestBodies/PostNotificationsUsers'
       responses:
-        '201':
+        '200':
           description: '정상적으로 변경됨'
-        '400':
-          description: 'Bad request'
-    patch:
-      summary: '알림 수정'
-      operationId: changeTeam
-      tags:
-        - notifications
-      parameters:
-        - $ref: '#/components/parameters/userIdPath'
-        - $ref: '#/components/parameters/cronJobIdPath'
-      requestBody:
-        $ref: '#/components/requestBodies/PatchNotificationsUsers'
-      responses:
-        '201':
-          description: '정상적으로 변경됨'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cronJobId:
+                    type: string
         '400':
           description: 'Bad request'
     get:
-      summary: '알림 조회'
-      operationId: getTeam
+      summary: '알림 구독 조회'
+      operationId: getNoticeSubscription
       tags:
         - notifications
       parameters:
         - $ref: '#/components/parameters/userIdPath'
-        - $ref: '#/components/parameters/cronJobIdPath'
       responses:
         '200':
           description: '정상적으로 조회됨'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+            Access-Control-Aloow-Methods:
+              schema:
+                type: string
+            Access-Control-Allow_Headers:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    cronJobId:
+                      type: string
+
         '400':
           description: 'Bad request'
+  /notifications/users/{userId}/crons/{cronJobId}:
     delete:
-      summary: '알림 삭제'
-      operationId: deleteTeam
+      summary: '알림 구독 삭제'
+      operationId: deleteNoticeSubscription
       tags:
         - notifications
       parameters:
@@ -901,6 +938,100 @@ paths:
           description: '정상적으로 삭제됨'
         '400':
           description: 'Bad request'
+  /notifications/notice:
+    post:
+      summary: '알림 추가'
+      operationId: addNotice
+      tags:
+        - notifications
+      requestBody:
+        $ref: '#/components/requestBodies/PostNotice'
+      responses:
+        '200':
+          description: '알림이 정상적으로 생성됨'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  noticeId:
+                    type: string
+                  cronJobId:
+                    type: string
+                  noticeType:
+                    type: string
+                  noticeMessage:
+                    type: string
+                  noticeCreateDateTime:
+                    type: string
+                  isRead:
+                    type: boolean
+        '400':
+          description: 'Bad request'
+  /notifications/users/{userId}/notice:
+    get:
+      summary: '알림 목록 조회'
+      operationId: getNoticeList
+      tags:
+        - notifications
+      parameters:
+        - $ref: '#/components/parameters/userIdPath'
+      responses:
+        '200':
+          description: '알림이 정상적으로 조회됨'
+          content:
+            applicaion/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    noticeId:
+                      type: string
+                    cronJobId:
+                      type: string
+                    noticeType:
+                      type: string
+                    noticeMessage:
+                      type: string
+                    noticeCreateDateTime:
+                      type: string
+                    isRead:
+                      type: boolean
+        '400':
+          description: 'Bad request'
+  /notifications/users/{userId}/notice/{noticeId}:
+    get:
+      summary: '알림 선택'
+      operationId: selectNotice
+      tags:
+        - notifications
+      parameters:
+        - $ref: '#/components/parameters/userIdPath'
+        - $ref: '#/components/parameters/noticeIdPath'
+      responses:
+        '200':
+          description: '알림이 정상적으로 선택됨'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  noticeId:
+                    type: string
+                  cronJobId:
+                    type: string
+                  noticeType:
+                    type: string
+                  noticeMessage:
+                    type: string
+                  noticeCreateDateTime:
+                    type: string
+                  isRead:
+                    type: boolean
+        '400':
+          description: 'Bad request'
+
   /notifications/users/{userId}/crons/{cronJobId}/webhooks:
     post:
       summary: '웹훅 추가'
@@ -1091,11 +1222,19 @@ components:
           type: string
         email:
           type: string
-    CronReadAuths:
-      description: '읽기 권한을 갖고 있는 크론잡 리스트'
+    UserCronJob:
+      description: '읽기 권한을 갖고 있는 유저 크론잡 리스트'
       type: object
       properties:
-        userId:
+        userAccount:
+          type: string
+        cronJobId:
+          type: string
+    TeamCronJob:
+      description: '읽기 권한을 갖고 있는 팀 크론잡 리스트'
+      type: object
+      properties:
+        teamAccount:
           type: string
         cronJobId:
           type: string
@@ -1139,6 +1278,13 @@ components:
       name: webhookId
       in: path
       description: '웹훅의 id'
+      required: true
+      schema:
+        type: string
+    noticeIdPath:
+      name: noticeId
+      in: path
+      description: '알림의 id'
       required: true
       schema:
         type: string
@@ -1221,6 +1367,35 @@ components:
                 type: string
               cronExpr:
                 type: string
+    PostCronProcess:
+      description: '크론 프로세스 추가'
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              pid:
+                type: string
+              startTime:
+                type: string
+              endTime:
+                type: string
+    PatchCronProcess:
+      description: '크론 프로세스 추가'
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              pid:
+                type: string
+              startTime:
+                type: string
+              endTime:
+                type: string
+
     PostUsers:
       description: '사용자 등록'
       required: true
@@ -1298,15 +1473,15 @@ components:
           schema:
             type: object
             required:
-              - teamId
-              - teamName
-              - uid
+              - teamAccount
+              - name
+              - userAccount
             properties:
-              teamId:
+              teamAccount:
                 type: string
-              teamName:
+              name:
                 type: string
-              uid:
+              userAccount:
                 type: string
     PatchTeam:
       description: '팀명 수정'
@@ -1316,7 +1491,11 @@ components:
           schema:
             type: object
             properties:
-              teamName:
+              teamAccount:
+                type: string
+              name:
+                type: string
+              userAccount:
                 type: string
     PostTeamUsers:
       description: '팀원 추가'
@@ -1333,6 +1512,18 @@ components:
                 type: string
               authId:
                 type: string
+    PostCronReadAuthsUsersCrons:
+      description: '유저 크론 추가'
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - cronJobId
+            properties:
+              cronJobId:
+                type: string
     PostCronReadAuthsTeamsCrons:
       description: '팀 크론 추가'
       required: true
@@ -1341,25 +1532,10 @@ components:
           schema:
             type: object
             required:
-              - userId
-              - teamId
-              - serverIp
-              - cronName
-              - cronExpr
-              - minTime
+              - cronJobId
             properties:
-              userId:
+              cronJobId:
                 type: string
-              teamId:
-                type: string
-              serverIp:
-                type: string
-              cronName:
-                type: string
-              cronExpr:
-                type: string
-              minTime:
-                type: integer
     PatchCronReadAuthsTeamsCrons:
       description: '팀 크론 변경'
       required: true
@@ -1388,7 +1564,7 @@ components:
               minTime:
                 type: integer
     PostNotificationsUsers:
-      description: '알림 추가'
+      description: '알림 구독 추가'
       required: true
       content:
         application/json:
@@ -1397,13 +1573,13 @@ components:
             required:
               - rcvUserId
               - createUserId
-              - notType
+              - cronJobId
             properties:
               rcvUserId:
                 type: string
               createUserId:
                 type: string
-              notType:
+              cronJobId:
                 type: string
     PatchNotificationsUsers:
       description: '알림 수정'
@@ -1446,6 +1622,27 @@ components:
               pk:
                 type: integer
               url:
+                type: string
+    PostNotice:
+      description: '알림 추가'
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - cronJobId
+              - noticeType
+              - noticeMessage
+              - noticeCreateDateTime
+            properties:
+              cronJobId:
+                type: string
+              noticeType:
+                type: string
+              noticeMessage:
+                type: string
+              noticeCreateDateTime:
                 type: string
   securitySchemes:
     bearerToken:
