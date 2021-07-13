@@ -841,6 +841,13 @@ paths:
       responses:
         '200':
           description: '정상적으로 변경됨'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cronJobId:
+                    type: string
         '400':
           description: 'Bad request'
     get:
@@ -853,6 +860,16 @@ paths:
       responses:
         '200':
           description: '정상적으로 조회됨'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    cronJobId:
+                      type: string
+
         '400':
           description: 'Bad request'
   /notifications/users/{userId}/crons/{cronJobId}:
@@ -869,7 +886,7 @@ paths:
           description: '정상적으로 삭제됨'
         '400':
           description: 'Bad request'
-  notifications/notice:
+  /notifications/notice:
     post:
       summary: '알림 추가'
       operationId: addNotice
@@ -880,9 +897,26 @@ paths:
       responses:
         '200':
           description: '알림이 정상적으로 생성됨'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  noticeId:
+                    type: string
+                  cronJobId:
+                    type: string
+                  noticeType:
+                    type: string
+                  noticeMessage:
+                    type: string
+                  noticeCreateDateTime:
+                    type: string
+                  isRead:
+                    type: boolean
         '400':
           description: 'Bad request'
-  notifications/users/{userId}/notice:
+  /notifications/users/{userId}/notice:
     get:
       summary: '알림 목록 조회'
       operationId: getNoticeList
@@ -890,12 +924,31 @@ paths:
         - notifications
       parameters:
         - $ref: '#/components/parameters/userIdPath'
-      response:
+      responses:
         '200':
           description: '알림이 정상적으로 조회됨'
+          content:
+            applicaion/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    noticeId:
+                      type: string
+                    cronJobId:
+                      type: string
+                    noticeType:
+                      type: string
+                    noticeMessage:
+                      type: string
+                    noticeCreateDateTime:
+                      type: string
+                    isRead:
+                      type: boolean
         '400':
           description: 'Bad request'
-  notifications/users/{userId}/notice/{noticeId}:
+  /notifications/users/{userId}/notice/{noticeId}:
     get:
       summary: '알림 선택'
       operationId: selectNotice
@@ -904,9 +957,26 @@ paths:
       parameters:
         - $ref: '#/components/parameters/userIdPath'
         - $ref: '#/components/parameters/noticeIdPath'
-      response:
+      responses:
         '200':
           description: '알림이 정상적으로 선택됨'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  noticeId:
+                    type: string
+                  cronJobId:
+                    type: string
+                  noticeType:
+                    type: string
+                  noticeMessage:
+                    type: string
+                  noticeCreateDateTime:
+                    type: string
+                  isRead:
+                    type: boolean
         '400':
           description: 'Bad request'
 
