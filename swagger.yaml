@@ -328,6 +328,7 @@ paths:
                 properties:
                   cronJobId:
                     type: string
+                    format: uuid
                   pid:
                     type: string
                   startTime:
@@ -354,6 +355,7 @@ paths:
                 properties:
                   cronJobId:
                     type: string
+                    format: uuid
                   pid:
                     type: string
                   startTime:
@@ -383,6 +385,7 @@ paths:
                 properties:
                   cronJobId:
                     type: string
+                    format: uuid
                   pid:
                     type: string
                   startTime:
@@ -713,6 +716,7 @@ paths:
                 properties:
                   cronJobId:
                     type: string
+                    format: uuid
                   userAccount:
                     type: string
         '400':
@@ -769,6 +773,7 @@ paths:
                 properties:
                   cronJobId:
                     type: string
+                    format: uuid
                   teamAccount:
                     type: string
         '400':
@@ -807,6 +812,7 @@ paths:
                 properties:
                   cronJobId:
                     type: string
+                    format: uuid
         '400':
           description: 'Bad request'
     get:
@@ -838,6 +844,7 @@ paths:
                   properties:
                     cronJobId:
                       type: string
+                      format: uuid
 
         '400':
           description: 'Bad request'
@@ -875,6 +882,7 @@ paths:
                     type: string
                   cronJobId:
                     type: string
+                    format: uuid
                   noticeType:
                     type: string
                   noticeMessage:
@@ -907,6 +915,7 @@ paths:
                       type: string
                     cronJobId:
                       type: string
+                      format: uuid
                     noticeType:
                       type: string
                     noticeMessage:
@@ -938,6 +947,7 @@ paths:
                     type: string
                   cronJobId:
                     type: string
+                    format: uuid
                   noticeType:
                     type: string
                   noticeMessage:
@@ -1050,6 +1060,7 @@ components:
           type: string
         cronJobId:
           type: string
+          format: uuid
         pid:
           type: string
         log:
@@ -1074,6 +1085,7 @@ components:
       properties:
         cronJobId:
           type: string
+          format: uuid
         pid:
           type: string
         startTime:
@@ -1151,6 +1163,7 @@ components:
           type: string
         cronJobId:
           type: string
+          format: uuid
     TeamCronJob:
       description: '읽기 권한을 갖고 있는 팀 크론잡 리스트'
       type: object
@@ -1159,6 +1172,7 @@ components:
           type: string
         cronJobId:
           type: string
+          format: uuid
   parameters:
     cronJobIdPath:
       name: cronJobId
@@ -1466,6 +1480,7 @@ components:
             properties:
               cronJobId:
                 type: string
+                format: uuid
     PostCronReadAuthsTeamsCrons:
       description: '팀 크론 추가'
       required: true
@@ -1478,6 +1493,7 @@ components:
             properties:
               cronJobId:
                 type: string
+                format: uuid
     PatchCronReadAuthsTeamsCrons:
       description: '팀 크론 변경'
       required: true
@@ -1523,6 +1539,7 @@ components:
                 type: string
               cronJobId:
                 type: string
+                format: uuid
     PatchNotificationsUsers:
       description: '알림 수정'
       required: true
@@ -1580,6 +1597,7 @@ components:
             properties:
               cronJobId:
                 type: string
+                format: uuid
               noticeType:
                 type: string
               noticeMessage:
