@@ -620,8 +620,6 @@ paths:
                       type: string
                     name:
                       type: string
-
-
         '400':
           description: 'Bad request'
     post:
@@ -716,7 +714,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TeamMembers'
+                type: array
+                items:
+                  $ref: '#/components/schemas/TeamMembers'
         '400':
           description: 'Bad request'
     post:
@@ -734,14 +734,25 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        description: '추가된 팀원 id'
+                $ref: '#/components/schemas/TeamMembers'
+        '400':
+          description: 'Bad request'
+    patch:
+      summary: '팀원 수정'
+      operationId: changeMember
+      tags:
+        - teams
+      parameters:
+        - $ref: '#/components/parameters/teamIdPath'
+      requestBody:
+        $ref: '#/components/requestBodies/PatchTeamUsers'
+      responses:
+        '201':
+          description: '정상적으로 수정됨'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamMembers'
         '400':
           description: 'Bad request'
   /teams/{teamId}/users/{userId} :
@@ -1216,11 +1227,15 @@ components:
       description: '팀원리스트'
       type: object
       properties:
-        userId:
+        userAccount:
           type: string
-        name:
+        teamAccount:
           type: string
-        email:
+        userName:
+          type: string
+        userEmail:
+          type: string
+        authType:
           type: string
     UserCronJob:
       description: '읽기 권한을 갖고 있는 유저 크론잡 리스트'
@@ -1505,12 +1520,33 @@ components:
           schema:
             type: object
             required:
-              - userId
-              - authId
+              - teamAccount
+              - userAccount
+              - authType
             properties:
-              userId:
+              teamAccount:
                 type: string
-              authId:
+              userAccount:
+                type: string
+              authType:
+                type: string
+    PatchTeamUsers:
+      description: '팀원 추가'
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - teamAccount
+              - userAccount
+              - authType
+            properties:
+              teamAccount:
+                type: string
+              userAccount:
+                type: string
+              authType:
                 type: string
     PostCronReadAuthsUsersCrons:
       description: '유저 크론 추가'
