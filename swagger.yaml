@@ -32,16 +32,26 @@ paths:
       tags:
         - authentication
       requestBody:
-        $ref: '#/components/requestBodies/PostUsers'
+        $ref: '#/components/requestBodies/PostAuthentication'
       responses:
         '200':
           description: '로그인 성공'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AccessToken'
-        '400':
-          description: 'Bad request'
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: "액세스 토큰"
+                  refreshToken:
+                    type: string
+                    description: "리프레시 토큰"
+                  accessTokenExpiresAt:
+                    type: string
+                    description: "엑세스 토큰 만료 시간"
+        '401':
+          description: 'Unauthorized'
   /auth/local/logout:
     post:
       summary: '사용자 로그아웃'
@@ -49,7 +59,7 @@ paths:
       tags:
         - authentication
       requestBody:
-        $ref: '#/components/requestBodies/PostUsers'
+        $ref: '#/components/requestBodies/PostAuthentication'
       responses:
         '200':
           description: '로그아웃 성공'
@@ -69,9 +79,21 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AccessToken'
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: "액세스 토큰"
+                  refreshToken:
+                    type: string
+                    description: "리프레시 토큰"
+                  accessTokenExpiresAt:
+                    type: string
+                    description: "엑세스 토큰 만료 시간"
         '400':
           description: 'Bad request'
+        '401':
+          description: 'UnAuthorized'
   /auth/register:
     post:
       summary: '사용자 회원가입'
@@ -89,6 +111,10 @@ paths:
                 $ref: '#/components/schemas/AccessToken'
         '400':
           description: 'Bad request'
+        '404':
+          description: 'Not Found'
+        '409':
+          description: 'Conflict'
   /cron-servers:
     get:
       summary: '크론 서버 목록 조회'
@@ -896,7 +922,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Webhook'
+                  $ref: '#/components/schemas/WebhookSubscription'
         '400':
           description: 'Bad request'
     delete:
@@ -947,6 +973,12 @@ components:
   schemas:
     AccessToken:
       description: '액세스 토큰'
+      type: object
+      properties:
+        token:
+          type: string
+    RefreshToken:
+      description: '리프레시 토큰'
       type: object
       properties:
         token:
@@ -1027,10 +1059,12 @@ components:
           type: string
         authId:
           type: string
-    Webhook:
+    WebhookSubscription:
       description: '웹훅'
       type: object
       properties:
+        id:
+          type: integer
         url:
           type: string
     TeamMembers:
@@ -1095,6 +1129,23 @@ components:
       schema:
         type: string
   requestBodies:
+    PostAuthentication:
+      description: '사용자 인증'
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - id
+              - password
+            properties:
+              id:
+                type: string
+                example: "testid"
+              password:
+                type: string
+                example: "testpass"
     PostReissue:
       description: '엑세스 토큰 재발급'
       required: true
@@ -1171,12 +1222,16 @@ components:
             properties:
               id:
                 type: string
+                example: "test"
               name:
                 type: string
+                example: "test"
               email:
                 type: string
+                example: "test@gabia.com"
               password:
                 type: string
+                example: "test"
     PatchUser:
       description: '사용자 정보 변경'
       required: true
