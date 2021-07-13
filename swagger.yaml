@@ -413,29 +413,6 @@ paths:
         '404':
           description: 'Not found'
   /users:
-    post:
-      summary: '사용자 등록'
-      operationId: registerUser
-      tags:
-        - users
-      requestBody:
-        $ref: '#/components/requestBodies/PostUsers'
-      responses:
-        '201':
-          description: '정상적으로  등록됨'
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        description: '등록된 사용자 id'
-        '400':
-          description: 'Bad request'
     get:
       summary: '사용자 목록 조회'
       operationId: getUsers
@@ -468,16 +445,13 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        description: '변경된 사용자 id'
+                $ref: '#/components/schemas/User'
         '400':
           description: 'Bad request'
+        '404':
+          description: 'Not Found'
+        '409':
+          description: 'Conflict'
     delete:
       summary: '회원탈퇴'
       operationId: deleteUser
@@ -488,8 +462,8 @@ paths:
       responses:
         '204':
           description: '정상적으로  탈퇴됨'
-        '400':
-          description: 'Bad request'
+        '404':
+          description: 'Not Found'
     get:
       summary: '회원정보조회'
       operationId: getUserInfo
@@ -1035,19 +1009,23 @@ paths:
   /notifications/users/{userId}/crons/{cronJobId}/webhooks:
     post:
       summary: '웹훅 추가'
-      operationId: changeTeam
+      operationId: addWebhook
       tags:
         - webhook
       parameters:
         - $ref: '#/components/parameters/userIdPath'
         - $ref: '#/components/parameters/cronJobIdPath'
       requestBody:
-        $ref: '#/components/requestBodies/PostNotificationsNotId'
+        $ref: '#/components/requestBodies/PostWebhook'
       responses:
         '201':
-          description: '정상적으로 변경됨'
+          description: '정상적으로 추가됨'
         '400':
           description: 'Bad request'
+        '404':
+          description: 'Not found'
+        '409':
+          description: 'Conflict'
     get:
       summary: '웹훅 리스트 조회'
       operationId: getWebhooks
@@ -1083,7 +1061,7 @@ paths:
   /notifications/users/{userId}/crons/{cronJobId}/webhooks/{webhookId}:
     patch:
       summary: '웹훅 수정'
-      operationId: changeTeam
+      operationId: updateWebhook
       tags:
         - webhook
       parameters:
@@ -1091,12 +1069,20 @@ paths:
         - $ref: '#/components/parameters/cronJobIdPath'
         - $ref: '#/components/parameters/webhookIdPath'
       requestBody:
-        $ref: '#/components/requestBodies/PatchNotificationsNotId'
+        $ref: '#/components/requestBodies/PatchWebhook'
       responses:
         '201':
           description: '정상적으로 변경됨'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookSubscription'
         '400':
           description: 'Bad request'
+        '404':
+          description: 'Not found'
+        '409':
+          description: 'Conflict'
     delete:
       summary: '웹훅 개별 삭제'
       operationId: deleteWebhookById
@@ -1109,8 +1095,8 @@ paths:
       responses:
         '204':
           description: '정상적으로 삭제됨'
-        '400':
-          description: 'Bad request'
+        '404':
+          description: 'Not found'
 components:
   schemas:
     AccessToken:
@@ -1174,16 +1160,18 @@ components:
       description: '사용자'
       type: object
       properties:
-        userId:
+        account:
           type: string
+          example: 'testid'
         name:
           type: string
+          example: 'testname'
         email:
           type: string
-        password:
-          type: string
+          example: 'test@gabia.com'
         role:
           type: string
+          example: 'ROLE_USER'
     TeamUser:
       description: '팀원'
       type: object
@@ -1210,8 +1198,13 @@ components:
       properties:
         id:
           type: integer
+          example: 1
+        endpoint:
+          type: string
+          example: 'HIWORKS'
         url:
           type: string
+          example: 'https://hooks.hiworks.com/messenger/hiworks/650b77a753596fc1de35398ba24b5d1e/hiworks/gabia'
     TeamMembers:
       description: '팀원리스트'
       type: object
@@ -1431,10 +1424,16 @@ components:
             properties:
               name:
                 type: string
+                example: ""
               email:
                 type: string
+                example: "test2@gabia.com"
               password:
                 type: string
+                example: ""
+              userRole:
+                type: string
+                example: ""
     PostTeamAuths:
       description: '사용자 권한 변경'
       required: true
@@ -1596,7 +1595,7 @@ components:
                 type: integer
               notType:
                 type: string
-    PostNotificationsNotId:
+    PostWebhook:
       description: '웹훅 추가'
       required: true
       content:
@@ -1604,11 +1603,14 @@ components:
           schema:
             type: object
             required:
+              - endpoint
               - url
             properties:
+              endpoint:
+                type: string
               url:
                 type: string
-    PatchNotificationsNotId:
+    PatchWebhook:
       description: '웹훅 수정'
       required: true
       content:
@@ -1616,11 +1618,11 @@ components:
           schema:
             type: object
             required:
-              - webhookId
+              - endpoint
               - url
             properties:
-              pk:
-                type: integer
+              endpoint:
+                type: string
               url:
                 type: string
     PostNotice:
