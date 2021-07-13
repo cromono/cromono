@@ -25,79 +25,10 @@ servers:
     description: '운영용 레디스 리프레시 토큰 DB'
 
 paths:
-  /auth/local/login:
-    post:
-      summary: '사용자 로그인'
-      operationId: login
-      tags:
-        - authentication
-      requestBody:
-        $ref: '#/components/requestBodies/PostAuthentication'
-      responses:
-        '200':
-          description: '로그인 성공'
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  token:
-                    type: string
-                    description: "액세스 토큰"
-                  refreshToken:
-                    type: string
-                    description: "리프레시 토큰"
-                  accessTokenExpiresAt:
-                    type: string
-                    description: "엑세스 토큰 만료 시간"
-        '401':
-          description: 'Unauthorized'
-  /auth/local/logout:
-    post:
-      summary: '사용자 로그아웃'
-      operationId: logout
-      tags:
-        - authentication
-      requestBody:
-        $ref: '#/components/requestBodies/PostAuthentication'
-      responses:
-        '200':
-          description: '로그아웃 성공'
-        '400':
-          description: 'Bad request'
-  /auth/local/reissue:
-    post:
-      summary: '사용자 Access token 재발급'
-      operationId: reissueToken
-      tags:
-        - authentication
-      requestBody:
-        $ref: '#/components/requestBodies/PostReissue'
-      responses:
-        '201':
-          description: '재발급 성공'
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  token:
-                    type: string
-                    description: "액세스 토큰"
-                  refreshToken:
-                    type: string
-                    description: "리프레시 토큰"
-                  accessTokenExpiresAt:
-                    type: string
-                    description: "엑세스 토큰 만료 시간"
-        '400':
-          description: 'Bad request'
-        '401':
-          description: 'UnAuthorized'
   /auth/register:
     post:
       summary: '사용자 회원가입'
-      operationId: register
+      operationId: addUser
       tags:
         - authentication
       requestBody:
@@ -128,6 +59,75 @@ paths:
           description: 'Not Found'
         '409':
           description: 'Conflict'
+  /auth/local/login:
+    post:
+      summary: '사용자 로그인'
+      operationId: authenticate
+      tags:
+        - authentication
+      requestBody:
+        $ref: '#/components/requestBodies/PostAuthentication'
+      responses:
+        '200':
+          description: '로그인 성공'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: "액세스 토큰"
+                  refreshToken:
+                    type: string
+                    description: "리프레시 토큰"
+                  accessTokenExpiresAt:
+                    type: string
+                    description: "엑세스 토큰 만료 시간"
+        '401':
+          description: 'Unauthorized'
+  /auth/local/logout:
+    post:
+      summary: '사용자 로그아웃'
+      operationId: unauthenticate
+      tags:
+        - authentication
+      requestBody:
+        $ref: '#/components/requestBodies/PostAuthentication'
+      responses:
+        '200':
+          description: '로그아웃 성공'
+        '400':
+          description: 'Bad request'
+  /auth/local/reissue:
+    post:
+      summary: '사용자 Access token 재발급'
+      operationId: reissueAccessToken
+      tags:
+        - authentication
+      requestBody:
+        $ref: '#/components/requestBodies/PostReissue'
+      responses:
+        '201':
+          description: '재발급 성공'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: "액세스 토큰"
+                  refreshToken:
+                    type: string
+                    description: "리프레시 토큰"
+                  accessTokenExpiresAt:
+                    type: string
+                    description: "엑세스 토큰 만료 시간"
+        '400':
+          description: 'Bad request'
+        '401':
+          description: 'UnAuthorized'
   /cron-servers:
     get:
       summary: '크론 서버 목록 조회'
@@ -1151,10 +1151,10 @@ components:
           schema:
             type: object
             required:
-              - id
+              - account
               - password
             properties:
-              id:
+              account:
                 type: string
                 example: "testid"
               password:
@@ -1229,23 +1229,23 @@ components:
           schema:
             type: object
             required:
-              - id
+              - account
               - name
               - email
               - password
             properties:
-              id:
+              account:
                 type: string
-                example: "test"
+                example: "testid"
               name:
                 type: string
-                example: "test"
+                example: "testname"
               email:
                 type: string
                 example: "test@gabia.com"
               password:
                 type: string
-                example: "test"
+                example: "testpass"
     PatchUser:
       description: '사용자 정보 변경'
       required: true
@@ -1447,3 +1447,15 @@ components:
                 type: integer
               url:
                 type: string
+  securitySchemes:
+    bearerToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      in: header
+
+security:
+  - bearerToken: []
+externalDocs:
+  url: "https://cronmonitor.atlassian.net/wiki/spaces/DOCUMENTAT/overview"
+  description: "confluence"
