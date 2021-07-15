@@ -6,8 +6,12 @@ servers:
   - url: 'http://localhost:8081'
     description: '로컬 테스트 환경'
   - url: 'http://139.150.64.58:80'
-    description: '배포 환경 로컬 접속'
+    description: '스테이징 서버 환경 로컬 접속'
   - url: 'http://10.7.27.11:80'
+    description: '스테이징 환경 gcloud 접속'
+  - url: 'http://211.115.73.153:80'
+    description: '배포 환경 로컬 접속'
+  - url: 'http://10.7.27.8:80'
     description: '배포 환경 gcloud 접속'
   - url: 'http://182.162.142.151:8086'
     description: 'InfluxDB'
@@ -1270,6 +1274,7 @@ components:
               serverIp:
                 type: string
                 format: ipv4, ipv6
+                example: "1.1.1.1"
     PatchCronServers:
       description: '크론 서버 등록'
       required: true
@@ -1280,6 +1285,8 @@ components:
             properties:
               serverIp:
                 type: string
+                format: ipv4, ipv6
+                example: "1.1.1.2"
     PostCronJobs:
       description: '크론 등록'
       required: true

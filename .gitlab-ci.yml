@@ -7,7 +7,8 @@ stages:
   - visualize
   - build
   - package
-  - deploy
+  - deploy_staging
+  - deploy_distribute
 
 variables:
   IMAGE_NAME: lukekijung/cronmonitor
@@ -71,7 +72,7 @@ package:
     - cronmonitor
 
 deploy_staging:
-  stage: deploy
+  stage: deploy_staging
   script:
     - apk upgrade && apk update
     - apk add openssh-client
@@ -85,5 +86,20 @@ deploy_staging:
     url: $STAGING_SERVER_IP:80
   only:
     - develop
+deploy_master:
+  stage: deploy_distribute
+  script:
+    - apk upgrade && apk update
+    - apk add openssh-client
+    - apk add sshpass
+    - sshpass -p "$DISTRIBUTE_SERVER_PASS" ssh -o StrictHostKeyChecking=no $DISTRIBUTE_SERVER_USER@$DISTRIBUTE_SERVER_IP docker login -u $DOCKERHUB_ID -p $DOCKERHUB_PASS
+    - sshpass -p "$DISTRIBUTE_SERVER_PASS" ssh -o StrictHostKeyChecking=no $DISTRIBUTE_SERVER_USER@$DISTRIBUTE_SERVER_IP docker pull $IMAGE_NAME
+    - sshpass -p "$DISTRIBUTE_SERVER_PASS" ssh -o StrictHostKeyChecking=no $DISTRIBUTE_SERVER_USER@$DISTRIBUTE_SERVER_IP "docker container stop cronmonitor && docker container rm cronmonitor || true"
+    - sshpass -p "$DISTRIBUTE_SERVER_PASS" ssh -o StrictHostKeyChecking=no $DISTRIBUTE_SERVER_USER@$DISTRIBUTE_SERVER_IP docker run --name cronmonitor -p 80:8080 -d $IMAGE_NAME
+  environment:
+    name: staging
+    url: $DISTRIBUTE_SERVER_IP:80
+  only:
+    - master
   tags:
     - cronmonitor
