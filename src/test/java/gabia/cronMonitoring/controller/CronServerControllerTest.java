@@ -19,10 +19,10 @@ import gabia.cronMonitoring.dto.CronServerDTO;
 import gabia.cronMonitoring.exception.cron.server.AlreadyRegisteredServerException;
 import gabia.cronMonitoring.exception.cron.server.NotExistingServerException;
 import gabia.cronMonitoring.exception.cron.server.NotValidIPException;
+import gabia.cronMonitoring.exception.cron.server.handler.ServerControllerExceptionHandler;
 import gabia.cronMonitoring.service.CronServerService;
 import java.util.ArrayList;
 import java.util.List;
-import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,10 +47,15 @@ public class CronServerControllerTest {
     @InjectMocks
     private CronServerController cronServerController;
 
+    @InjectMocks
+    private ServerControllerExceptionHandler serverControllerExceptionHandler;
+
     @Before
     public void setup() {
         cronServerController = new CronServerController(cronServerService);
-        mockMvc = standaloneSetup(cronServerController).build();
+        mockMvc = standaloneSetup(cronServerController)
+            .setControllerAdvice(serverControllerExceptionHandler)
+            .build();
     }
 
     ObjectMapper mapper = new ObjectMapper();
@@ -98,13 +103,11 @@ public class CronServerControllerTest {
         given(cronServerService.addCronServer("notvalidip"))
             .willThrow(new NotValidIPException("유효한 IP주소가 아닙니다."));
         // Then
-        Assertions.assertThatThrownBy(() ->
-            mockMvc.perform(post("/cron-servers")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(request))
-                .andDo(print())
-                .andExpect(status().isBadRequest()))
-            .hasCause(new NotValidIPException("유효한 IP주소가 아닙니다."));
+        mockMvc.perform(post("/cron-servers")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(request))
+            .andDo(print())
+            .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -116,13 +119,11 @@ public class CronServerControllerTest {
         given(cronServerService.addCronServer("1.1.1.1"))
             .willThrow(new AlreadyRegisteredServerException("이미 등록된 서버입니다."));
         // Then
-        Assertions.assertThatThrownBy(() ->
-            mockMvc.perform(post("/cron-servers")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(request))
-                .andDo(print())
-                .andExpect(status().isBadRequest()))
-            .hasCause(new AlreadyRegisteredServerException("이미 등록된 서버입니다."));
+        mockMvc.perform(post("/cron-servers")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(request))
+            .andDo(print())
+            .andExpect(status().isConflict());
     }
 
     @Test
@@ -152,13 +153,11 @@ public class CronServerControllerTest {
         given(cronServerService.updateCronServer(any(), any()))
             .willThrow(new NotValidIPException("입력된 새 주소가 유효한 IP주소가 아닙니다."));
         // Then
-        Assertions.assertThatThrownBy(() ->
-            mockMvc.perform(patch("/cron-servers/{serverIp}}", "1.1.1.1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(request))
-                .andDo(print())
-                .andExpect(status().isBadRequest()))
-            .hasCause(new NotValidIPException("입력된 새 주소가 유효한 IP주소가 아닙니다."));
+        mockMvc.perform(patch("/cron-servers/{serverIp}}", "1.1.1.1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(request))
+            .andDo(print())
+            .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -170,13 +169,11 @@ public class CronServerControllerTest {
         given(cronServerService.updateCronServer(any(), any()))
             .willThrow(new NotExistingServerException("존재하지 않는 서버입니다."));
         // Then
-        Assertions.assertThatThrownBy(() ->
-            mockMvc.perform(patch("/cron-servers/{serverIp}}", "1.1.1.1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(request))
-                .andDo(print())
-                .andExpect(status().isBadRequest()))
-            .hasCause(new NotExistingServerException("존재하지 않는 서버입니다."));
+        mockMvc.perform(patch("/cron-servers/{serverIp}}", "1.1.1.1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(request))
+            .andDo(print())
+            .andExpect(status().isNotFound());
     }
 
     @Test
@@ -188,13 +185,11 @@ public class CronServerControllerTest {
         given(cronServerService.updateCronServer(any(), any()))
             .willThrow(new AlreadyRegisteredServerException("이미 등록된 서버입니다."));
         // Then
-        Assertions.assertThatThrownBy(() ->
-            mockMvc.perform(patch("/cron-servers/{serverIp}}", "1.1.1.1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(request))
-                .andDo(print())
-                .andExpect(status().isBadRequest()))
-            .hasCause(new AlreadyRegisteredServerException("이미 등록된 서버입니다."));
+        mockMvc.perform(patch("/cron-servers/{serverIp}}", "1.1.1.1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(request))
+            .andDo(print())
+            .andExpect(status().isConflict());
     }
 
     @Test
@@ -211,13 +206,12 @@ public class CronServerControllerTest {
     public void 미등록_서버_삭제시_DELETE_예외() throws Exception {
         // Given
         // When
-        doThrow(new NotExistingServerException("존재하지 않는 서버입니다.")).when(cronServerService).deleteCronServer(any());
+        doThrow(new NotExistingServerException("존재하지 않는 서버입니다.")).when(cronServerService)
+            .deleteCronServer(any());
         // Then
-        Assertions.assertThatThrownBy(() ->
-            mockMvc.perform(delete("/cron-servers/{serverIp}", "1.1.1.1"))
-                .andDo(print())
-                .andExpect(status().isNotFound()))
-            .hasCause(new NotExistingServerException("존재하지 않는 서버입니다."));
+        mockMvc.perform(delete("/cron-servers/{serverIp}", "1.1.1.1"))
+            .andDo(print())
+            .andExpect(status().isNotFound());
 
     }
 }
