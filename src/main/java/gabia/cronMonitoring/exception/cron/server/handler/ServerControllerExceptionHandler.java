@@ -24,7 +24,7 @@ public class ServerControllerExceptionHandler {
 
     @ExceptionHandler(NotExistingServerException.class)
     public ResponseEntity handle(NotExistingServerException e) {
-        return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(NotValidIPException.class)

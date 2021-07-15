@@ -110,9 +110,7 @@ public class CronServerService {
     public void deleteCronServer(String ip) {
 
         // 서버 삭제
-        Optional<CronServer> findServer = cronServerRepository.findByIp(ip);
-        findServer.orElseThrow(() -> new NotExistingServerException("존재하지 않는 서버입니다."));
-        CronServer cronServer = findServer.get();
-        cronServerRepository.delete(cronServer);
+        CronServer findServer = cronServerRepository.findByIp(ip).orElseThrow(() -> new NotExistingServerException("존재하지 않는 서버입니다."));
+        cronServerRepository.delete(findServer);
     }
 }
