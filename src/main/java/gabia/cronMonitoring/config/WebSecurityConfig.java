@@ -7,6 +7,7 @@ import gabia.cronMonitoring.util.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -47,10 +48,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-            // token을 사용하는 방식이기 때문에 csrf를 disable
             .cors().configurationSource(corsConfigurationSource())
             .and()
 
+            // token을 사용하는 방식이기 때문에 csrf를 disable
             .csrf().disable()
 
             .exceptionHandling()
@@ -70,7 +71,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
             .and()
             .authorizeRequests()
-            .antMatchers("/").permitAll()
+            .antMatchers(HttpMethod.OPTIONS,"/").permitAll()
             .antMatchers("/hello").permitAll()
             .antMatchers("/notifications/notice").permitAll()
             .antMatchers("/auth/register").anonymous()
