@@ -1270,6 +1270,7 @@ components:
               serverIp:
                 type: string
                 format: ipv4, ipv6
+                example: "1.1.1.1"
     PatchCronServers:
       description: '크론 서버 등록'
       required: true
@@ -1280,6 +1281,8 @@ components:
             properties:
               serverIp:
                 type: string
+                format: ipv4, ipv6
+                example: "1.1.1.2"
     PostCronJobs:
       description: '크론 등록'
       required: true

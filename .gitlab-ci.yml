@@ -51,9 +51,9 @@ build:
   artifacts:
     paths:
       - build/libs/*.jar
-  only:
-    - develop
-    - master
+#  only:
+#    - develop
+#    - master
   tags:
     - cronmonitor
 
@@ -64,9 +64,9 @@ package:
     - docker login -u $DOCKERHUB_ID -p $DOCKERHUB_PASS
     - docker push $IMAGE_NAME
     - docker images | grep 'cronmonitor'
-  only:
-    - develop
-    - master
+#  only:
+#    - develop
+#    - master
   tags:
     - cronmonitor
 
@@ -83,7 +83,8 @@ deploy_staging:
   environment:
     name: staging
     url: $STAGING_SERVER_IP:80
-  only:
-    - develop
+#  only:
+#    - develop
+#    - master
   tags:
     - cronmonitor
