@@ -137,12 +137,12 @@ class AuthServiceIntegrationTest {
         // When
         AccessTokenDTO anotherResponse = authService.authenticate(anotherRequest);
         authService.unauthenticate(anotherAccount);
+        authService.deleteRefreshToken(anotherAccount);
         AccessTokenDTO response = authService.authenticate(request);
         // Then
         assertThrows(InvalidTokenException.class, () -> authService.reissueAccessToken(
             anotherResponse.getRefreshToken()));
         authService.deleteRefreshToken(account);
-        authService.deleteRefreshToken(anotherAccount);
     }
 
     @Test

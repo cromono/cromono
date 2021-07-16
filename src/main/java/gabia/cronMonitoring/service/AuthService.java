@@ -66,7 +66,6 @@ public class AuthService {
 
     /**
      * 엑세스 토큰 재발급 및 리프레시 토큰 갱신
-     * @param accessToken 만료된 엑세스 토큰
      * @param refreshToken 리프레시 토큰
      * @return 엑세스 토큰 DTO
      */
