@@ -140,7 +140,7 @@ class AuthServiceIntegrationTest {
         AccessTokenDTO response = authService.authenticate(request);
         // Then
         assertThrows(InvalidTokenException.class, () -> authService.reissueAccessToken(
-            response.getRefreshToken()));
+            anotherResponse.getRefreshToken()));
         authService.deleteRefreshToken(account);
         authService.deleteRefreshToken(anotherAccount);
     }
