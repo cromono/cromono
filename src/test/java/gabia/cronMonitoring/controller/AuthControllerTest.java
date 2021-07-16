@@ -1,5 +1,6 @@
 package gabia.cronMonitoring.controller;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -186,7 +187,7 @@ class AuthControllerTest {
         // When
         when(authService.getCurrentUser())
             .thenReturn(UserInfoDTO.builder().account(userAccount).build());
-        when(authService.reissueAccessToken(userAccount, token)).thenReturn(response);
+        when(authService.reissueAccessToken(any())).thenReturn(response);
         // Then
         mockMvc.perform(post("/auth/local/reissue", token)
             .contentType(MediaType.APPLICATION_JSON)
@@ -213,7 +214,7 @@ class AuthControllerTest {
         // When
         when(authService.getCurrentUser())
             .thenReturn(UserInfoDTO.builder().account(userAccount).build());
-        when(authService.reissueAccessToken(userAccount, token)).thenThrow(InvalidTokenException.class);
+        when(authService.reissueAccessToken(any())).thenThrow(InvalidTokenException.class);
         // Then
         mockMvc.perform(post("/auth/local/reissue", token)
             .contentType(MediaType.APPLICATION_JSON)

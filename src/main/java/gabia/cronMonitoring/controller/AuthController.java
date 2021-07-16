@@ -59,7 +59,7 @@ public class AuthController {
     public ResponseEntity<AccessTokenDTO> refreshToken(
         @Valid @RequestBody RefreshTokenDTO request) {
         AccessTokenDTO accessTokenDTO = authService
-            .reissueAccessToken(authService.getCurrentUser().getAccount(), request.getRefreshToken());
+            .reissueAccessToken(request.getRefreshToken());
         return new ResponseEntity(accessTokenDTO, HttpStatus.CREATED);
     }
 }
