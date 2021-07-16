@@ -102,7 +102,7 @@ class AuthServiceIntegrationTest {
         // When
         AccessTokenDTO response = authService.authenticate(request);
         // Then
-        assertDoesNotThrow(() -> authService.reissueAccessToken(response.getToken(),
+        assertDoesNotThrow(() -> authService.reissueAccessToken(
             response.getRefreshToken()));
         authService.deleteRefreshToken(account);
     }
@@ -139,7 +139,7 @@ class AuthServiceIntegrationTest {
         authService.unauthenticate(anotherAccount);
         AccessTokenDTO response = authService.authenticate(request);
         // Then
-        assertThrows(InvalidTokenException.class, () -> authService.reissueAccessToken(anotherResponse.getToken(),
+        assertThrows(InvalidTokenException.class, () -> authService.reissueAccessToken(
             response.getRefreshToken()));
         authService.deleteRefreshToken(account);
         authService.deleteRefreshToken(anotherAccount);
@@ -164,7 +164,7 @@ class AuthServiceIntegrationTest {
         AccessTokenDTO response = authService.authenticate(request);
         // Then
         assertThrows(InvalidTokenException.class,
-            () -> authService.reissueAccessToken(response.getToken(),
+            () -> authService.reissueAccessToken(
                 "notvalidtoken"));
         authService.deleteRefreshToken(account);
     }
