@@ -74,6 +74,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(HttpMethod.OPTIONS,"/").permitAll()
             .antMatchers("/hello").permitAll()
             .antMatchers("/notifications/notice").permitAll()
+            .antMatchers("/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process").permitAll()
             .antMatchers("/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process/{pid}").permitAll()
             .antMatchers("/auth/register").anonymous()
             .antMatchers("/auth/local/login").anonymous()
