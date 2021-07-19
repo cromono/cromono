@@ -128,19 +128,19 @@ public class UserService implements UserDetailsService {
         }
 
         // request에 따른 객체 정보 update 및 반환
-        if (!request.getAccount().isEmpty()) {
+        if (request.getAccount() != null && !request.getAccount().isEmpty()) {
             user.setAccount(request.getAccount());
         }
-        if (!request.getName().isEmpty()) {
+        if (request.getName() != null && !request.getName().isEmpty()) {
             user.setName(request.getName());
         }
-        if (!request.getEmail().isEmpty()) {
+        if (request.getEmail() != null && !request.getEmail().isEmpty()) {
             if (!emailValidator.isValid(request.getEmail())) {
                 throw new NotValidEmailException("유효한 메일주소가 아닙니다.");
             }
             user.setEmail(request.getEmail());
         }
-        if (!request.getPassword().isEmpty()) {
+        if (request.getPassword() != null && !request.getPassword().isEmpty()) {
             user.setPassword(request.getPassword());
         }
         if (request.getRole() != null) {
