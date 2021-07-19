@@ -371,7 +371,7 @@ public class NoticeIntegrationTest {
         //when
         NoticeDTO.Request request = new Request();
         request.setNoticeMessage("test");
-        request.setNoticeType(NoticeType.NoStart);
+        request.setNoticeType(NoticeType.NotStart);
         request.setCronJobId(cronJob.getId());
         request.setNoticeCreateDateTime(timestamp);
 
@@ -384,7 +384,7 @@ public class NoticeIntegrationTest {
                 .content(requestJson))
             .andDo(print())
             .andExpect(jsonPath("$.cronJobId").value(cronJob.getId().toString()))
-            .andExpect(jsonPath("$.noticeType").value(NoticeType.NoStart.toString()))
+            .andExpect(jsonPath("$.noticeType").value(NoticeType.NotStart.toString()))
             .andExpect(jsonPath("$.noticeMessage").value("test"))
             .andExpect(status().isOk());
     }
