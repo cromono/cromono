@@ -1,5 +1,6 @@
 package gabia.cronMonitoring.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import gabia.cronMonitoring.entity.Enum.NoticeType;
 import gabia.cronMonitoring.entity.Notice;
 import gabia.cronMonitoring.util.ValidUUID;
@@ -27,6 +28,7 @@ public class NoticeDTO {
         @NotEmpty @NotBlank
         String noticeMessage;
 
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
         Timestamp noticeCreateDateTime;
 
     }

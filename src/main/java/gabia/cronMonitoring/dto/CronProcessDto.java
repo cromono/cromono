@@ -1,5 +1,6 @@
 package gabia.cronMonitoring.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import gabia.cronMonitoring.entity.CronProcess;
 import java.sql.Timestamp;
 import java.util.UUID;
@@ -18,7 +19,9 @@ public class CronProcessDto {
 
         @NotEmpty @NotBlank
         String pid;
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
         Timestamp startTime;
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
         Timestamp endTime;
     }
 
@@ -29,7 +32,9 @@ public class CronProcessDto {
 
         UUID cronJobId;
         String pid;
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
         Timestamp startTime;
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
         Timestamp endTime;
 
         public static Response from(CronProcess cronProcess) {
