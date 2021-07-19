@@ -44,7 +44,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 , "/error"
             )
             .antMatchers(HttpMethod.POST, "/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process/")
-            .antMatchers(HttpMethod.PATCH, "/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process/{pid}/");
+            .antMatchers(HttpMethod.PATCH, "/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process/{pid}");
     }
 
     @Override
@@ -77,7 +77,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/hello").permitAll()
             .antMatchers("/notifications/notice").permitAll()
             .antMatchers(HttpMethod.POST, "/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process/").permitAll()
-            .antMatchers(HttpMethod.PATCH, "/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process/{pid}/").permitAll()
+            .antMatchers(HttpMethod.PATCH, "/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process/{pid}").permitAll()
             .antMatchers("/auth/register").anonymous()
             .antMatchers("/auth/local/login").anonymous()
 
