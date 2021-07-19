@@ -22,8 +22,13 @@ public class CronJobRepositoryImpl implements CronJobRepository{
 
     @Override
     public CronJob save(CronJob cronjob) {
-        em.persist(cronjob);
-        return em.find(CronJob.class,cronjob.getId());
+        if (cronjob.getId() == null) {
+            em.persist(cronjob);
+            return cronjob;
+        }
+        else {
+            return em.merge(cronjob);
+        }
     }
 
     @Override
