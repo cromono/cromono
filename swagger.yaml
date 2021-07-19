@@ -1186,7 +1186,8 @@ components:
       description: '크론 job의 id'
       required: true
       schema:
-        type: integer
+        type: string
+        format: uuid
     pidPath:
       name: pid
       required: true
@@ -1202,6 +1203,7 @@ components:
       schema:
         type: string
         format: ipv4, ipv6
+        example: "1.1.1.1"
     userIdPath:
       name: userId
       in: path
