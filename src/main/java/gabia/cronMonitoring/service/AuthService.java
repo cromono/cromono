@@ -66,18 +66,17 @@ public class AuthService {
 
     /**
      * 엑세스 토큰 재발급 및 리프레시 토큰 갱신
-     * @param accessToken 만료된 엑세스 토큰
      * @param refreshToken 리프레시 토큰
      * @return 엑세스 토큰 DTO
      */
-    public AccessTokenDTO reissueAccessToken(String accessToken, String refreshToken) {
+    public AccessTokenDTO reissueAccessToken(String refreshToken) {
         
         // JWT 유효성 검증
         if (!tokenProvider.validateToken(refreshToken)) {
             throw new InvalidTokenException("유효하지 않은 Refresh Token입니다.");
         }
 
-        Authentication authentication = tokenProvider.getAuthentication(accessToken);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RefreshToken savedRefreshToken = refreshTokenBusiness
             .getRefreshToken(authentication.getName());
 
