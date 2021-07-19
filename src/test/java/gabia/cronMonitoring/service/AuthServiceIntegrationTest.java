@@ -40,6 +40,7 @@ class AuthServiceIntegrationTest {
     RefreshTokenRepository refreshTokenRepository;
 
     @Test
+    @Transactional
     void 로그인_성공() throws Exception {
         // Given
         String account = "test";
@@ -60,9 +61,11 @@ class AuthServiceIntegrationTest {
         String token = refreshTokenRepository.findById(account).get().getToken();
         Assertions.assertThat(response.getRefreshToken()).isEqualTo(token);
         authService.deleteRefreshToken(account);
+        authService.unauthenticate(account);
     }
 
     @Test
+    @Transactional
     void 로그아웃_성공() throws Exception {
         // Given
         String account = "test";
@@ -82,9 +85,11 @@ class AuthServiceIntegrationTest {
         // Then
         assertDoesNotThrow(() -> authService.unauthenticate(response.getToken()));
         authService.deleteRefreshToken(account);
+        authService.unauthenticate(account);
     }
 
     @Test
+    @Transactional
     void 엑세스_토큰_재발급_성공() throws Exception {
         // Given
         String account = "test";
@@ -102,16 +107,18 @@ class AuthServiceIntegrationTest {
         // When
         AccessTokenDTO response = authService.authenticate(request);
         // Then
-        assertDoesNotThrow(() -> authService.reissueAccessToken(response.getToken(),
+        assertDoesNotThrow(() -> authService.reissueAccessToken(
             response.getRefreshToken()));
         authService.deleteRefreshToken(account);
+        authService.unauthenticate(account);
     }
 
     @Test
+    @Transactional
     void 리프레시_토큰의_유저_정보_비일치로_인한_엑세스_토큰_재발급_실패() throws Exception {
         // Given
-        String account = "test";
-        String name = "test";
+        String account = "test123";
+        String name = "test123";
         String email = "test@gabia.com";
         String password = "test";
         String anotherAccount = "testtest";
@@ -136,16 +143,23 @@ class AuthServiceIntegrationTest {
         userService.addUser(anotherRequest);
         // When
         AccessTokenDTO anotherResponse = authService.authenticate(anotherRequest);
+        String refreshToken = anotherResponse.getRefreshToken().toString();
         authService.unauthenticate(anotherAccount);
-        AccessTokenDTO response = authService.authenticate(request);
+        authService.deleteRefreshToken(anotherAccount);
+        authService.authenticate(request);
         // Then
-        assertThrows(InvalidTokenException.class, () -> authService.reissueAccessToken(anotherResponse.getToken(),
-            response.getRefreshToken()));
         authService.deleteRefreshToken(account);
         authService.deleteRefreshToken(anotherAccount);
+        assertThrows(InvalidTokenException.class, () -> authService.reissueAccessToken(
+            refreshToken));
+        authService.deleteRefreshToken(account);
+        authService.deleteRefreshToken(anotherAccount);
+        authService.unauthenticate(account);
+        authService.unauthenticate(anotherAccount);
     }
 
     @Test
+    @Transactional
     void 유효하지_않은_리프레시_토큰으로_인한_엑세스_토큰_재발급_실패() throws Exception {
         // Given
         String account = "test";
@@ -162,14 +176,17 @@ class AuthServiceIntegrationTest {
         userService.addUser(request);
         // When
         AccessTokenDTO response = authService.authenticate(request);
+        authService.unauthenticate(account);
         // Then
         assertThrows(InvalidTokenException.class,
-            () -> authService.reissueAccessToken(response.getToken(),
+            () -> authService.reissueAccessToken(
                 "notvalidtoken"));
         authService.deleteRefreshToken(account);
+        authService.unauthenticate(account);
     }
 
     @Test
+    @Transactional
     void 현재_사용자_확인_성공() throws Exception {
         // Given
         String account = "test";
@@ -189,6 +206,7 @@ class AuthServiceIntegrationTest {
         UserInfoDTO currentUser = authService.getCurrentUser();
         // Then
         Assertions.assertThat(currentUser.getAccount()).isEqualTo(account);
-        authService.deleteRefreshToken(response.getToken());
+        authService.deleteRefreshToken(account);
+        authService.unauthenticate(account);
     }
 }

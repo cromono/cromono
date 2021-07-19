@@ -1672,7 +1672,6 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      in: header
 
 security:
   - bearerToken: []
