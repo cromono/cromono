@@ -42,7 +42,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/h2-console/**"
                 , "/favicon.ico"
                 , "/error"
-            );
+            )
+            .antMatchers(HttpMethod.POST, "/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process/")
+            .antMatchers(HttpMethod.PATCH, "/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process/{pid}/");
     }
 
     @Override
@@ -74,8 +76,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(HttpMethod.OPTIONS,"/").permitAll()
             .antMatchers("/hello").permitAll()
             .antMatchers("/notifications/notice").permitAll()
-            .antMatchers(HttpMethod.POST, "/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process").permitAll()
-            .antMatchers(HttpMethod.PATCH, "/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process/{pid}").permitAll()
+            .antMatchers(HttpMethod.POST, "/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process/").permitAll()
+            .antMatchers(HttpMethod.PATCH, "/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process/{pid}/").permitAll()
             .antMatchers("/auth/register").anonymous()
             .antMatchers("/auth/local/login").anonymous()
 
