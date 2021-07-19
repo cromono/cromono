@@ -1209,6 +1209,7 @@ components:
       required: true
       schema:
         type: string
+        example: "testid"
     teamIdPath:
       name: teamId
       in: path
