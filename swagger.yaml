@@ -882,8 +882,18 @@ paths:
       responses:
         '200':
           description: '알림이 정상적으로 조회됨'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+            Access-Control-Aloow-Methods:
+              schema:
+                type: string
+            Access-Control-Allow_Headers:
+              schema:
+                type: string
           content:
-            applicaion/json:
+            application/json:
               schema:
                 type: array
                 items:
@@ -1203,7 +1213,7 @@ components:
       schema:
         type: string
         format: ipv4, ipv6
-        example: "1.1.1.1"
+        example: "0.0.0.0"
     userIdPath:
       name: userId
       in: path
@@ -1475,10 +1485,13 @@ components:
             properties:
               teamAccount:
                 type: string
+                example: 'cromono'
               name:
                 type: string
+                example: 'cromono'
               userAccount:
                 type: string
+                example: 'testid'
     PatchTeam:
       description: '팀명 수정'
       required: true
