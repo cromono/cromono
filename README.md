@@ -10,6 +10,9 @@
 
 크론 작업을 여러 서버에 접속하지 않고 한개의 화면에서 실행여부, 로그를 확인하고 싶음
 
+- [크론 프로젝트 최종발표.pdf](https://github.com/cromono/cromono/files/8311436/default.pdf)
+
+
 ## 필수 기능
 
 - 모니터링 할 크론 등록
@@ -42,5 +45,8 @@
 - Kafka
 
 ## API Documentation
+
+
+
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/8f9f0d4b75afcfcda430?action=collection%2Fimport)
